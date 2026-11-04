@@ -6,10 +6,10 @@
   <title>29 (Twenty-Nine) Card Game - Luxury Edition</title>
   <meta name="description" content="Authentic South Asian trick-taking card game 29 (Twenty-Nine) featuring luxury physical card aesthetics, pure inline SVG vector cards, and heuristic AI.">
   
-  <!-- Google Fonts: Plus Jakarta Sans & JetBrains Mono -->
+  <!-- Google Fonts: Luxury English Deck Typography -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700;800&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=JetBrains+Mono:wght@500;700;800&family=Lato:ital,wght@0,300;0,400;0,700;0,900;1,400&family=Merriweather:wght@400;700&family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
 
   <!-- Core CSS -->
   <link rel="stylesheet" href="css/variables.css">
@@ -84,8 +84,9 @@
   <main class="game-table-arena">
     <!-- North: Partner Arthur -->
     <div class="player-pod pod-north" id="pod-north">
-      <div class="player-avatar-wrap">
-        <span>🤖</span>
+      <div class="player-avatar-wrap" data-player-id="2" title="Click to Change Avatar">
+        <span class="avatar-content" id="avatar-icon-2">🤖</span>
+        <span class="player-avatar-edit-badge">✏️</span>
         <span class="bidder-crown-badge" id="crown-north" style="display:none;">👑</span>
       </div>
       <div class="player-meta" style="align-items: center;">
@@ -98,8 +99,9 @@
 
     <!-- West: Opponent Marcus -->
     <div class="player-pod pod-west" id="pod-west">
-      <div class="player-avatar-wrap">
-        <span>👤</span>
+      <div class="player-avatar-wrap" data-player-id="3" title="Click to Change Avatar">
+        <span class="avatar-content" id="avatar-icon-3">🐺</span>
+        <span class="player-avatar-edit-badge">✏️</span>
         <span class="bidder-crown-badge" id="crown-west" style="display:none;">👑</span>
       </div>
       <div class="player-meta">
@@ -138,8 +140,9 @@
 
     <!-- East: Opponent Sophia -->
     <div class="player-pod pod-east" id="pod-east">
-      <div class="player-avatar-wrap">
-        <span>👤</span>
+      <div class="player-avatar-wrap" data-player-id="1" title="Click to Change Avatar">
+        <span class="avatar-content" id="avatar-icon-1">🦊</span>
+        <span class="player-avatar-edit-badge">✏️</span>
         <span class="bidder-crown-badge" id="crown-east" style="display:none;">👑</span>
       </div>
       <div class="player-meta">
@@ -154,8 +157,9 @@
     <div class="player-pod pod-south" id="pod-south">
       <div class="south-controls-bar">
         <div class="user-identity-badge">
-          <div class="player-avatar-wrap" style="width:36px; height:36px;">
-            <span>⭐</span>
+          <div class="player-avatar-wrap" data-player-id="0" style="width:38px; height:38px;" title="Click to Change Avatar">
+            <span class="avatar-content" id="avatar-icon-0">🦁</span>
+            <span class="player-avatar-edit-badge">✏️</span>
             <span class="bidder-crown-badge" id="crown-south" style="display:none;">👑</span>
           </div>
           <div class="player-meta">
@@ -331,6 +335,38 @@
       </div>
       <div class="dialog-actions">
         <button class="btn-m3 btn-m3-filled" id="btn-save-settings">Save & Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Profile Icon / Avatar Chooser Modal -->
+  <div class="modal-overlay" id="modal-avatar-chooser">
+    <div class="m3-dialog avatar-chooser-dialog">
+      <div class="dialog-title">
+        <span>🎭</span> <span id="title-avatar-modal">Select Profile Avatar</span>
+      </div>
+      <div class="dialog-body" style="display:flex; flex-direction:column; gap:16px;">
+        <p class="avatar-chooser-subtitle" id="avatar-target-name">Choose an avatar for player</p>
+        
+        <!-- Preset Avatar Options (4-5 presets + extra high quality) -->
+        <div class="avatar-presets-grid" id="avatar-presets-grid">
+          <!-- Populated dynamically via JS -->
+        </div>
+
+        <div class="avatar-divider">
+          <span>OR</span>
+        </div>
+
+        <!-- Custom Upload Option -->
+        <div class="avatar-upload-action">
+          <input type="file" id="avatar-file-input" accept="image/*" style="display:none;">
+          <button class="btn-m3 btn-m3-outlined btn-upload-avatar" id="btn-trigger-upload">
+            <span>📷</span> <span id="text-upload-avatar">Upload Custom Photo / Icon</span>
+          </button>
+        </div>
+      </div>
+      <div class="dialog-actions">
+        <button class="btn-m3 btn-m3-filled" id="btn-close-avatar-modal">Close</button>
       </div>
     </div>
   </div>

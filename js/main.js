@@ -3,7 +3,7 @@
  * 100% Perfect Edition: Cinematic Timing, Wide Fan, High Contrast & Full Visibility
  */
 
-import { SUITS, RANKS, PLAYERS, TEAMS, GAME_PHASES, BID_RULES, SETTINGS_DEFAULTS } from './constants.js';
+import { SUITS, RANKS, PLAYERS, TEAMS, GAME_PHASES, BID_RULES, SETTINGS_DEFAULTS, PRESET_AVATARS, DEFAULT_PLAYER_AVATARS } from './constants.js';
 import { GameState } from './gameState.js';
 import { AIEngine } from './aiEngine.js';
 import { SoundEngine } from './audio.js';
@@ -18,9 +18,19 @@ class TwentyNineApp {
     this.currentLanguage = 'en';
     this.selectedBid = 16;
     this.aiTurnTimeout = null;
+    this.currentEditingPlayerId = 0;
+
+    // Persisted Player Avatars
+    this.playerAvatars = {
+      0: localStorage.getItem('twenty_nine_avatar_0') || DEFAULT_PLAYER_AVATARS[0],
+      1: localStorage.getItem('twenty_nine_avatar_1') || DEFAULT_PLAYER_AVATARS[1],
+      2: localStorage.getItem('twenty_nine_avatar_2') || DEFAULT_PLAYER_AVATARS[2],
+      3: localStorage.getItem('twenty_nine_avatar_3') || DEFAULT_PLAYER_AVATARS[3],
+    };
 
     this.cacheDOM();
     this.bindEvents();
+    this.renderPlayerAvatars();
     this.updateLanguageUI();
     this.initGame();
   }
@@ -130,6 +140,23 @@ class TwentyNineApp {
     this.modalSettings = document.getElementById('modal-settings');
     this.titleSettingsModal = document.getElementById('title-settings-modal');
     this.toastContainer = document.getElementById('toast-container');
+
+    // Avatar Chooser Modal
+    this.modalAvatarChooser = document.getElementById('modal-avatar-chooser');
+    this.titleAvatarModal = document.getElementById('title-avatar-modal');
+    this.avatarTargetName = document.getElementById('avatar-target-name');
+    this.avatarPresetsGrid = document.getElementById('avatar-presets-grid');
+    this.avatarFileInput = document.getElementById('avatar-file-input');
+    this.btnTriggerUpload = document.getElementById('btn-trigger-upload');
+    this.btnCloseAvatarModal = document.getElementById('btn-close-avatar-modal');
+    this.textUploadAvatar = document.getElementById('text-upload-avatar');
+
+    this.avatarIconEls = {
+      0: document.getElementById('avatar-icon-0'),
+      1: document.getElementById('avatar-icon-1'),
+      2: document.getElementById('avatar-icon-2'),
+      3: document.getElementById('avatar-icon-3')
+    };
 
     // Buttons
     this.btnSoundToggle = document.getElementById('btn-sound-toggle');
@@ -250,7 +277,8 @@ class TwentyNineApp {
     this.btnSoundToggle.addEventListener('click', () => {
       const isMuted = this.sound.toggleMute();
       this.soundIcon.textContent = isMuted ? '🔇' : '🔊';
-      this.showToast(isMuted ? 'সাউন্ড বন্ধ' : 'সাউন্ড চালু');
+      const isBn = this.currentLanguage === 'bn';
+      this.showToast(isBn ? (isMuted ? 'সাউন্ড বন্ধ' : 'সাউন্ড চালু') : (isMuted ? 'Sound Muted' : 'Sound Enabled'));
     });
 
     this.btnRulesDialog.addEventListener('click', () => {
@@ -279,6 +307,99 @@ class TwentyNineApp {
       this.modalSettings.classList.remove('active');
       this.showToast(this.currentLanguage === 'bn' ? 'সেটিংস সংরক্ষিত হয়েছে' : 'Settings saved');
     });
+
+    // Avatar Chooser Triggers & Upload
+    document.querySelectorAll('.player-avatar-wrap[data-player-id]').forEach(wrap => {
+      wrap.addEventListener('click', () => {
+        this.sound.playButtonClick();
+        const pid = parseInt(wrap.dataset.playerId, 10);
+        this.openAvatarChooser(pid);
+      });
+    });
+
+    this.btnCloseAvatarModal.addEventListener('click', () => {
+      this.sound.playButtonClick();
+      this.modalAvatarChooser.classList.remove('active');
+    });
+
+    this.btnTriggerUpload.addEventListener('click', () => {
+      this.sound.playButtonClick();
+      this.avatarFileInput.click();
+    });
+
+    this.avatarFileInput.addEventListener('change', (e) => {
+      const file = e.target.files && e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const dataUrl = event.target.result;
+        this.setPlayerAvatar(this.currentEditingPlayerId, dataUrl);
+        this.modalAvatarChooser.classList.remove('active');
+        this.avatarFileInput.value = '';
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  renderPlayerAvatars() {
+    for (let i = 0; i < 4; i++) {
+      const el = this.avatarIconEls[i];
+      const avatarVal = this.playerAvatars[i];
+      if (el && avatarVal) {
+        if (avatarVal.startsWith('data:image') || avatarVal.startsWith('http') || avatarVal.startsWith('blob:')) {
+          el.innerHTML = `<img src="${avatarVal}" alt="Avatar" />`;
+        } else {
+          el.textContent = avatarVal;
+        }
+      }
+    }
+  }
+
+  openAvatarChooser(playerId) {
+    this.currentEditingPlayerId = playerId;
+    const isBn = this.currentLanguage === 'bn';
+    const pName = isBn ? PLAYERS[playerId].nameBn : PLAYERS[playerId].nameEn;
+    
+    this.avatarTargetName.textContent = isBn 
+      ? `${pName}-এর জন্য অবতার বা ছবি নির্বাচন করুন:` 
+      : `Select avatar or upload custom photo for ${pName}:`;
+
+    // Populate preset avatar items
+    this.avatarPresetsGrid.innerHTML = PRESET_AVATARS.map(preset => {
+      const isSelected = this.playerAvatars[playerId] === preset.icon;
+      return `
+        <div class="avatar-preset-item ${isSelected ? 'selected' : ''}" data-icon="${preset.icon}">
+          <span class="avatar-preset-icon">${preset.icon}</span>
+          <span class="avatar-preset-label">${preset.label}</span>
+        </div>
+      `;
+    }).join('');
+
+    this.avatarPresetsGrid.querySelectorAll('.avatar-preset-item').forEach(item => {
+      item.addEventListener('click', () => {
+        this.sound.playButtonClick();
+        const icon = item.dataset.icon;
+        this.setPlayerAvatar(this.currentEditingPlayerId, icon);
+        this.modalAvatarChooser.classList.remove('active');
+      });
+    });
+
+    this.modalAvatarChooser.classList.add('active');
+  }
+
+  setPlayerAvatar(playerId, avatarVal) {
+    this.playerAvatars[playerId] = avatarVal;
+    try {
+      localStorage.setItem('twenty_nine_avatar_' + playerId, avatarVal);
+    } catch (err) {
+      console.warn('Could not persist avatar to localStorage:', err);
+    }
+    this.renderPlayerAvatars();
+
+    const isBn = this.currentLanguage === 'bn';
+    const pName = isBn ? PLAYERS[playerId].nameBn : PLAYERS[playerId].nameEn;
+    this.showToast(isBn ? `${pName}-এর অবতার আপডেট হয়েছে` : `${pName}'s avatar updated!`);
   }
 
   updateLanguageUI() {
@@ -357,6 +478,16 @@ class TwentyNineApp {
         First team to reach <strong>6 Game Points</strong> wins the match!
       </div>
     `;
+
+    if (this.titleAvatarModal) {
+      this.titleAvatarModal.textContent = isBn ? 'প্রোফাইল অবতার নির্বাচন' : 'Select Profile Avatar';
+    }
+    if (this.textUploadAvatar) {
+      this.textUploadAvatar.textContent = isBn ? 'কাস্টম ছবি বা ফটো আপলোড করুন' : 'Upload Custom Photo / Icon';
+    }
+    if (this.btnCloseAvatarModal) {
+      this.btnCloseAvatarModal.textContent = isBn ? 'সম্পন্ন' : 'Close';
+    }
   }
 
   initGame() {

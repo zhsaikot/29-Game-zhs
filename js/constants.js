@@ -61,6 +61,24 @@ export const RANKS = {
 
 export const RANK_ORDER = ['J', '9', 'A', '10', 'K', 'Q', '8', '7'];
 
+export const PRESET_AVATARS = [
+  { id: 'lion', label: 'Lion King', icon: '🦁' },
+  { id: 'crown', label: 'Monarch', icon: '👑' },
+  { id: 'wolf', label: 'Dire Wolf', icon: '🐺' },
+  { id: 'fox', label: 'Sly Fox', icon: '🦊' },
+  { id: 'ninja', label: 'Ninja', icon: '🥷' },
+  { id: 'wizard', label: 'Wizard', icon: '🧙' },
+  { id: 'bot', label: 'Cyber AI', icon: '🤖' },
+  { id: 'tiger', label: 'Tiger', icon: '🐯' }
+];
+
+export const DEFAULT_PLAYER_AVATARS = {
+  0: '🦁',
+  1: '🦊',
+  2: '🤖',
+  3: '🐺'
+};
+
 export const PLAYERS = [
   { id: 0, key: 'SOUTH', nameEn: 'Saikot', nameBn: 'সইকত', isHuman: true, team: 1 },
   { id: 1, key: 'EAST',  nameEn: 'Sophia (East)', nameBn: 'সোফিয়া (পূর্ব)', isHuman: false, team: 2 },

@@ -37,8 +37,10 @@
   --card-back-secondary: #3B82F6;
   --card-back-accent: #60A5FA;
 
-  /* Typography */
-  --font-ui: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  /* Typography: Luxury English Card Game Fonts */
+  --font-heading: 'Cinzel', 'Merriweather', Georgia, serif;
+  --font-ui: 'Outfit', 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-body: 'Lato', 'Outfit', sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
 
   /* Elevation Shadows */

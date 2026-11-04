@@ -25,13 +25,20 @@
 ### 🎨 1. Google Material Design 3 & Glassmorphic HUD
 - **Deep Obsidian Slate (`#0B0F17`) Theme:** Elevated glassmorphic surfaces (`backdrop-filter: blur(16px)`), ambient arena glow (`#131B26`), and tonal borders.
 - **Material You Accents:** Google Pastel Blue (`#A8C7FA`), Pastel Coral (`#F2B8B5`), Pastel Mint (`#C4EED0`), and Golden Honey (`#FDE293`).
-- **Typography:** Loaded from Google Fonts — `'Plus Jakarta Sans'` for sleek UI controls and `'JetBrains Mono'` for high-precision scores and bids.
+- **Typography:** Loaded from Google Fonts — `'Cinzel'` and `'Merriweather'` for regal royal card headings, `'Outfit'` and `'Plus Jakarta Sans'` for sleek UI, and `'JetBrains Mono'` for high-precision scores and bids.
+- **Player Profile Avatars:** Choose from curated preset avatars (Lion King, Monarch, Dire Wolf, Sly Fox, Ninja, Arcane Mage, Cyber AI, Bengal Tiger) or upload any custom photo/icon with automatic circular masking!
 
-### 🃏 2. Bespoke SVG Vector Playing Cards (Zero Raster Images)
-- **100% Pure Inline SVG:** Ultra-crisp rendering on any device or resolution.
-- **Custom Royal Art:** Stylized knight's shield for Jack (J), sacred 9-point star mandala for Nine (9), grand radiant sunburst halo for Ace (A), Roman crest for Ten (10), coronation crown for King (K), and jeweled tiara for Queen (Q).
-- **Geometric Pattern Back:** Sacred geometry blue/indigo mesh with traditional 29 gold emblem and locked mystery seals.
-- **Micro-Interaction:** Hovering cards gives a tactile 2px micro-lift (`--hover-y: -2px`) and soft pastel glow without any jitter or jumping.
+### 🃏 2. Luxury Playing Card Deck (Bicycle / Theory11 Hybrid)
+- **100% Pure Inline SVG:** Ultra-crisp vector rendering on any device or resolution with zero raster images.
+- **Authentic Traditional Pip Layouts (7, 8, 9, 10):** Precise playing-card coordinates with upper pips pointing up and lower pips inverted 180°, plus subtle gold inner glow on Nine (2 pts).
+- **Double-Headed Mirrored Royal Court Cards (J, Q, K):**
+  - **Jack (J - 3 pts):** Royal Halberd/Spear, Gold Prince Crown, Shield with suit emblem, and luxury gold border.
+  - **Queen (Q):** Sovereign Tiara, Tudor Rose/Scepter, and mirrored portrait.
+  - **King (K):** Imperial Cross Crown, Broadsword, and Royal Crest.
+  - **Ace (A - 1 pt):** Oversized ornate central pip with intricate filigree engravings.
+- **Micro Point Badge:** Sleek, high-contrast micro-pill integrated cleanly at the bottom border.
+- **Micro-Interaction:** Hovering cards provides a buttery-smooth 4px micro-lift (`--hover-y: -4px`) and luxury glow.
+- **Trick-Winner Animation:** On trick completion, cards glide smoothly to the winning player's pod, accompanied by a celebratory winner avatar pulse!
 
 ### 🇧🇩 3. 100% Authentic South Asian / Bangladeshi Rules
 - **32-Card Deck:** Spades (♠), Hearts (♥), Clubs (♣), Diamonds (♦).
