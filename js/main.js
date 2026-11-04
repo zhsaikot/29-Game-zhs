@@ -920,20 +920,25 @@ class TwentyNineApp {
 
     const suitObj = SUITS[trumpSuit] || { symbol: '♦', color: 'red', nameEn: 'Diamonds', nameBn: 'ডায়মন্ডস' };
     const suitName = isBn ? suitObj.nameBn : suitObj.nameEn;
+    const suitSymbolColor = suitObj.color === 'red' ? 'var(--suit-red)' : 'var(--text-primary)';
 
     // Pick authentic card to render: use the locked trump card or fallback to Ace of that suit
     const displayCard = (trumpCard && trumpCard.rank && trumpCard.rank !== '?')
       ? trumpCard
       : { suit: trumpSuit, rank: 'A', points: 1, power: 6, id: `trump_rev_${Date.now()}` };
 
-    this.hudTrumpSlot.className = 'trump-indicator-slot revealed has-card trump-reveal-pulse';
+    this.hudTrumpSlot.className = 'trump-indicator-slot revealed has-hanging-card trump-reveal-pulse';
     this.hudTrumpSlot.innerHTML = `
-      <div class="hud-mini-trump-card" title="${suitName}">
-        ${CardRenderer.renderFaceSVG(displayCard)}
-      </div>
+      <span class="hud-trump-icon-symbol" style="color: ${suitSymbolColor};">${suitObj.symbol}</span>
       <div class="hud-trump-meta">
         <span class="hud-trump-badge">${isBn ? 'ট্রাম্প' : 'TRUMP'}</span>
         <span class="hud-trump-title">${suitName}</span>
+      </div>
+      <div class="hud-hanging-trump-card" title="${suitName}">
+        <div class="hud-hanging-connector"></div>
+        <div class="hud-hanging-card-inner">
+          ${CardRenderer.renderFaceSVG(displayCard)}
+        </div>
       </div>
     `;
 
