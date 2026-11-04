@@ -118,11 +118,12 @@
   bottom: auto;
   cursor: default;
   filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.6));
+  will-change: transform, opacity;
 }
 
 /* Dynamic card drop-in */
 .trick-card-played {
-  animation: card-drop-in 0.38s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+  animation: card-drop-in 0.38s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 @keyframes card-drop-in {
@@ -134,29 +135,6 @@
     opacity: 1;
     transform: translateX(var(--card-x)) translateY(0px) rotate(var(--card-rot)) scale(1);
   }
-}
-
-/* Sweep to winner animation */
-.trick-slot .playing-card.card-sweep-to-winner {
-  transition: all 0.75s cubic-bezier(0.4, 0, 0.2, 1) !important;
-  opacity: 0;
-  pointer-events: none;
-}
-
-.trick-slot .playing-card.sweep-to-south {
-  transform: translateY(140px) scale(0.25) !important;
-}
-
-.trick-slot .playing-card.sweep-to-north {
-  transform: translateY(-140px) scale(0.25) !important;
-}
-
-.trick-slot .playing-card.sweep-to-east {
-  transform: translateX(160px) scale(0.25) !important;
-}
-
-.trick-slot .playing-card.sweep-to-west {
-  transform: translateX(-160px) scale(0.25) !important;
 }
 
 /* Winner Pod Flash Pulse */

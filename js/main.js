@@ -956,10 +956,15 @@ class TwentyNineApp {
           const deltaX = targetX - cardX;
           const deltaY = targetY - cardY;
 
-          // Stagger card flight slightly for natural deck gathering
+          // Clear any active drop-in animation so transition can animate transform smoothly
+          card.classList.remove('trick-card-played');
+          card.style.animation = 'none';
+          void card.offsetWidth; // Force reflow
+
+          // Stagger card flight smoothly towards winner's pod
           const delaySec = idx * 0.04;
-          card.style.transition = `transform 0.62s cubic-bezier(0.2, 0.9, 0.3, 1) ${delaySec}s, opacity 0.52s ease ${delaySec + 0.12}s, filter 0.6s ease`;
-          card.style.transform = `translate(${deltaX}px, ${deltaY}px) scale(0.2) rotate(${(idx - 1.5) * 16}deg)`;
+          card.style.transition = `transform 0.72s cubic-bezier(0.2, 0.85, 0.3, 1) ${delaySec}s, opacity 0.55s ease ${delaySec + 0.15}s, filter 0.6s ease`;
+          card.style.transform = `translate(${deltaX}px, ${deltaY}px) scale(0.24) rotate(${(idx - 1.5) * 14}deg)`;
           card.style.opacity = '0';
           card.style.pointerEvents = 'none';
         }

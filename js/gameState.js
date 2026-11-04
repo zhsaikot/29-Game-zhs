@@ -251,9 +251,10 @@ export class GameState {
       this.lockedTrumpCard = null;
     } else {
       this.trumpSuit = suit;
-      const cardIndex = bidderHand.findIndex(c => c.suit === suit);
-      if (cardIndex !== -1) {
-        this.lockedTrumpCard = bidderHand.splice(cardIndex, 1)[0];
+      // Record trump card without removing it from bidder's hand - player preserves all 4 cards!
+      const matchedCard = bidderHand.find(c => c.suit === suit);
+      if (matchedCard) {
+        this.lockedTrumpCard = { ...matchedCard };
       } else {
         this.lockedTrumpCard = { id: 'trump_locked', suit, rank: '?', power: 0, points: 0 };
       }
@@ -278,12 +279,11 @@ export class GameState {
       if (p === this.highestBidder && this.isSeventhCardTrump) {
         const seventh = secondBatch[2];
         this.trumpSuit = seventh.suit;
-        this.lockedTrumpCard = seventh;
-        secondBatch.splice(2, 1);
-        this.hands[p].push(...secondBatch);
-      } else {
-        this.hands[p].push(...secondBatch);
+        this.lockedTrumpCard = { ...seventh };
       }
+      
+      // All 4 new cards are appended to player's hand (4 initial + 4 new = exactly 8 cards)
+      this.hands[p].push(...secondBatch);
       this.sortHand(this.hands[p]);
     }
 
@@ -379,12 +379,6 @@ export class GameState {
     this.trumpRevealedBy = playerId;
     this.trumpRevealedInTrick = this.trickNumber;
     this.trumpRevealedAtPlayCount = this.currentTrick.length;
-
-    // Return locked card to bidder's hand
-    if (this.lockedTrumpCard && this.lockedTrumpCard.id !== 'trump_locked') {
-      this.hands[this.highestBidder].push(this.lockedTrumpCard);
-      this.sortHand(this.hands[this.highestBidder]);
-    }
 
     this.emit('trumpRevealed', {
       playerId,
