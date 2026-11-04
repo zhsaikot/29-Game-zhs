@@ -488,12 +488,48 @@ class TwentyNineApp {
     if (this.btnCloseAvatarModal) {
       this.btnCloseAvatarModal.textContent = isBn ? 'সম্পন্ন' : 'Close';
     }
+
+    if (this.hudTargetTitle) {
+      this.hudTargetTitle.textContent = isBn ? '🎯 লক্ষ্য:' : '🎯 Target:';
+    }
+
+    if (this.gameState && this.gameState.isTrumpRevealed && this.gameState.trumpSuit) {
+      const badge = this.hudTrumpSlot.querySelector('.hud-trump-badge');
+      const title = this.hudTrumpSlot.querySelector('.hud-trump-title');
+      if (badge) badge.textContent = isBn ? 'ট্রাম্প' : 'TRUMP';
+      if (title) {
+        const sObj = SUITS[this.gameState.trumpSuit];
+        if (sObj) title.textContent = isBn ? sObj.nameBn : sObj.nameEn;
+      }
+    } else {
+      if (this.hudTrumpLabel) {
+        const bidder = this.gameState ? this.gameState.highestBidder : null;
+        const trumpSuit = this.gameState ? this.gameState.trumpSuit : null;
+        if (bidder === 0 && trumpSuit && this.gameState.phase !== GAME_PHASES.BIDDING) {
+          this.hudTrumpLabel.textContent = `${isBn ? 'রং:' : 'Trump:'} ${SUITS[trumpSuit].symbol} (${isBn ? 'গোপন' : 'Hidden'})`;
+        } else {
+          this.hudTrumpLabel.textContent = isBn ? 'রং: গোপন' : 'Trump: Hidden';
+        }
+      }
+    }
   }
 
   initGame() {
     this.updateScoreLedger();
     this.resetTableForNewRound();
     this.gameState.startNewRound();
+  }
+
+  renderHudTrumpHidden(labelOverride = null) {
+    const isBn = this.currentLanguage === 'bn';
+    const text = labelOverride || (isBn ? 'রং: গোপন' : 'Trump: Hidden');
+    this.hudTrumpSlot.className = 'trump-indicator-slot';
+    this.hudTrumpSlot.innerHTML = `
+      <span class="trump-indicator-icon" id="hud-trump-icon">🔒</span>
+      <span id="hud-trump-label">${text}</span>
+    `;
+    this.hudTrumpIcon = document.getElementById('hud-trump-icon');
+    this.hudTrumpLabel = document.getElementById('hud-trump-label');
   }
 
   resetTableForNewRound() {
@@ -503,9 +539,7 @@ class TwentyNineApp {
     this.slotSouth.innerHTML = '';
     this.trickCurrentPoints.textContent = '0 pts';
     this.trickRoundLabel.textContent = this.currentLanguage === 'bn' ? 'হাত ১ / ৮ (Trick 1/8)' : 'Trick 1 / 8';
-    this.hudTrumpSlot.className = 'trump-indicator-slot';
-    this.hudTrumpIcon.textContent = '🔒';
-    this.hudTrumpLabel.textContent = this.currentLanguage === 'bn' ? 'রং: গোপন' : 'Trump: Hidden';
+    this.renderHudTrumpHidden();
     this.hudTargetVal.textContent = '--';
 
     this.lockedTrumpCardStub.className = 'locked-trump-card-stub';
@@ -763,11 +797,10 @@ class TwentyNineApp {
     const { bidder, isSeventhCard, trumpSuit } = data;
     const isBn = this.currentLanguage === 'bn';
 
-    this.hudTrumpSlot.className = 'trump-indicator-slot';
-    this.hudTrumpIcon.textContent = '🔒';
-    this.hudTrumpLabel.textContent = bidder === 0 && trumpSuit 
+    const labelText = (bidder === 0 && trumpSuit)
       ? `${isBn ? 'রং:' : 'Trump:'} ${SUITS[trumpSuit].symbol} (${isBn ? 'গোপন' : 'Hidden'})` 
       : (isBn ? 'রং: গোপন' : 'Trump: Hidden');
+    this.renderHudTrumpHidden(labelText);
     
     this.lockedTrumpCardStub.className = 'locked-trump-card-stub';
     this.lockedTrumpCardStub.innerHTML = '<span>🔒</span>';
@@ -881,26 +914,36 @@ class TwentyNineApp {
   }
 
   onTrumpRevealed(data) {
-    const { playerId, trumpSuit } = data;
+    const { playerId, trumpSuit, trumpCard } = data;
     const isBn = this.currentLanguage === 'bn';
     this.sound.playTrumpReveal();
 
-    const suitObj = SUITS[trumpSuit];
+    const suitObj = SUITS[trumpSuit] || { symbol: '♦', color: 'red', nameEn: 'Diamonds', nameBn: 'ডায়মন্ডস' };
     const suitName = isBn ? suitObj.nameBn : suitObj.nameEn;
 
-    this.hudTrumpSlot.className = 'trump-indicator-slot revealed';
-    this.hudTrumpIcon.textContent = suitObj.symbol;
-    this.hudTrumpIcon.style.color = suitObj.color === 'red' ? 'var(--suit-red)' : 'var(--text-primary)';
-    this.hudTrumpLabel.textContent = `${isBn ? 'রং:' : 'Trump:'} ${suitName}`;
-    this.hudTrumpSlot.classList.add('trump-reveal-flip');
+    // Pick authentic card to render: use the locked trump card or fallback to Ace of that suit
+    const displayCard = (trumpCard && trumpCard.rank && trumpCard.rank !== '?')
+      ? trumpCard
+      : { suit: trumpSuit, rank: 'A', points: 1, power: 6, id: `trump_rev_${Date.now()}` };
 
-    this.lockedTrumpCardStub.className = 'locked-trump-card-stub revealed';
-    this.lockedTrumpCardStub.innerHTML = `<span style="font-size:1.4rem; color:${suitObj.color === 'red' ? 'var(--suit-red)' : 'var(--suit-black)'};">${suitObj.symbol}</span>`;
+    this.hudTrumpSlot.className = 'trump-indicator-slot revealed has-card trump-reveal-pulse';
+    this.hudTrumpSlot.innerHTML = `
+      <div class="hud-mini-trump-card" title="${suitName}">
+        ${CardRenderer.renderFaceSVG(displayCard)}
+      </div>
+      <div class="hud-trump-meta">
+        <span class="hud-trump-badge">${isBn ? 'ট্রাম্প' : 'TRUMP'}</span>
+        <span class="hud-trump-title">${suitName}</span>
+      </div>
+    `;
+
+    this.lockedTrumpCardStub.className = 'locked-trump-card-stub revealed has-card';
+    this.lockedTrumpCardStub.innerHTML = CardRenderer.renderFaceSVG(displayCard);
     this.lockedTrumpTag.textContent = suitName.toUpperCase();
 
     const pName = isBn ? PLAYERS[playerId].nameBn : PLAYERS[playerId].nameEn;
-    this.showSpeechBubble(playerId, `✨ ${suitName}!`);
-    this.showToast(`✨ ${pName} ${isBn ? 'রং প্রকাশ করেছেন:' : 'revealed Trump:'} ${suitName} (${suitObj.symbol})!`);
+    this.showSpeechBubble(playerId, `🎺 ${suitName}!`);
+    this.showToast(`🎺 ${pName} ${isBn ? 'রং প্রকাশ করেছেন:' : 'revealed Trump:'} ${suitName} (${suitObj.symbol})!`);
 
     this.renderHandsAndCounts();
   }

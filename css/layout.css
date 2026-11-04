@@ -160,6 +160,76 @@ body {
   background: rgba(40, 30, 15, 0.9);
 }
 
+.trump-indicator-slot.has-card {
+  padding: 3px 12px 3px 6px;
+  gap: 8px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(30, 41, 59, 0.95), rgba(45, 30, 15, 0.95));
+  border-color: var(--accent-gold);
+  box-shadow: 0 0 14px rgba(253, 226, 147, 0.5);
+}
+
+.trump-reveal-pulse {
+  animation: trump-slot-glow 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes trump-slot-glow {
+  0% {
+    box-shadow: 0 0 4px rgba(253, 226, 147, 0.3);
+    transform: scale(0.96);
+  }
+  50% {
+    box-shadow: 0 0 22px rgba(253, 226, 147, 0.9);
+    transform: scale(1.06);
+  }
+  100% {
+    box-shadow: 0 0 14px rgba(253, 226, 147, 0.5);
+    transform: scale(1);
+  }
+}
+
+.hud-mini-trump-card {
+  width: 26px;
+  height: 38px;
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.5), 0 0 8px rgba(253, 226, 147, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 1px solid rgba(253, 226, 147, 0.85);
+  background: #FFFFFF;
+  animation: trump-card-flip 0.75s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.hud-mini-trump-card svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.hud-trump-meta {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.15;
+}
+
+.hud-trump-badge {
+  font-size: 0.65rem;
+  font-weight: 800;
+  color: var(--accent-gold);
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  font-family: var(--font-heading);
+}
+
+.hud-trump-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
 .trump-indicator-icon {
   font-size: 1.15rem;
   line-height: 1;
@@ -678,10 +748,17 @@ body {
 }
 
 .locked-trump-card-stub.revealed {
-  background: #FFFFFF;
+  background: transparent;
   color: #0F172A;
-  border-color: var(--primary-accent);
-  box-shadow: 0 0 14px rgba(168, 199, 250, 0.7);
+  border-color: var(--accent-gold);
+  box-shadow: 0 0 16px rgba(253, 226, 147, 0.75);
+  overflow: hidden;
+}
+
+.locked-trump-card-stub.revealed svg {
+  width: 100%;
+  height: 100%;
+  display: block;
 }
 
 .locked-trump-tag {
