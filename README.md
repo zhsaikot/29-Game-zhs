@@ -37,7 +37,7 @@
   - **King (K):** Imperial Cross Crown, Broadsword, and Royal Crest.
   - **Ace (A - 1 pt):** Oversized ornate central pip with intricate filigree engravings.
 - **Micro Point Badge:** Sleek, high-contrast micro-pill integrated cleanly at the bottom border.
-- **Micro-Interaction:** Hovering cards provides a buttery-smooth 4px micro-lift (`--hover-y: -4px`) and luxury glow.
+- **Rock-Solid Stability:** Zero jitter or jumping — cards maintain fixed, stable coordinates without disorienting hover displacement.
 - **Trick-Winner Animation:** On trick completion, cards glide smoothly to the winning player's pod, accompanied by a celebratory winner avatar pulse!
 
 ### 🇧🇩 3. 100% Authentic South Asian / Bangladeshi Rules
