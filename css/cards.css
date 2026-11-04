@@ -15,7 +15,7 @@
   margin-top: 6px;
 }
 
-/* Playing Card Base Structure - Fixed Stable Position (No Hover Movement) */
+/* Playing Card Base Structure - Smooth 4px Glide (Preserving Natural Stacking Order) */
 .playing-card {
   --card-x: 0px;
   --card-y: 0px;
@@ -30,9 +30,10 @@
   perspective: 1000px;
   transform-style: preserve-3d;
   
-  /* Rock-solid fan position - completely stable without any hover movement */
+  /* Natural fan position with gentle 4px glide transition */
   transform: translateX(var(--card-x)) translateY(var(--card-y)) rotate(var(--card-rot));
-  transition: opacity 0.25s ease, filter 0.2s ease;
+  transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.25s ease, filter 0.25s ease;
+  will-change: transform;
   
   user-select: none;
   touch-action: manipulation;
@@ -76,6 +77,12 @@
   width: 100%;
   height: 100%;
   display: block;
+}
+
+/* Card Hover in Hand: Gently glides 4px straight upwards without changing layer order */
+.hand-container .playing-card:not(.dimmed):hover {
+  transform: translateX(var(--card-x)) translateY(calc(var(--card-y) - 4px)) rotate(var(--card-rot));
+  filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.5));
 }
 
 /* Playable Pulse indicator on active turn */
