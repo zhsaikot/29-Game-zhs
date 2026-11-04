@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>29 (Twenty-Nine) Card Game - Material 3 Edition</title>
+  <meta name="description" content="Authentic South Asian trick-taking card game 29 (Twenty-Nine) built with Google Material Design 3, pure SVG vector cards, and heuristic AI.">
+  
+  <!-- Google Fonts: Plus Jakarta Sans & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700;800&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Core CSS -->
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/cards.css">
+</head>
+<body>
+  <div class="ambient-glow"></div>
+
+  <!-- Top App Header / M3 HUD -->
+  <header class="app-header">
+    <div class="brand-section">
+      <div class="brand-logo-pill">
+        <span class="brand-logo-text">29</span>
+      </div>
+      <div>
+        <div class="brand-subtext" id="brand-title">Twenty-Nine • Bangladesh Standard</div>
+      </div>
+    </div>
+
+    <!-- Match Score Ledger (Red vs Black Points) -->
+    <div class="hud-score-ledger">
+      <div class="score-team-pill team-you">
+        <span id="label-team1">You & Kabir:</span>
+        <span id="score-team1-val" style="font-family: var(--font-mono); font-weight:800;">0</span>
+        <div class="score-pips" id="team1-pips">
+          <div class="pip"></div><div class="pip"></div><div class="pip"></div>
+          <div class="pip"></div><div class="pip"></div><div class="pip"></div>
+        </div>
+      </div>
+      <span class="score-divider">VS</span>
+      <div class="score-team-pill team-opponents">
+        <span id="label-team2">Rahim & Karim:</span>
+        <span id="score-team2-val" style="font-family: var(--font-mono); font-weight:800;">0</span>
+        <div class="score-pips" id="team2-pips">
+          <div class="pip"></div><div class="pip"></div><div class="pip"></div>
+          <div class="pip"></div><div class="pip"></div><div class="pip"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Trump & Target HUD Slot -->
+    <div class="hud-trump-widget">
+      <div class="trump-indicator-slot" id="hud-trump-slot" title="Trump Suit">
+        <span class="trump-indicator-icon" id="hud-trump-icon">🔒</span>
+        <span id="hud-trump-label">Trump: Hidden</span>
+      </div>
+      <div class="trump-indicator-slot" id="hud-target-slot" title="Current Round Target">
+        <span id="hud-target-title">🎯 Target:</span>
+        <span id="hud-target-val" style="font-family: var(--font-mono); font-weight:800; color:var(--primary-accent);">--</span>
+      </div>
+    </div>
+
+    <!-- Quick Action Icons & Language Toggle -->
+    <div class="hud-actions">
+      <button class="btn-icon-m3 btn-lang-toggle" id="btn-lang-toggle" title="Switch Language">
+        <span id="lang-indicator">বাং</span>
+      </button>
+      <button class="btn-icon-m3" id="btn-sound-toggle" title="Toggle Sound">
+        <span id="sound-icon">🔊</span>
+      </button>
+      <button class="btn-icon-m3" id="btn-rules-dialog" title="Rules & Help">
+        <span>📖</span>
+      </button>
+      <button class="btn-icon-m3" id="btn-settings-dialog" title="Game Settings">
+        <span>⚙️</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Game Arena -->
+  <main class="game-table-arena">
+    <!-- North: Partner Kabir -->
+    <div class="player-pod pod-north" id="pod-north">
+      <div class="player-avatar-wrap">
+        <span>🤖</span>
+        <span class="bidder-crown-badge" id="crown-north" style="display:none;">👑</span>
+      </div>
+      <div class="player-meta" style="align-items: center;">
+        <span class="player-name" id="name-north">Kabir (Partner)</span>
+        <span class="player-status-tag" id="status-north">Waiting</span>
+        <span class="player-card-count" id="count-north">4 cards</span>
+      </div>
+      <div class="north-cards-preview" id="north-card-stubs"></div>
+    </div>
+
+    <!-- West: Opponent Karim -->
+    <div class="player-pod pod-west" id="pod-west">
+      <div class="player-avatar-wrap">
+        <span>👤</span>
+        <span class="bidder-crown-badge" id="crown-west" style="display:none;">👑</span>
+      </div>
+      <div class="player-meta">
+        <span class="player-name" id="name-west">Karim (West)</span>
+        <span class="player-status-tag" id="status-west">Waiting</span>
+        <span class="player-card-count" id="count-west">4 cards</span>
+      </div>
+      <div class="west-cards-preview" id="west-card-stubs"></div>
+    </div>
+
+    <!-- Center Trick Arena -->
+    <div class="trick-arena" id="trick-arena">
+      <!-- Dedicated Locked Trump Table Slot -->
+      <div class="locked-trump-table-slot" id="locked-trump-table-slot" title="Locked Trump Card">
+        <div class="locked-trump-card-stub" id="locked-trump-card-stub">
+          <span>🔒</span>
+        </div>
+        <span class="locked-trump-tag" id="locked-trump-tag">TRUMP</span>
+      </div>
+
+      <!-- 4 Card Slots -->
+      <div class="trick-slot slot-north" id="slot-north"></div>
+      <div class="trick-slot slot-west" id="slot-west"></div>
+      <div class="trick-slot slot-east" id="slot-east"></div>
+      <div class="trick-slot slot-south" id="slot-south"></div>
+
+      <!-- Center Trick Status -->
+      <div class="trick-center-info" id="trick-center-info">
+        <span class="trick-number-label" id="trick-round-label">Trick 1 / 8</span>
+        <span class="trick-points-badge" id="trick-current-points">0 pts</span>
+      </div>
+    </div>
+
+    <!-- East: Opponent Rahim -->
+    <div class="player-pod pod-east" id="pod-east">
+      <div class="player-avatar-wrap">
+        <span>👤</span>
+        <span class="bidder-crown-badge" id="crown-east" style="display:none;">👑</span>
+      </div>
+      <div class="player-meta">
+        <span class="player-name" id="name-east">Rahim (East)</span>
+        <span class="player-status-tag" id="status-east">Waiting</span>
+        <span class="player-card-count" id="count-east">4 cards</span>
+      </div>
+      <div class="east-cards-preview" id="east-card-stubs"></div>
+    </div>
+
+    <!-- South: Human Player -->
+    <div class="player-pod pod-south" id="pod-south">
+      <div class="south-controls-bar">
+        <div class="user-identity-badge">
+          <div class="player-avatar-wrap" style="width:36px; height:36px;">
+            <span>⭐</span>
+            <span class="bidder-crown-badge" id="crown-south" style="display:none;">👑</span>
+          </div>
+          <div class="player-meta">
+            <span class="player-name" id="name-south">You</span>
+            <span class="player-status-tag" id="status-south">Ready</span>
+          </div>
+        </div>
+
+        <!-- Action Buttons: Reveal Trump & Claim Marriage -->
+        <div class="action-buttons-group">
+          <button class="btn-reveal-trump" id="btn-claim-marriage" style="display: none; background: linear-gradient(135deg, #FDE293, #C4EED0);">
+            <span>👑</span> <span id="text-claim-marriage">Claim Marriage (জোড়া)</span>
+          </button>
+          <button class="btn-reveal-trump" id="btn-reveal-trump" style="display: none;">
+            <span>✨</span> <span id="text-reveal-trump">Reveal Trump (রং তোলা)</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Floating Non-Modal Bidding Dock (Directly Above South Cards) -->
+      <div class="floating-bidding-panel" id="floating-bidding-panel">
+        <div class="bidding-panel-header">
+          <span class="bidding-status-heading">
+            <span>🎯</span> <span id="label-your-bid">Your Turn to Bid (আপনার ডাক)</span>
+          </span>
+          <span class="bidding-current-highest" id="dock-highest-bid-label">Current: None</span>
+        </div>
+
+        <!-- Quick Bid Chips (16 to 28) -->
+        <div class="quick-bid-chips-row" id="quick-bid-chips">
+          <button class="chip-bid" data-val="16">16</button>
+          <button class="chip-bid" data-val="17">17</button>
+          <button class="chip-bid" data-val="18">18</button>
+          <button class="chip-bid" data-val="19">19</button>
+          <button class="chip-bid" data-val="20">20</button>
+          <button class="chip-bid" data-val="21">21</button>
+          <button class="chip-bid" data-val="22">22</button>
+          <button class="chip-bid" data-val="23">23</button>
+          <button class="chip-bid" data-val="24">24</button>
+        </div>
+
+        <!-- Bidding Action Controls -->
+        <div class="bidding-actions-row">
+          <button class="btn-m3 btn-m3-tonal" id="btn-dock-pass">Pass (পাস)</button>
+          <button class="btn-m3 btn-m3-filled" id="btn-dock-submit">Submit Bid</button>
+        </div>
+      </div>
+
+      <!-- Player Hand (Natural Fan Layout) -->
+      <div class="hand-container" id="player-hand-container">
+        <!-- Dynamically injected SVG cards -->
+      </div>
+    </div>
+  </main>
+
+  <!-- Challenge Banner (Double / Redouble prompt) -->
+  <div class="challenge-banner" id="challenge-banner" style="display: none;">
+    <span id="challenge-text">Opponents bid 16. Challenge with Double (x2 points)?</span>
+    <div style="display: flex; gap: 8px;">
+      <button class="btn-m3 btn-m3-filled" id="btn-accept-double">Double (x2)</button>
+      <button class="btn-m3 btn-m3-tonal" id="btn-skip-double">Skip</button>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- ==========================================================================
+       Modals
+       ========================================================================== -->
+
+  <!-- Trump Selection Modal -->
+  <div class="modal-overlay" id="modal-trump-select">
+    <div class="m3-dialog">
+      <div class="dialog-title">
+        <span>🃏</span> <span id="title-trump-select">Select Trump Suit (রং নির্ধারণ)</span>
+      </div>
+      <div class="dialog-body" id="desc-trump-select">
+        You won the bid! Choose the Trump suit to keep secret, or pick "7th Card" as a blind trump.
+      </div>
+      <div class="trump-picker-grid">
+        <div class="trump-pick-card" data-suit="SPADES">
+          <span class="trump-pick-symbol" style="color:var(--suit-black);">♠</span>
+          <span class="trump-pick-name" id="name-suit-spades">Spades (ইসকাপণ)</span>
+        </div>
+        <div class="trump-pick-card" data-suit="HEARTS">
+          <span class="trump-pick-symbol" style="color:var(--suit-red);">♥</span>
+          <span class="trump-pick-name" id="name-suit-hearts">Hearts (হরতন)</span>
+        </div>
+        <div class="trump-pick-card" data-suit="CLUBS">
+          <span class="trump-pick-symbol" style="color:var(--suit-black);">♣</span>
+          <span class="trump-pick-name" id="name-suit-clubs">Clubs (চিড়িতন)</span>
+        </div>
+        <div class="trump-pick-card" data-suit="DIAMONDS">
+          <span class="trump-pick-symbol" style="color:var(--suit-red);">♦</span>
+          <span class="trump-pick-name" id="name-suit-diamonds">Diamonds (রুইতন)</span>
+        </div>
+        <div class="trump-pick-card trump-seventh-card-btn" id="btn-trump-seventh">
+          <span class="trump-pick-symbol">🎲</span>
+          <span class="trump-pick-name" id="name-suit-seventh">7th Card (৭ নম্বর তাস - ব্লাইন্ড ট্রাম্প)</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Round End Summary Modal -->
+  <div class="modal-overlay" id="modal-round-end">
+    <div class="m3-dialog">
+      <div class="dialog-title" id="round-result-title">
+        <span>🏆</span> Round Complete
+      </div>
+      <div class="dialog-body" id="round-result-body"></div>
+      <div class="dialog-actions">
+        <button class="btn-m3 btn-m3-filled" id="btn-next-round">Next Round</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Match Over Modal -->
+  <div class="modal-overlay" id="modal-match-over">
+    <div class="m3-dialog">
+      <div class="dialog-title" id="match-over-title">
+        <span>🎉</span> Match Won!
+      </div>
+      <div class="dialog-body" id="match-over-body"></div>
+      <div class="dialog-actions">
+        <button class="btn-m3 btn-m3-filled" id="btn-restart-match">Play New Match</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Rules & Help Modal -->
+  <div class="modal-overlay" id="modal-rules">
+    <div class="m3-dialog" style="max-width: 560px; max-height: 85vh; overflow-y: auto;">
+      <div class="dialog-title">
+        <span>📖</span> <span id="title-rules-modal">Rules of 29 (২৯ খেলার নিয়মাবলী)</span>
+      </div>
+      <div class="dialog-body" id="rules-content" style="display: flex; flex-direction: column; gap: 12px; font-size: 0.88rem;">
+        <!-- Injected dynamically based on language -->
+      </div>
+      <div class="dialog-actions">
+        <button class="btn-m3 btn-m3-filled" id="btn-close-rules">Got It</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Settings Modal -->
+  <div class="modal-overlay" id="modal-settings">
+    <div class="m3-dialog">
+      <div class="dialog-title">
+        <span>⚙️</span> <span id="title-settings-modal">Game Settings</span>
+      </div>
+      <div class="dialog-body" style="display:flex; flex-direction:column; gap:14px;">
+        <label style="display:flex; justify-content:space-between; align-items:center;">
+          <span id="opt-turn-dir">Turn Direction:</span>
+          <select id="setting-turn-dir" style="background:#1E293B; color:#fff; border:1px solid #475569; padding:4px 8px; border-radius:8px;">
+            <option value="anti-clockwise">Anti-Clockwise (Bangladeshi)</option>
+            <option value="clockwise">Clockwise (Standard)</option>
+          </select>
+        </label>
+        <label style="display:flex; justify-content:space-between; align-items:center;">
+          <span id="opt-last-trick">Last Trick Bonus (+1 Pt = 29):</span>
+          <input type="checkbox" id="setting-last-trick" checked>
+        </label>
+        <label style="display:flex; justify-content:space-between; align-items:center;">
+          <span id="opt-high-bid">High Bid (≥21) = 2 Game Points:</span>
+          <input type="checkbox" id="setting-high-bid" checked>
+        </label>
+        <label style="display:flex; justify-content:space-between; align-items:center;">
+          <span id="opt-sound">Sound Effects:</span>
+          <input type="checkbox" id="setting-sound" checked>
+        </label>
+      </div>
+      <div class="dialog-actions">
+        <button class="btn-m3 btn-m3-filled" id="btn-save-settings">Save & Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main ES6 Entry Point -->
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>

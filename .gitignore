@@ -1,0 +1,10 @@
+# Operating System Files
+.DS_Store
+Thumbs.db
+
+# Logs & temp screenshots
+*.log
+screenshot.png
+cards_debug.png
+perfect_screenshot.png
+smooth_hover_screenshot.png

@@ -1,0 +1,901 @@
+/* ==========================================================================
+   29 (Twenty-Nine) Game Layout & Material 3 HUD Styling - Perfect Edition
+   ========================================================================== */
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+body {
+  font-family: var(--font-ui);
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  height: 100vh;
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Background Ambient Glow */
+.ambient-glow {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: var(--bg-arena-glow);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Top App Header / HUD */
+.app-header {
+  position: relative;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 16px;
+  background: var(--surface-container);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border-bottom: var(--surface-border);
+  gap: 10px;
+}
+
+.brand-section {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.brand-logo-pill {
+  background: linear-gradient(135deg, #1D3557, #0B0F17);
+  border: 1px solid rgba(168, 199, 250, 0.4);
+  padding: 4px 10px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: var(--shadow-sm);
+}
+
+.brand-logo-text {
+  font-family: var(--font-mono);
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--primary-accent);
+  letter-spacing: -0.5px;
+}
+
+.brand-subtext {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Score Ledger in Header */
+.hud-score-ledger {
+  display: flex;
+  align-items: center;
+  background: rgba(11, 15, 23, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 28px;
+  padding: 4px 14px;
+  gap: 14px;
+}
+
+.score-team-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.score-team-pill.team-you {
+  color: var(--primary-accent);
+}
+
+.score-team-pill.team-opponents {
+  color: var(--secondary-accent);
+}
+
+.score-pips {
+  display: flex;
+  gap: 4px;
+}
+
+.pip {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.pip.pip-red {
+  background: #E11D48;
+  border-color: #FB7185;
+  box-shadow: 0 0 6px rgba(225, 29, 72, 0.7);
+}
+
+.score-divider {
+  color: var(--text-muted);
+  font-weight: 300;
+  font-size: 0.8rem;
+}
+
+/* Round & Trump Widget */
+.hud-trump-widget {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.trump-indicator-slot {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(19, 27, 38, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.trump-indicator-slot.revealed {
+  border-color: var(--accent-gold);
+  box-shadow: var(--shadow-glow-trump);
+  background: rgba(40, 30, 15, 0.9);
+}
+
+.trump-indicator-icon {
+  font-size: 1.15rem;
+  line-height: 1;
+}
+
+.hud-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn-icon-m3 {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--text-secondary);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.95rem;
+}
+
+.btn-icon-m3:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-primary);
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+.btn-lang-toggle {
+  border-radius: 16px;
+  width: auto;
+  padding: 0 10px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--primary-accent);
+}
+
+/* ==========================================================================
+   Main Game Arena / Table
+   ========================================================================== */
+.game-table-arena {
+  position: relative;
+  flex: 1;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  grid-template-columns: 140px 1fr 140px;
+  grid-template-areas:
+    "top-left    player-north   top-right"
+    "player-west trick-arena    player-east"
+    "bot-left    player-south   bot-right";
+  padding: 6px 14px 8px;
+  overflow: hidden;
+  z-index: 10;
+}
+
+/* Player Pods / Avatars */
+.player-pod {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  z-index: 20;
+}
+
+.player-avatar-wrap {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #1E293B;
+  border: 2px solid rgba(255, 255, 255, 0.14);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.3s var(--ease-spring);
+}
+
+.player-pod.active-turn .player-avatar-wrap {
+  border-color: var(--primary-accent);
+  box-shadow: 0 0 18px rgba(168, 199, 250, 0.7);
+  transform: scale(1.1);
+}
+
+.player-pod.is-bidder .player-avatar-wrap {
+  border-color: var(--accent-gold);
+}
+
+.bidder-crown-badge {
+  position: absolute;
+  top: -8px;
+  right: -4px;
+  font-size: 0.95rem;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+}
+
+.player-meta {
+  display: flex;
+  flex-direction: column;
+}
+
+.player-name {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.player-status-tag {
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+}
+
+.player-card-count {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  background: rgba(255, 255, 255, 0.08);
+  padding: 1px 6px;
+  border-radius: 10px;
+  display: inline-block;
+  margin-top: 2px;
+}
+
+/* Dynamic Live Speech Bubbles */
+.speech-bubble {
+  position: absolute;
+  background: rgba(30, 41, 59, 0.96);
+  border: 1px solid var(--primary-accent);
+  color: #FFFFFF;
+  padding: 5px 12px;
+  border-radius: 16px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  box-shadow: var(--shadow-md);
+  pointer-events: none;
+  white-space: nowrap;
+  z-index: 100;
+  animation: pop-fade 2.4s ease forwards;
+}
+
+.pod-north .speech-bubble {
+  bottom: -32px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.pod-west .speech-bubble {
+  right: -80px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.pod-east .speech-bubble {
+  left: -80px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.pod-south .speech-bubble {
+  top: -34px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+@keyframes pop-fade {
+  0% { transform: scale(0.6); opacity: 0; }
+  15% { transform: scale(1.06); opacity: 1; }
+  25% { transform: scale(1); opacity: 1; }
+  85% { opacity: 1; }
+  100% { opacity: 0; transform: translateY(-8px); }
+}
+
+/* North (Partner Kabir) */
+.pod-north {
+  grid-area: player-north;
+  flex-direction: column;
+  justify-self: center;
+  align-self: start;
+}
+
+.north-cards-preview {
+  display: flex;
+  margin-top: 4px;
+  height: 28px;
+}
+
+.north-card-stub {
+  width: 22px;
+  height: 32px;
+  background: linear-gradient(135deg, #1E3A8A, #0F172A);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 4px;
+  margin-left: -10px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+/* West (Karim) */
+.pod-west {
+  grid-area: player-west;
+  flex-direction: column;
+  justify-self: start;
+  align-self: center;
+}
+
+.west-cards-preview {
+  display: flex;
+  flex-direction: column;
+  margin-top: 6px;
+  width: 32px;
+}
+
+.west-card-stub {
+  width: 32px;
+  height: 20px;
+  background: linear-gradient(135deg, #1E3A8A, #0F172A);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 4px;
+  margin-top: -12px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+/* East (Rahim) */
+.pod-east {
+  grid-area: player-east;
+  flex-direction: column;
+  justify-self: end;
+  align-self: center;
+}
+
+.east-cards-preview {
+  display: flex;
+  flex-direction: column;
+  margin-top: 6px;
+  width: 32px;
+}
+
+.east-card-stub {
+  width: 32px;
+  height: 20px;
+  background: linear-gradient(135deg, #1E3A8A, #0F172A);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 4px;
+  margin-top: -12px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+/* South (Human Player) */
+.pod-south {
+  grid-area: player-south;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-self: center;
+  align-self: end;
+  width: 100%;
+  max-width: 950px;
+  z-index: 40;
+}
+
+.south-controls-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 4px 12px;
+  margin-bottom: 2px;
+}
+
+.user-identity-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.action-buttons-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Reveal Trump & Claim Marriage Buttons */
+.btn-reveal-trump {
+  background: linear-gradient(135deg, #FDE293, #F2B8B5);
+  color: #0F172A;
+  border: none;
+  font-family: var(--font-ui);
+  font-weight: 800;
+  font-size: 0.85rem;
+  padding: 8px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 4px 14px rgba(253, 226, 147, 0.45);
+  transition: all 0.2s var(--ease-spring);
+  animation: pulse-glow 2s infinite ease-in-out;
+}
+
+.btn-reveal-trump:hover {
+  transform: translateY(-2px) scale(1.04);
+  box-shadow: 0 6px 20px rgba(253, 226, 147, 0.65);
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 10px rgba(253, 226, 147, 0.35); }
+  50% { box-shadow: 0 0 22px rgba(253, 226, 147, 0.7); }
+}
+
+/* ==========================================================================
+   Central Trick Arena
+   ========================================================================== */
+.trick-arena {
+  grid-area: trick-arena;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: auto;
+  width: 100%;
+  max-width: 520px;
+  height: 250px;
+  border-radius: 24px;
+  background: rgba(19, 27, 38, 0.55);
+  border: 1px dashed rgba(255, 255, 255, 0.1);
+  box-shadow: inset 0 0 36px rgba(0, 0, 0, 0.45);
+}
+
+.trick-slot {
+  position: absolute;
+  width: var(--card-width);
+  height: var(--card-height);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.slot-south {
+  bottom: 8px;
+}
+
+.slot-north {
+  top: 8px;
+}
+
+.slot-west {
+  left: 18px;
+}
+
+.slot-east {
+  right: 18px;
+}
+
+.trick-center-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  background: rgba(11, 15, 23, 0.88);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  padding: 6px 14px;
+  border-radius: 16px;
+  backdrop-filter: blur(8px);
+  z-index: 15;
+}
+
+.trick-number-label {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.trick-points-badge {
+  font-family: var(--font-mono);
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--accent-gold);
+}
+
+/* Dedicated Locked Trump on Table Slot */
+.locked-trump-table-slot {
+  position: absolute;
+  top: 10px;
+  left: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  z-index: 12;
+}
+
+.locked-trump-card-stub {
+  width: 38px;
+  height: 54px;
+  border-radius: 6px;
+  background: linear-gradient(135deg, #1E3A8A, #0F172A);
+  border: 1.5px solid var(--accent-gold);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+}
+
+.locked-trump-card-stub.revealed {
+  background: #FFFFFF;
+  color: #0F172A;
+  border-color: var(--primary-accent);
+  box-shadow: 0 0 14px rgba(168, 199, 250, 0.7);
+}
+
+.locked-trump-tag {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: var(--accent-gold);
+  text-transform: uppercase;
+}
+
+/* Floating Points Particle Animation */
+.floating-points-particle {
+  position: absolute;
+  font-family: var(--font-mono);
+  font-weight: 800;
+  font-size: 1.35rem;
+  color: var(--accent-gold);
+  text-shadow: 0 2px 8px rgba(0,0,0,0.9);
+  pointer-events: none;
+  z-index: 100;
+  animation: float-up-fade 1.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes float-up-fade {
+  0% { transform: translateY(0) scale(0.8); opacity: 0; }
+  25% { transform: translateY(-18px) scale(1.25); opacity: 1; }
+  100% { transform: translateY(-56px) scale(1); opacity: 0; }
+}
+
+/* ==========================================================================
+   Interactive Floating Bidding Panel
+   ========================================================================== */
+.floating-bidding-panel {
+  position: absolute;
+  bottom: calc(var(--card-height) + 42px);
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  opacity: 0;
+  pointer-events: none;
+  background: var(--surface-container-highest);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--primary-accent);
+  border-radius: 24px;
+  padding: 12px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  box-shadow: var(--shadow-lg), 0 0 28px rgba(168, 199, 250, 0.3);
+  z-index: 150;
+  transition: all 0.3s var(--ease-spring);
+  width: 90%;
+  max-width: 480px;
+}
+
+.floating-bidding-panel.active {
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.bidding-panel-header {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  align-items: center;
+}
+
+.bidding-status-heading {
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: var(--primary-accent);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.bidding-current-highest {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+}
+
+.quick-bid-chips-row {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.chip-bid {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.chip-bid:hover:not(:disabled) {
+  background: var(--primary-accent);
+  color: var(--on-primary);
+  transform: translateY(-2px);
+}
+
+.chip-bid.selected {
+  background: var(--primary-accent);
+  color: var(--on-primary);
+  border-color: var(--primary-accent);
+  box-shadow: 0 0 10px rgba(168, 199, 250, 0.5);
+}
+
+.chip-bid:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.bidding-actions-row {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+  justify-content: center;
+}
+
+/* Modals */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.modal-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.m3-dialog {
+  background: var(--surface-container-high);
+  border: var(--surface-border);
+  border-radius: 28px;
+  padding: 24px;
+  width: 90%;
+  max-width: 440px;
+  box-shadow: var(--shadow-lg);
+  transform: translateY(20px) scale(0.96);
+  transition: transform 0.3s var(--ease-spring);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.modal-overlay.active .m3-dialog {
+  transform: translateY(0) scale(1);
+}
+
+.dialog-title {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.dialog-body {
+  font-size: 0.92rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.dialog-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.btn-m3 {
+  padding: 8px 18px;
+  border-radius: 20px;
+  font-family: var(--font-ui);
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s ease;
+}
+
+.btn-m3-filled {
+  background: var(--primary-accent);
+  color: var(--on-primary);
+}
+
+.btn-m3-filled:hover {
+  background: #C2E7FF;
+}
+
+.btn-m3-tonal {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-primary);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.btn-m3-tonal:hover {
+  background: rgba(255, 255, 255, 0.14);
+}
+
+/* Trump Picker Grid */
+.trump-picker-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.trump-pick-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 14px 10px;
+  background: rgba(15, 23, 42, 0.85);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  cursor: pointer;
+  transition: all 0.25s var(--ease-spring);
+}
+
+.trump-pick-card:hover {
+  border-color: var(--accent-gold);
+  transform: translateY(-3px);
+  background: rgba(30, 41, 59, 0.95);
+}
+
+.trump-pick-symbol {
+  font-size: 2.2rem;
+  line-height: 1;
+}
+
+.trump-pick-name {
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.trump-seventh-card-btn {
+  grid-column: span 2;
+  border-color: rgba(168, 199, 250, 0.35);
+}
+
+/* Challenge Banner */
+.challenge-banner {
+  position: absolute;
+  top: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(29, 53, 87, 0.95);
+  border: 1px solid var(--primary-accent);
+  border-radius: 30px;
+  padding: 6px 16px;
+  backdrop-filter: blur(12px);
+  box-shadow: var(--shadow-md);
+  z-index: 60;
+  animation: slide-down 0.3s var(--ease-spring);
+}
+
+@keyframes slide-down {
+  from { transform: translate(-50%, -20px); opacity: 0; }
+  to { transform: translate(-50%, 0); opacity: 1; }
+}
+
+/* Toast Container */
+.toast-container {
+  position: fixed;
+  top: 60px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  z-index: 300;
+  pointer-events: none;
+}
+
+.toast {
+  background: var(--surface-container-highest);
+  border: var(--surface-border-active);
+  border-radius: 20px;
+  padding: 8px 18px;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  box-shadow: var(--shadow-md);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  animation: toast-in 0.4s var(--ease-spring) forwards;
+}
+
+@keyframes toast-in {
+  from { transform: translateY(-15px) scale(0.9); opacity: 0; }
+  to { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+.toast.toast-marriage {
+  border-color: var(--accent-gold);
+  background: linear-gradient(135deg, rgba(40, 30, 15, 0.95), rgba(60, 45, 20, 0.95));
+  color: var(--accent-gold);
+}
