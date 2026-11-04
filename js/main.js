@@ -493,16 +493,12 @@ class TwentyNineApp {
       this.hudTargetTitle.textContent = isBn ? '🎯 লক্ষ্য:' : '🎯 Target:';
     }
 
-    if (this.gameState && this.gameState.isTrumpRevealed && this.gameState.trumpSuit) {
-      const badge = this.hudTrumpSlot.querySelector('.hud-trump-badge');
-      const title = this.hudTrumpSlot.querySelector('.hud-trump-title');
-      if (badge) badge.textContent = isBn ? 'ট্রাম্প' : 'TRUMP';
-      if (title) {
+    if (this.hudTrumpLabel) {
+      if (this.gameState && this.gameState.isTrumpRevealed && this.gameState.trumpSuit) {
         const sObj = SUITS[this.gameState.trumpSuit];
-        if (sObj) title.textContent = isBn ? sObj.nameBn : sObj.nameEn;
-      }
-    } else {
-      if (this.hudTrumpLabel) {
+        const sName = sObj ? (isBn ? sObj.nameBn : sObj.nameEn) : '';
+        this.hudTrumpLabel.textContent = `${isBn ? 'রং:' : 'Trump:'} ${sName}`;
+      } else {
         const bidder = this.gameState ? this.gameState.highestBidder : null;
         const trumpSuit = this.gameState ? this.gameState.trumpSuit : null;
         if (bidder === 0 && trumpSuit && this.gameState.phase !== GAME_PHASES.BIDDING) {
@@ -914,36 +910,23 @@ class TwentyNineApp {
   }
 
   onTrumpRevealed(data) {
-    const { playerId, trumpSuit, trumpCard } = data;
+    const { playerId, trumpSuit } = data;
     const isBn = this.currentLanguage === 'bn';
     this.sound.playTrumpReveal();
 
     const suitObj = SUITS[trumpSuit] || { symbol: '♦', color: 'red', nameEn: 'Diamonds', nameBn: 'ডায়মন্ডস' };
     const suitName = isBn ? suitObj.nameBn : suitObj.nameEn;
-    const suitSymbolColor = suitObj.color === 'red' ? 'var(--suit-red)' : 'var(--text-primary)';
 
-    // Pick authentic card to render: use the locked trump card or fallback to Ace of that suit
-    const displayCard = (trumpCard && trumpCard.rank && trumpCard.rank !== '?')
-      ? trumpCard
-      : { suit: trumpSuit, rank: 'A', points: 1, power: 6, id: `trump_rev_${Date.now()}` };
-
-    this.hudTrumpSlot.className = 'trump-indicator-slot revealed has-hanging-card trump-reveal-pulse';
+    this.hudTrumpSlot.className = 'trump-indicator-slot revealed trump-reveal-pulse';
     this.hudTrumpSlot.innerHTML = `
-      <span class="hud-trump-icon-symbol" style="color: ${suitSymbolColor};">${suitObj.symbol}</span>
-      <div class="hud-trump-meta">
-        <span class="hud-trump-badge">${isBn ? 'ট্রাম্প' : 'TRUMP'}</span>
-        <span class="hud-trump-title">${suitName}</span>
-      </div>
-      <div class="hud-hanging-trump-card" title="${suitName}">
-        <div class="hud-hanging-connector"></div>
-        <div class="hud-hanging-card-inner">
-          ${CardRenderer.renderFaceSVG(displayCard)}
-        </div>
-      </div>
+      <span class="trump-indicator-icon" id="hud-trump-icon" style="color: ${suitObj.color === 'red' ? 'var(--suit-red)' : 'var(--text-primary)'};">${suitObj.symbol}</span>
+      <span id="hud-trump-label">${isBn ? 'রং:' : 'Trump:'} ${suitName}</span>
     `;
+    this.hudTrumpIcon = document.getElementById('hud-trump-icon');
+    this.hudTrumpLabel = document.getElementById('hud-trump-label');
 
-    this.lockedTrumpCardStub.className = 'locked-trump-card-stub revealed has-card';
-    this.lockedTrumpCardStub.innerHTML = CardRenderer.renderFaceSVG(displayCard);
+    this.lockedTrumpCardStub.className = 'locked-trump-card-stub revealed';
+    this.lockedTrumpCardStub.innerHTML = `<span style="font-size:1.4rem; color:${suitObj.color === 'red' ? 'var(--suit-red)' : 'var(--suit-black)'};">${suitObj.symbol}</span>`;
     this.lockedTrumpTag.textContent = suitName.toUpperCase();
 
     const pName = isBn ? PLAYERS[playerId].nameBn : PLAYERS[playerId].nameEn;
