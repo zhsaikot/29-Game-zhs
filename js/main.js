@@ -15,7 +15,7 @@ class TwentyNineApp {
     this.ai = new AIEngine();
     this.gameState = new GameState();
 
-    this.currentLanguage = 'bn';
+    this.currentLanguage = 'en';
     this.selectedBid = 16;
     this.aiTurnTimeout = null;
 
@@ -663,8 +663,8 @@ class TwentyNineApp {
   onChallengeAnnounced(data) {
     const { type, team } = data;
     const teamName = team === 1 
-      ? (this.currentLanguage === 'bn' ? 'আপনি ও কবির' : 'You & Kabir')
-      : (this.currentLanguage === 'bn' ? 'রহিম ও করিম' : 'Rahim & Karim');
+      ? (this.currentLanguage === 'bn' ? TEAMS.TEAM_1.nameBn : TEAMS.TEAM_1.nameEn)
+      : (this.currentLanguage === 'bn' ? TEAMS.TEAM_2.nameBn : TEAMS.TEAM_2.nameEn);
     this.showToast(`⚡ ${teamName}: ${type}!`, true);
     this.sound.playTrumpReveal();
   }
@@ -781,8 +781,8 @@ class TwentyNineApp {
     this.hudTargetVal.textContent = newBid;
 
     const teamName = teamId === 1 
-      ? (isBn ? 'আপনি ও কবির' : 'You & Kabir') 
-      : (isBn ? 'রহিম ও করিম' : 'Rahim & Karim');
+      ? (isBn ? TEAMS.TEAM_1.nameBn : TEAMS.TEAM_1.nameEn) 
+      : (isBn ? TEAMS.TEAM_2.nameBn : TEAMS.TEAM_2.nameEn);
 
     const message = isBiddingTeam 
       ? `👑 ${isBn ? 'জোড়া/ম্যারেজ!' : 'Marriage!'} ${teamName} held K & Q! ${isBn ? 'টার্গেট কমল:' : 'Target reduced:'} ${originalBid} ➔ ${newBid}!` 
@@ -804,15 +804,36 @@ class TwentyNineApp {
       setTimeout(() => particle.remove(), 1200);
     }
 
-    // Directional sweep class
-    const sweepClass = winnerId === 0 ? 'sweep-to-south' : (winnerId === 2 ? 'sweep-to-north' : (winnerId === 1 ? 'sweep-to-east' : 'sweep-to-west'));
+    // Precise fly-to-winner animation: collect cards into winning player's pod
+    const winnerPod = this.pods[winnerId];
+    if (winnerPod) {
+      const winnerRect = winnerPod.getBoundingClientRect();
+      const targetX = winnerRect.left + winnerRect.width / 2;
+      const targetY = winnerRect.top + winnerRect.height / 2;
 
-    [this.slotSouth, this.slotEast, this.slotNorth, this.slotWest].forEach(slot => {
-      const card = slot.querySelector('.playing-card');
-      if (card) {
-        card.classList.add('card-sweep-to-winner', sweepClass);
-      }
-    });
+      // Celebrate trick winner avatar with subtle pulse & glow
+      winnerPod.classList.add('winner-pod-pulse');
+      setTimeout(() => winnerPod.classList.remove('winner-pod-pulse'), 850);
+
+      const slots = [this.slotSouth, this.slotEast, this.slotNorth, this.slotWest];
+      slots.forEach((slot, idx) => {
+        const card = slot.querySelector('.playing-card');
+        if (card) {
+          const cardRect = card.getBoundingClientRect();
+          const cardX = cardRect.left + cardRect.width / 2;
+          const cardY = cardRect.top + cardRect.height / 2;
+          const deltaX = targetX - cardX;
+          const deltaY = targetY - cardY;
+
+          // Stagger card flight slightly for natural deck gathering
+          const delaySec = idx * 0.04;
+          card.style.transition = `transform 0.62s cubic-bezier(0.2, 0.9, 0.3, 1) ${delaySec}s, opacity 0.52s ease ${delaySec + 0.12}s, filter 0.6s ease`;
+          card.style.transform = `translate(${deltaX}px, ${deltaY}px) scale(0.2) rotate(${(idx - 1.5) * 16}deg)`;
+          card.style.opacity = '0';
+          card.style.pointerEvents = 'none';
+        }
+      });
+    }
 
     const wName = isBn ? PLAYERS[winnerId].nameBn : PLAYERS[winnerId].nameEn;
     this.showSpeechBubble(winnerId, `+${points}`);
@@ -842,8 +863,8 @@ class TwentyNineApp {
       this.matchOverBody.innerHTML = `
         <div style="font-size:1.05rem; margin-bottom:12px;">
           ${isBn ? 'চূড়ান্ত ম্যাচ স্কোর:' : 'Final Match Score:'} 
-          <strong>${isBn ? 'আপনি ও কবির' : 'You & Kabir'} (${matchScores.team1})</strong> vs 
-          <strong>${isBn ? 'রহিম ও করিম' : 'Rahim & Karim'} (${matchScores.team2})</strong>
+          <strong>${isBn ? TEAMS.TEAM_1.nameBn : TEAMS.TEAM_1.nameEn} (${matchScores.team1})</strong> vs 
+          <strong>${isBn ? TEAMS.TEAM_2.nameBn : TEAMS.TEAM_2.nameEn} (${matchScores.team2})</strong>
         </div>
         <div>${isBn ? 'টার্গেট ৬ গেম পয়েন্ট পূর্ণ হয়েছে।' : 'Target 6 Game Points achieved.'}</div>
       `;
@@ -854,8 +875,8 @@ class TwentyNineApp {
         : `<span>💥</span> ${isBn ? 'ডাক ব্যর্থ হয়েছে (ডাউন/সেট)' : 'Bid Failed / Set'} (${pointsMade} / ${targetBid} pts)`;
 
       const winnerTeamName = isBidAchieved 
-        ? (PLAYERS[bidder].team === 1 ? (isBn ? 'আপনি ও কবির' : 'You & Kabir') : (isBn ? 'রহিম ও করিম' : 'Rahim & Karim'))
-        : (PLAYERS[bidder].team === 1 ? (isBn ? 'রহিম ও করিম' : 'Rahim & Karim') : (isBn ? 'আপনি ও কবির' : 'You & Kabir'));
+        ? (PLAYERS[bidder].team === 1 ? (isBn ? TEAMS.TEAM_1.nameBn : TEAMS.TEAM_1.nameEn) : (isBn ? TEAMS.TEAM_2.nameBn : TEAMS.TEAM_2.nameEn))
+        : (PLAYERS[bidder].team === 1 ? (isBn ? TEAMS.TEAM_2.nameBn : TEAMS.TEAM_2.nameEn) : (isBn ? TEAMS.TEAM_1.nameBn : TEAMS.TEAM_1.nameEn));
 
       this.roundResultBody.innerHTML = `
         <div style="display:flex; flex-direction:column; gap:8px;">
@@ -863,7 +884,7 @@ class TwentyNineApp {
           <div>${isBn ? 'টার্গেট পয়েন্ট:' : 'Target:'} <strong>${targetBid} pts</strong> | ${isBn ? 'অর্জিত:' : 'Made:'} <strong>${pointsMade} pts</strong></div>
           <div>${isBn ? 'রাউন্ডের ফল:' : 'Round Outcome:'} <strong>${winnerTeamName}</strong> <strong>+${gamePointsDelta}</strong> ${isBn ? 'গেম পয়েন্ট পেল।' : 'Game Point(s).' }</div>
           <div style="margin-top:8px; color:var(--text-primary); font-family:var(--font-mono);">
-            ${isBn ? 'মোট স্কোর:' : 'Overall Score:'} ${isBn ? 'আপনি ও কবির:' : 'You & Kabir:'} ${matchScores.team1} | ${isBn ? 'রহিম ও করিম:' : 'Rahim & Karim:'} ${matchScores.team2}
+            ${isBn ? 'মোট স্কোর:' : 'Overall Score:'} ${isBn ? TEAMS.TEAM_1.nameBn : TEAMS.TEAM_1.nameEn}: ${matchScores.team1} | ${isBn ? TEAMS.TEAM_2.nameBn : TEAMS.TEAM_2.nameEn}: ${matchScores.team2}
           </div>
         </div>
       `;

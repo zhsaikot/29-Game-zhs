@@ -525,7 +525,7 @@ export class GameState {
       teamPoints: this.teamPoints
     });
 
-    // Wait 700ms for sweep animation before advancing
+    // Wait 850ms for card flight animation to winner before advancing
     setTimeout(() => {
       this.currentTrick = [];
       this.leadSuit = null;
@@ -541,7 +541,7 @@ export class GameState {
           leader: this.currentTurn
         });
       }
-    }, 750);
+    }, 850);
   }
 
   concludeRound() {

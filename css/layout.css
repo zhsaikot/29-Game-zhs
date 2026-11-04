@@ -202,55 +202,80 @@ body {
 }
 
 /* ==========================================================================
-   Main Game Arena / Table
+   Main Game Arena / Luxury Casino Velvet Felt Table
    ========================================================================== */
 .game-table-arena {
   position: relative;
   flex: 1;
   display: grid;
   grid-template-rows: auto 1fr auto;
-  grid-template-columns: 140px 1fr 140px;
+  grid-template-columns: 170px 1fr 170px;
   grid-template-areas:
     "top-left    player-north   top-right"
     "player-west trick-arena    player-east"
     "bot-left    player-south   bot-right";
-  padding: 6px 14px 8px;
+  padding: 10px 18px 8px;
+  margin: 8px 16px 10px;
+  border-radius: 36px;
+  background: 
+    radial-gradient(ellipse at 50% 50%, rgba(20, 48, 82, 0.42) 0%, rgba(9, 15, 26, 0.96) 75%),
+    radial-gradient(rgba(245, 158, 11, 0.04) 1px, transparent 0);
+  background-size: 100% 100%, 18px 18px;
+  border: 1.5px solid rgba(245, 158, 11, 0.25);
+  box-shadow: inset 0 0 90px rgba(0, 0, 0, 0.8), 0 10px 32px rgba(0, 0, 0, 0.65);
   overflow: hidden;
   z-index: 10;
 }
 
-/* Player Pods / Avatars */
+/* Player Pods / Luxury Glassmorphic Badges */
 .player-pod {
   position: relative;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   z-index: 20;
+}
+
+.pod-north, .pod-west, .pod-east {
+  background: rgba(15, 23, 42, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 20px;
+  padding: 8px 14px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.4);
+  transition: all 0.3s cubic-bezier(0.2, 0, 0, 1);
+}
+
+.pod-north.active-turn, .pod-west.active-turn, .pod-east.active-turn {
+  border-color: rgba(168, 199, 250, 0.6);
+  box-shadow: 0 0 24px rgba(168, 199, 250, 0.35), 0 6px 20px rgba(0, 0, 0, 0.5);
 }
 
 .player-avatar-wrap {
   position: relative;
-  width: 44px;
-  height: 44px;
+  width: 46px;
+  height: 46px;
   border-radius: 50%;
-  background: #1E293B;
-  border: 2px solid rgba(255, 255, 255, 0.14);
+  background: linear-gradient(135deg, #1E293B, #0F172A);
+  border: 2px solid rgba(255, 255, 255, 0.16);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.25rem;
-  box-shadow: var(--shadow-sm);
+  font-size: 1.3rem;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.4);
   transition: all 0.3s var(--ease-spring);
 }
 
 .player-pod.active-turn .player-avatar-wrap {
   border-color: var(--primary-accent);
-  box-shadow: 0 0 18px rgba(168, 199, 250, 0.7);
+  box-shadow: 0 0 22px rgba(168, 199, 250, 0.85);
   transform: scale(1.1);
 }
 
 .player-pod.is-bidder .player-avatar-wrap {
   border-color: var(--accent-gold);
+  box-shadow: 0 0 16px rgba(245, 158, 11, 0.5);
 }
 
 .bidder-crown-badge {
@@ -428,8 +453,14 @@ body {
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  padding: 4px 12px;
+  padding: 6px 16px;
   margin-bottom: 2px;
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 20px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
 }
 
 .user-identity-badge {
@@ -474,7 +505,7 @@ body {
 }
 
 /* ==========================================================================
-   Central Trick Arena
+   Central Trick Arena & Velvet Inlay Mat
    ========================================================================== */
 .trick-arena {
   grid-area: trick-arena;
@@ -484,12 +515,32 @@ body {
   justify-content: center;
   margin: auto;
   width: 100%;
-  max-width: 520px;
-  height: 250px;
-  border-radius: 24px;
-  background: rgba(19, 27, 38, 0.55);
-  border: 1px dashed rgba(255, 255, 255, 0.1);
-  box-shadow: inset 0 0 36px rgba(0, 0, 0, 0.45);
+  max-width: 620px;
+  height: 290px;
+  border-radius: 32px;
+  background: radial-gradient(ellipse at center, rgba(24, 38, 59, 0.65) 0%, rgba(11, 16, 26, 0.9) 100%);
+  border: 1.5px dashed rgba(245, 158, 11, 0.28);
+  box-shadow: inset 0 0 55px rgba(0, 0, 0, 0.7), 0 8px 28px rgba(0, 0, 0, 0.45);
+}
+
+/* Luxury 29 Center Table Seal */
+.table-center-seal {
+  position: absolute;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 7rem;
+  font-weight: 900;
+  color: rgba(245, 158, 11, 0.045);
+  pointer-events: none;
+  user-select: none;
+  letter-spacing: -3px;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 175px;
+  height: 175px;
+  border-radius: 50%;
+  border: 1.5px dashed rgba(245, 158, 11, 0.06);
 }
 
 .trick-slot {
@@ -500,49 +551,54 @@ body {
   align-items: center;
   justify-content: center;
   pointer-events: none;
+  z-index: 10;
 }
 
 .slot-south {
-  bottom: 8px;
+  bottom: 12px;
 }
 
 .slot-north {
-  top: 8px;
+  top: 12px;
 }
 
 .slot-west {
-  left: 18px;
+  left: 24px;
 }
 
 .slot-east {
-  right: 18px;
+  right: 24px;
 }
 
 .trick-center-info {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
-  background: rgba(11, 15, 23, 0.88);
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  padding: 6px 14px;
-  border-radius: 16px;
-  backdrop-filter: blur(8px);
+  gap: 3px;
+  background: linear-gradient(135deg, rgba(26, 36, 52, 0.96), rgba(15, 23, 42, 0.98));
+  border: 1.2px solid rgba(245, 158, 11, 0.35);
+  padding: 8px 18px;
+  border-radius: 20px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.1);
   z-index: 15;
 }
 
 .trick-number-label {
   font-size: 0.75rem;
   color: var(--text-secondary);
-  font-weight: 600;
+  font-weight: 700;
   text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .trick-points-badge {
   font-family: var(--font-mono);
-  font-size: 0.95rem;
-  font-weight: 800;
+  font-size: 1.05rem;
+  font-weight: 900;
   color: var(--accent-gold);
+  letter-spacing: -0.3px;
 }
 
 /* Dedicated Locked Trump on Table Slot */

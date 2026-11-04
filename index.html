@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="bn">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>29 (Twenty-Nine) Card Game - Material 3 Edition</title>
-  <meta name="description" content="Authentic South Asian trick-taking card game 29 (Twenty-Nine) built with Google Material Design 3, pure SVG vector cards, and heuristic AI.">
+  <title>29 (Twenty-Nine) Card Game - Luxury Edition</title>
+  <meta name="description" content="Authentic South Asian trick-taking card game 29 (Twenty-Nine) featuring luxury physical card aesthetics, pure inline SVG vector cards, and heuristic AI.">
   
   <!-- Google Fonts: Plus Jakarta Sans & JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -33,7 +33,7 @@
     <!-- Match Score Ledger (Red vs Black Points) -->
     <div class="hud-score-ledger">
       <div class="score-team-pill team-you">
-        <span id="label-team1">You & Kabir:</span>
+        <span id="label-team1">Saikot & Arthur:</span>
         <span id="score-team1-val" style="font-family: var(--font-mono); font-weight:800;">0</span>
         <div class="score-pips" id="team1-pips">
           <div class="pip"></div><div class="pip"></div><div class="pip"></div>
@@ -42,7 +42,7 @@
       </div>
       <span class="score-divider">VS</span>
       <div class="score-team-pill team-opponents">
-        <span id="label-team2">Rahim & Karim:</span>
+        <span id="label-team2">Sophia & Marcus:</span>
         <span id="score-team2-val" style="font-family: var(--font-mono); font-weight:800;">0</span>
         <div class="score-pips" id="team2-pips">
           <div class="pip"></div><div class="pip"></div><div class="pip"></div>
@@ -66,7 +66,7 @@
     <!-- Quick Action Icons & Language Toggle -->
     <div class="hud-actions">
       <button class="btn-icon-m3 btn-lang-toggle" id="btn-lang-toggle" title="Switch Language">
-        <span id="lang-indicator">বাং</span>
+        <span id="lang-indicator">EN</span>
       </button>
       <button class="btn-icon-m3" id="btn-sound-toggle" title="Toggle Sound">
         <span id="sound-icon">🔊</span>
@@ -82,28 +82,28 @@
 
   <!-- Main Game Arena -->
   <main class="game-table-arena">
-    <!-- North: Partner Kabir -->
+    <!-- North: Partner Arthur -->
     <div class="player-pod pod-north" id="pod-north">
       <div class="player-avatar-wrap">
         <span>🤖</span>
         <span class="bidder-crown-badge" id="crown-north" style="display:none;">👑</span>
       </div>
       <div class="player-meta" style="align-items: center;">
-        <span class="player-name" id="name-north">Kabir (Partner)</span>
+        <span class="player-name" id="name-north">Arthur (Partner)</span>
         <span class="player-status-tag" id="status-north">Waiting</span>
         <span class="player-card-count" id="count-north">4 cards</span>
       </div>
       <div class="north-cards-preview" id="north-card-stubs"></div>
     </div>
 
-    <!-- West: Opponent Karim -->
+    <!-- West: Opponent Marcus -->
     <div class="player-pod pod-west" id="pod-west">
       <div class="player-avatar-wrap">
         <span>👤</span>
         <span class="bidder-crown-badge" id="crown-west" style="display:none;">👑</span>
       </div>
       <div class="player-meta">
-        <span class="player-name" id="name-west">Karim (West)</span>
+        <span class="player-name" id="name-west">Marcus (West)</span>
         <span class="player-status-tag" id="status-west">Waiting</span>
         <span class="player-card-count" id="count-west">4 cards</span>
       </div>
@@ -112,6 +112,9 @@
 
     <!-- Center Trick Arena -->
     <div class="trick-arena" id="trick-arena">
+      <!-- Table Center Watermark / Seal -->
+      <div class="table-center-seal" aria-hidden="true">29</div>
+
       <!-- Dedicated Locked Trump Table Slot -->
       <div class="locked-trump-table-slot" id="locked-trump-table-slot" title="Locked Trump Card">
         <div class="locked-trump-card-stub" id="locked-trump-card-stub">
@@ -133,21 +136,21 @@
       </div>
     </div>
 
-    <!-- East: Opponent Rahim -->
+    <!-- East: Opponent Sophia -->
     <div class="player-pod pod-east" id="pod-east">
       <div class="player-avatar-wrap">
         <span>👤</span>
         <span class="bidder-crown-badge" id="crown-east" style="display:none;">👑</span>
       </div>
       <div class="player-meta">
-        <span class="player-name" id="name-east">Rahim (East)</span>
+        <span class="player-name" id="name-east">Sophia (East)</span>
         <span class="player-status-tag" id="status-east">Waiting</span>
         <span class="player-card-count" id="count-east">4 cards</span>
       </div>
       <div class="east-cards-preview" id="east-card-stubs"></div>
     </div>
 
-    <!-- South: Human Player -->
+    <!-- South: Human Player Saikot -->
     <div class="player-pod pod-south" id="pod-south">
       <div class="south-controls-bar">
         <div class="user-identity-badge">
@@ -156,7 +159,7 @@
             <span class="bidder-crown-badge" id="crown-south" style="display:none;">👑</span>
           </div>
           <div class="player-meta">
-            <span class="player-name" id="name-south">You</span>
+            <span class="player-name" id="name-south">Saikot</span>
             <span class="player-status-tag" id="status-south">Ready</span>
           </div>
         </div>
@@ -164,10 +167,10 @@
         <!-- Action Buttons: Reveal Trump & Claim Marriage -->
         <div class="action-buttons-group">
           <button class="btn-reveal-trump" id="btn-claim-marriage" style="display: none; background: linear-gradient(135deg, #FDE293, #C4EED0);">
-            <span>👑</span> <span id="text-claim-marriage">Claim Marriage (জোড়া)</span>
+            <span>👑</span> <span id="text-claim-marriage">Claim Marriage</span>
           </button>
           <button class="btn-reveal-trump" id="btn-reveal-trump" style="display: none;">
-            <span>✨</span> <span id="text-reveal-trump">Reveal Trump (রং তোলা)</span>
+            <span>✨</span> <span id="text-reveal-trump">Reveal Trump</span>
           </button>
         </div>
       </div>
@@ -176,7 +179,7 @@
       <div class="floating-bidding-panel" id="floating-bidding-panel">
         <div class="bidding-panel-header">
           <span class="bidding-status-heading">
-            <span>🎯</span> <span id="label-your-bid">Your Turn to Bid (আপনার ডাক)</span>
+            <span>🎯</span> <span id="label-your-bid">Your Turn to Bid</span>
           </span>
           <span class="bidding-current-highest" id="dock-highest-bid-label">Current: None</span>
         </div>
@@ -196,7 +199,7 @@
 
         <!-- Bidding Action Controls -->
         <div class="bidding-actions-row">
-          <button class="btn-m3 btn-m3-tonal" id="btn-dock-pass">Pass (পাস)</button>
+          <button class="btn-m3 btn-m3-tonal" id="btn-dock-pass">Pass</button>
           <button class="btn-m3 btn-m3-filled" id="btn-dock-submit">Submit Bid</button>
         </div>
       </div>
@@ -228,7 +231,7 @@
   <div class="modal-overlay" id="modal-trump-select">
     <div class="m3-dialog">
       <div class="dialog-title">
-        <span>🃏</span> <span id="title-trump-select">Select Trump Suit (রং নির্ধারণ)</span>
+        <span>🃏</span> <span id="title-trump-select">Select Trump Suit</span>
       </div>
       <div class="dialog-body" id="desc-trump-select">
         You won the bid! Choose the Trump suit to keep secret, or pick "7th Card" as a blind trump.
@@ -236,23 +239,23 @@
       <div class="trump-picker-grid">
         <div class="trump-pick-card" data-suit="SPADES">
           <span class="trump-pick-symbol" style="color:var(--suit-black);">♠</span>
-          <span class="trump-pick-name" id="name-suit-spades">Spades (ইসকাপণ)</span>
+          <span class="trump-pick-name" id="name-suit-spades">Spades</span>
         </div>
         <div class="trump-pick-card" data-suit="HEARTS">
           <span class="trump-pick-symbol" style="color:var(--suit-red);">♥</span>
-          <span class="trump-pick-name" id="name-suit-hearts">Hearts (হরতন)</span>
+          <span class="trump-pick-name" id="name-suit-hearts">Hearts</span>
         </div>
         <div class="trump-pick-card" data-suit="CLUBS">
           <span class="trump-pick-symbol" style="color:var(--suit-black);">♣</span>
-          <span class="trump-pick-name" id="name-suit-clubs">Clubs (চিড়িতন)</span>
+          <span class="trump-pick-name" id="name-suit-clubs">Clubs</span>
         </div>
         <div class="trump-pick-card" data-suit="DIAMONDS">
           <span class="trump-pick-symbol" style="color:var(--suit-red);">♦</span>
-          <span class="trump-pick-name" id="name-suit-diamonds">Diamonds (রুইতন)</span>
+          <span class="trump-pick-name" id="name-suit-diamonds">Diamonds</span>
         </div>
         <div class="trump-pick-card trump-seventh-card-btn" id="btn-trump-seventh">
           <span class="trump-pick-symbol">🎲</span>
-          <span class="trump-pick-name" id="name-suit-seventh">7th Card (৭ নম্বর তাস - ব্লাইন্ড ট্রাম্প)</span>
+          <span class="trump-pick-name" id="name-suit-seventh">7th Card (Blind Trump)</span>
         </div>
       </div>
     </div>
@@ -288,7 +291,7 @@
   <div class="modal-overlay" id="modal-rules">
     <div class="m3-dialog" style="max-width: 560px; max-height: 85vh; overflow-y: auto;">
       <div class="dialog-title">
-        <span>📖</span> <span id="title-rules-modal">Rules of 29 (২৯ খেলার নিয়মাবলী)</span>
+        <span>📖</span> <span id="title-rules-modal">Rules of 29</span>
       </div>
       <div class="dialog-body" id="rules-content" style="display: flex; flex-direction: column; gap: 12px; font-size: 0.88rem;">
         <!-- Injected dynamically based on language -->

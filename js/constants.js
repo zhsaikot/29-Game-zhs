@@ -62,15 +62,15 @@ export const RANKS = {
 export const RANK_ORDER = ['J', '9', 'A', '10', 'K', 'Q', '8', '7'];
 
 export const PLAYERS = [
-  { id: 0, key: 'SOUTH', nameEn: 'You', nameBn: 'আপনি', isHuman: true, team: 1 },
-  { id: 1, key: 'EAST',  nameEn: 'Rahim (East)', nameBn: 'রহিম (পূর্ব)', isHuman: false, team: 2 },
-  { id: 2, key: 'NORTH', nameEn: 'Kabir (Partner)', nameBn: 'কবির (পার্টনার)', isHuman: false, team: 1 },
-  { id: 3, key: 'WEST',  nameEn: 'Karim (West)', nameBn: 'করিম (পশ্চিম)', isHuman: false, team: 2 }
+  { id: 0, key: 'SOUTH', nameEn: 'Saikot', nameBn: 'সইকত', isHuman: true, team: 1 },
+  { id: 1, key: 'EAST',  nameEn: 'Sophia (East)', nameBn: 'সোফিয়া (পূর্ব)', isHuman: false, team: 2 },
+  { id: 2, key: 'NORTH', nameEn: 'Arthur (Partner)', nameBn: 'আর্থার (পার্টনার)', isHuman: false, team: 1 },
+  { id: 3, key: 'WEST',  nameEn: 'Marcus (West)', nameBn: 'মার্কাস (পশ্চিম)', isHuman: false, team: 2 }
 ];
 
 export const TEAMS = {
-  TEAM_1: { id: 1, nameEn: 'You & Kabir', nameBn: 'আপনি ও কবির', playerIds: [0, 2], color: 'var(--primary-accent)' },
-  TEAM_2: { id: 2, nameEn: 'Rahim & Karim', nameBn: 'রহিম ও করিম', playerIds: [1, 3], color: 'var(--secondary-accent)' }
+  TEAM_1: { id: 1, nameEn: 'Saikot & Arthur', nameBn: 'সইকত ও আর্থার', playerIds: [0, 2], color: 'var(--primary-accent)' },
+  TEAM_2: { id: 2, nameEn: 'Sophia & Marcus', nameBn: 'সোফিয়া ও মার্কাস', playerIds: [1, 3], color: 'var(--secondary-accent)' }
 };
 
 export const GAME_PHASES = {
@@ -93,7 +93,7 @@ export const BID_RULES = {
 };
 
 export const SETTINGS_DEFAULTS = {
-  language: 'bn',                  // 'bn' (Bangla) or 'en' (English)
+  language: 'en',                  // 'en' (English) default
   turnDirection: 'anti-clockwise', // South -> East -> North -> West (Bangladeshi standard)
   lastTrickPoint: true,            // 28 + 1 = 29
   highBidDoublePoints: true,       // Bids >= 21 earn 2 game points automatically
