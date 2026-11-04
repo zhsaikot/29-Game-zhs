@@ -1,11 +1,12 @@
 /**
  * Bespoke SVG Card Renderer for 29 (Twenty-Nine)
- * Pure Inline High-Contrast Vector SVG Cards (Zero Raster Images)
+ * Luxury Physical Deck (Bicycle / Theory11 / Material 3 Hybrid)
+ * 100% Pure Vector Inline SVG (Zero Raster Images)
  */
 
 import { SUITS, RANKS } from './constants.js';
 
-// Crisp high-contrast vector suit paths (viewBox: 0 0 100 100)
+// High-precision vector suit paths (viewBox: 0 0 100 100, centered at 50, 50)
 const SUIT_PATHS = {
   SPADES: 'M50 10 C35 32 15 50 15 68 C15 82 27 90 42 86 C40 92 36 96 28 98 L72 98 C64 96 60 92 58 86 C73 90 85 82 85 68 C85 50 65 32 50 10 Z',
   HEARTS: 'M50 88 C40 76 12 55 12 32 C12 16 26 8 40 14 C46 17 48 22 50 26 C52 22 54 17 60 14 C74 8 88 16 88 32 C88 55 60 76 50 88 Z',
@@ -13,130 +14,322 @@ const SUIT_PATHS = {
   CLUBS: 'M50 42 C40 42 36 34 36 26 C36 14 44 8 50 8 C56 8 64 14 64 26 C64 34 60 42 50 42 C42 42 36 40 30 46 C20 56 22 72 35 74 C42 75 48 70 50 64 C49 76 44 86 36 96 L64 96 C56 86 51 76 50 64 C52 70 58 75 65 74 C78 72 80 56 70 46 C64 40 58 42 50 42 Z'
 };
 
-// High-contrast, bold central vector emblems
-const EMBLEMS = {
-  J: (color) => `
-    <g class="emblem emblem-jack" fill="none" stroke="${color}" stroke-width="2.6" opacity="0.92">
-      <!-- Shield Base -->
-      <path d="M50 18 L72 32 L66 60 L50 80 L34 60 L28 32 Z" fill="${color}" fill-opacity="0.12"/>
-      <!-- Inner Knight Crest -->
-      <path d="M38 34 L50 24 L62 34 L58 54 L50 62 L42 54 Z" stroke-width="2.2" fill="${color}" fill-opacity="0.2"/>
-      <circle cx="50" cy="40" r="4" fill="${color}"/>
-      <!-- Crown points -->
-      <path d="M32 24 L50 12 L68 24" stroke-linecap="round" stroke-width="2.4"/>
-      <circle cx="32" cy="22" r="3" fill="${color}"/>
-      <circle cx="50" cy="10" r="3.5" fill="${color}"/>
-      <circle cx="68" cy="22" r="3" fill="${color}"/>
-      <!-- Crossguard -->
-      <line x1="38" y1="70" x2="62" y2="70" stroke-width="2.5" stroke-linecap="round"/>
-      <line x1="50" y1="64" x2="50" y2="76" stroke-width="2.5" stroke-linecap="round"/>
-    </g>
-  `,
-  9: (color) => `
-    <g class="emblem emblem-nine" fill="none" stroke="${color}" stroke-width="2.4" opacity="0.9">
-      <!-- 9-Point Starburst Geometric Compass -->
-      <polygon points="50,16 60,34 80,38 64,52 69,72 50,61 31,72 36,52 20,38 40,34" fill="${color}" fill-opacity="0.12"/>
-      <circle cx="50" cy="46" r="12" stroke-width="2" fill="${color}" fill-opacity="0.16"/>
-      <circle cx="50" cy="46" r="5" fill="${color}"/>
-      <circle cx="50" cy="46" r="22" stroke-dasharray="3 3" stroke-width="1.4"/>
-    </g>
-  `,
-  A: (color, suitPath) => `
-    <g class="emblem emblem-ace" opacity="0.95">
-      <!-- Grand Radiant Halo -->
-      <circle cx="50" cy="48" r="36" fill="none" stroke="${color}" stroke-width="2" stroke-dasharray="4 3" opacity="0.5"/>
-      <circle cx="50" cy="48" r="28" fill="${color}" fill-opacity="0.08" stroke="${color}" stroke-width="1.5"/>
-      <g transform="translate(24, 22) scale(0.52)">
-        <path d="${suitPath}" fill="${color}" filter="drop-shadow(0 2px 6px rgba(0,0,0,0.25))"/>
-      </g>
-    </g>
-  `,
-  10: (color) => `
-    <g class="emblem emblem-ten" fill="none" stroke="${color}" stroke-width="2.4" opacity="0.92">
-      <rect x="26" y="20" width="48" height="56" rx="8" fill="${color}" fill-opacity="0.1" stroke-width="2"/>
-      <rect x="30" y="24" width="40" height="48" rx="6" stroke-dasharray="2 3" stroke-width="1.2"/>
-      <text x="50" y="56" font-family="'JetBrains Mono', monospace" font-size="28" font-weight="900" fill="${color}" text-anchor="middle" letter-spacing="1">10</text>
-    </g>
-  `,
-  K: (color) => `
-    <g class="emblem emblem-king" fill="none" stroke="${color}" stroke-width="2.6" opacity="0.92">
-      <!-- King Coronation Crown -->
-      <path d="M26 66 L74 66 L70 32 L58 44 L50 22 L42 44 L30 32 Z" fill="${color}" fill-opacity="0.14"/>
-      <circle cx="30" cy="30" r="3" fill="${color}"/>
-      <circle cx="50" cy="20" r="4" fill="${color}"/>
-      <circle cx="70" cy="30" r="3" fill="${color}"/>
-      <line x1="28" y1="58" x2="72" y2="58" stroke-width="2"/>
-      <rect x="34" y="68" width="32" height="7" rx="2" fill="${color}" fill-opacity="0.25"/>
-    </g>
-  `,
-  Q: (color) => `
-    <g class="emblem emblem-queen" fill="none" stroke="${color}" stroke-width="2.5" opacity="0.92">
-      <!-- Queen Jewel Tiara -->
-      <path d="M28 64 L72 64 L68 36 L57 46 L50 30 L43 46 L32 36 Z" fill="${color}" fill-opacity="0.12"/>
-      <circle cx="50" cy="28" r="3.5" fill="${color}"/>
-      <circle cx="32" cy="34" r="2.8" fill="${color}"/>
-      <circle cx="68" cy="34" r="2.8" fill="${color}"/>
-      <ellipse cx="50" cy="54" rx="12" ry="7" stroke-width="1.8" fill="${color}" fill-opacity="0.2"/>
-      <circle cx="50" cy="54" r="3.5" fill="${color}"/>
-    </g>
-  `,
-  DEFAULT: (color, suitPath) => `
-    <g class="emblem emblem-default" opacity="0.9">
-      <g transform="translate(30, 28) scale(0.4)">
-        <path d="${suitPath}" fill="${color}"/>
-      </g>
-    </g>
-  `
-};
-
 export class CardRenderer {
   /**
-   * Generates the high-contrast SVG string for the face of a card
+   * Helper to render a single suit pip centered at (x, y) with rotation and scale
+   */
+  static renderPip(suitPath, colorHex, x, y, scale = 0.17, rot = 0) {
+    return `
+      <g transform="translate(${x}, ${y}) rotate(${rot}) scale(${scale}) translate(-50, -50)">
+        <path d="${suitPath}" fill="${colorHex}"/>
+      </g>
+    `;
+  }
+
+  /**
+   * Traditional Playing Card Pip Layouts for Number Cards (7, 8, 9, 10)
+   */
+  static renderNumberCardPips(rank, suitPath, colorHex, cardId) {
+    const isNine = rank === '9';
+    let pipsHTML = '';
+
+    // Subtle inner frame border for pip grid
+    const frameStroke = isNine ? '#F59E0B' : colorHex;
+    const frameStrokeOpacity = isNine ? 0.75 : 0.22;
+    const frameGlow = isNine ? 'filter="drop-shadow(0 0 5px rgba(245, 158, 11, 0.45))"' : '';
+
+    const innerGridFrame = `
+      <rect x="18" y="16" width="64" height="112" rx="6" fill="none" stroke="${frameStroke}" stroke-width="${isNine ? '1.4' : '0.9'}" stroke-opacity="${frameStrokeOpacity}" ${frameGlow}/>
+      <rect x="20.5" y="18.5" width="59" height="107" rx="4.5" fill="none" stroke="${frameStroke}" stroke-width="0.6" stroke-opacity="${isNine ? 0.45 : 0.12}" stroke-dasharray="3 2"/>
+    `;
+
+    // Exact traditional playing card pip coordinates (viewBox 0 0 100 144)
+    // Left column: x = 32 | Right column: x = 68 | Center column: x = 50
+    if (rank === '7') {
+      // 7 pips: 3 left, 3 right, 1 upper-center
+      pipsHTML += CardRenderer.renderPip(suitPath, colorHex, 32, 28, 0.165, 0);
+      pipsHTML += CardRenderer.renderPip(suitPath, colorHex, 68, 28, 0.165, 0);
+      pipsHTML += CardRenderer.renderPip(suitPath, colorHex, 50, 48, 0.165, 0);
+      pipsHTML += CardRenderer.renderPip(suitPath, colorHex, 32, 72, 0.165, 0);
+      pipsHTML += CardRenderer.renderPip(suitPath, colorHex, 68, 72, 0.165, 0);
+      pipsHTML += CardRenderer.renderPip(suitPath, colorHex, 32, 116, 0.165, 180);
+      pipsHTML += CardRenderer.renderPip(suitPath, colorHex, 68, 116, 0.165, 180);
+    } else if (rank === '8') {
+      // 8 pips: 3 left, 3 right, 2 center
+      pipsHTML += CardRenderer.renderPip(suitPath, colorHex, 32, 28, 0.165, 0);
+      pipsHTML += CardRenderer.renderPip(suitPath, colorHex, 68, 28, 0.165, 0);
+      pipsHTML += CardRenderer.renderPip(suitPath, colorHex, 50, 50, 0.165, 0);
+      pipsHTML += CardRenderer.renderPip(suitPath, colorHex, 32, 72, 0.165, 0);
+      pipsHTML += CardRenderer.renderPip(suitPath, colorHex, 68, 72, 0.165, 0);
+      pipsHTML += CardRenderer.renderPip(suitPath, colorHex, 50, 94, 0.165, 180);
+      pipsHTML += CardRenderer.renderPip(suitPath, colorHex, 32, 116, 0.165, 180);
+      pipsHTML += CardRenderer.renderPip(suitPath, colorHex, 68, 116, 0.165, 180);
+    } else if (rank === '9') {
+      // 9 pips: 4 left, 4 right, 1 prominent center pip (2 pts honor card in 29!)
+      pipsHTML += CardRenderer.renderPip(suitPath, colorHex, 32, 28, 0.16, 0);
+      pipsHTML += CardRenderer.renderPip(suitPath, colorHex, 68, 28, 0.16, 0);
+      pipsHTML += CardRenderer.renderPip(suitPath, colorHex, 32, 50, 0.16, 0);
+      pipsHTML += CardRenderer.renderPip(suitPath, colorHex, 68, 50, 0.16, 0);
+      // Large center pip with gold accent ring
+      pipsHTML += `
+        <circle cx="50" cy="72" r="14" fill="none" stroke="#F59E0B" stroke-width="0.9" stroke-opacity="0.45" stroke-dasharray="2 2"/>
+        ${CardRenderer.renderPip(suitPath, colorHex, 50, 72, 0.22, 0)}
+      `;
+      pipsHTML += CardRenderer.renderPip(suitPath, colorHex, 32, 94, 0.16, 180);
+      pipsHTML += CardRenderer.renderPip(suitPath, colorHex, 68, 94, 0.16, 180);
+      pipsHTML += CardRenderer.renderPip(suitPath, colorHex, 32, 116, 0.16, 180);
+      pipsHTML += CardRenderer.renderPip(suitPath, colorHex, 68, 116, 0.16, 180);
+    } else if (rank === '10') {
+      // 10 pips: 4 left, 4 right, 2 center
+      pipsHTML += CardRenderer.renderPip(suitPath, colorHex, 32, 28, 0.16, 0);
+      pipsHTML += CardRenderer.renderPip(suitPath, colorHex, 68, 28, 0.16, 0);
+      pipsHTML += CardRenderer.renderPip(suitPath, colorHex, 50, 39, 0.16, 0);
+      pipsHTML += CardRenderer.renderPip(suitPath, colorHex, 32, 52, 0.16, 0);
+      pipsHTML += CardRenderer.renderPip(suitPath, colorHex, 68, 52, 0.16, 0);
+      pipsHTML += CardRenderer.renderPip(suitPath, colorHex, 32, 92, 0.16, 180);
+      pipsHTML += CardRenderer.renderPip(suitPath, colorHex, 68, 92, 0.16, 180);
+      pipsHTML += CardRenderer.renderPip(suitPath, colorHex, 50, 105, 0.16, 180);
+      pipsHTML += CardRenderer.renderPip(suitPath, colorHex, 32, 116, 0.16, 180);
+      pipsHTML += CardRenderer.renderPip(suitPath, colorHex, 68, 116, 0.16, 180);
+    }
+
+    return `
+      <g class="card-pips-field">
+        ${innerGridFrame}
+        ${pipsHTML}
+      </g>
+    `;
+  }
+
+  /**
+   * Double-Headed Mirrored Royal Court Cards (Jack, Queen, King)
+   */
+  static renderCourtCard(rank, suitPath, colorHex, cardId) {
+    const isJack = rank === 'J';
+    const isQueen = rank === 'Q';
+    const isKing = rank === 'K';
+
+    // Luxury Court Frame colors
+    const frameBorderColor = isJack ? '#D97706' : (isKing ? '#B45309' : '#9333EA');
+    const accentGold = '#F59E0B';
+
+    // Figure-specific top-half illustration (centered in x: 20..80, y: 19..72)
+    let figureHalfSVG = '';
+
+    if (isJack) {
+      // Jack: Royal Halberd/Spear + Gold Prince Crown + Shield with Suit Emblem
+      figureHalfSVG = `
+        <!-- Halberd/Spear (Left) -->
+        <line x1="28" y1="21" x2="28" y2="72" stroke="#92400E" stroke-width="1.6"/>
+        <path d="M28 20 L23 26 L28 24 L33 26 Z" fill="${accentGold}" stroke="#78350F" stroke-width="0.7"/>
+        <path d="M28 24 C34 24 36 29 36 34 L28 32 Z" fill="${colorHex}" fill-opacity="0.3" stroke="${colorHex}" stroke-width="0.8"/>
+
+        <!-- Gold Prince Crown -->
+        <path d="M42 27 L44 22 L50 24 L56 22 L58 27 Z" fill="${accentGold}" stroke="#B45309" stroke-width="0.9"/>
+        <circle cx="50" cy="23" r="1.3" fill="#D97706"/>
+        <circle cx="44" cy="21.5" r="1" fill="#EF4444"/>
+        <circle cx="56" cy="21.5" r="1" fill="#EF4444"/>
+
+        <!-- Prince Bust & Hair -->
+        <path d="M42 30 C39 36 40 43 43 47 L57 47 C60 43 61 36 58 30 Z" fill="#F8FAFC" stroke="${colorHex}" stroke-width="1.1"/>
+        <circle cx="50" cy="34" r="5.5" fill="#FFFFFF" stroke="${colorHex}" stroke-width="0.9"/>
+        <path d="M47 37 Q50 40 53 37" fill="none" stroke="${colorHex}" stroke-width="0.9" stroke-linecap="round"/>
+
+        <!-- Royal Armor / Tunic -->
+        <path d="M38 47 L50 54 L62 47 L66 72 L34 72 Z" fill="${colorHex}" fill-opacity="0.18" stroke="${colorHex}" stroke-width="1.2"/>
+        <path d="M44 47 L50 60 L56 47" stroke="${accentGold}" stroke-width="1.2" fill="none"/>
+
+        <!-- Shield with Suit Emblem (Right) -->
+        <path d="M62 45 L74 45 L74 58 C74 65 68 69 68 69 C68 69 62 65 62 58 Z" fill="#FFFFFF" stroke="${accentGold}" stroke-width="1.3" filter="drop-shadow(0 1px 3px rgba(0,0,0,0.15))"/>
+        <g transform="translate(68, 55) scale(0.12) translate(-50, -50)">
+          <path d="${suitPath}" fill="${colorHex}"/>
+        </g>
+      `;
+    } else if (isQueen) {
+      // Queen: Detailed Sovereign Tiara + Tudor Rose/Scepter + Mirrored Geometric Portrait
+      figureHalfSVG = `
+        <!-- Sovereign Tiara -->
+        <path d="M40 25 L42 19 L47 23 L50 17 L53 23 L58 19 L60 25 Z" fill="${accentGold}" stroke="#B45309" stroke-width="0.9"/>
+        <circle cx="42" cy="18.5" r="1.1" fill="${colorHex}"/>
+        <circle cx="50" cy="16.5" r="1.4" fill="#EF4444"/>
+        <circle cx="58" cy="18.5" r="1.1" fill="${colorHex}"/>
+
+        <!-- Queen Veil & Face -->
+        <path d="M37 28 C35 38 37 50 41 58 L59 58 C63 50 65 38 63 28 Z" fill="#F8FAFC" stroke="${colorHex}" stroke-width="1.1"/>
+        <circle cx="50" cy="34" r="5.2" fill="#FFFFFF" stroke="${colorHex}" stroke-width="0.9"/>
+        <path d="M47 37 Q50 39.5 53 37" fill="none" stroke="${colorHex}" stroke-width="0.8" stroke-linecap="round"/>
+
+        <!-- Tudor Rose / Scepter (Left) -->
+        <line x1="31" y1="36" x2="31" y2="72" stroke="${accentGold}" stroke-width="1.5"/>
+        <circle cx="31" cy="34" r="4.5" fill="#EF4444" stroke="#991B1B" stroke-width="0.8"/>
+        <circle cx="31" cy="34" r="2.2" fill="#FDE293"/>
+
+        <!-- Ermine Robe & Suit Medallion (Right) -->
+        <path d="M40 46 L50 53 L60 46 L67 72 L33 72 Z" fill="${colorHex}" fill-opacity="0.15" stroke="${colorHex}" stroke-width="1.2"/>
+        <path d="M45 50 L50 58 L55 50" stroke="${accentGold}" stroke-width="1" fill="none"/>
+        <circle cx="67" cy="52" r="6" fill="#FFFFFF" stroke="${accentGold}" stroke-width="1"/>
+        <g transform="translate(67, 52) scale(0.11) translate(-50, -50)">
+          <path d="${suitPath}" fill="${colorHex}"/>
+        </g>
+      `;
+    } else if (isKing) {
+      // King: Imperial Cross Crown + Broadsword + Mirrored Royal Crest
+      figureHalfSVG = `
+        <!-- Imperial Cross Crown -->
+        <path d="M37 26 L39 18 L45 22 L50 15 L55 22 L61 18 L63 26 Z" fill="${accentGold}" stroke="#B45309" stroke-width="1"/>
+        <line x1="50" y1="11" x2="50" y2="15" stroke="#B45309" stroke-width="1.3"/>
+        <line x1="47.5" y1="13" x2="52.5" y2="13" stroke="#B45309" stroke-width="1.3"/>
+        <circle cx="39" cy="17.5" r="1.1" fill="#EF4444"/>
+        <circle cx="61" cy="17.5" r="1.1" fill="#EF4444"/>
+
+        <!-- King Regal Face & Beard -->
+        <circle cx="50" cy="33" r="5.8" fill="#FFFFFF" stroke="${colorHex}" stroke-width="1"/>
+        <path d="M43 33 L50 44 L57 33 Z" fill="${colorHex}" fill-opacity="0.25" stroke="${colorHex}" stroke-width="1"/>
+        <path d="M46 32 Q50 35 54 32" stroke="${colorHex}" stroke-width="0.9" fill="none"/>
+
+        <!-- Broadsword (Left) -->
+        <line x1="29" y1="22" x2="29" y2="70" stroke="#64748B" stroke-width="2"/>
+        <path d="M29 20 L26 24 L32 24 Z" fill="#94A3B8" stroke="#475569" stroke-width="0.8"/>
+        <line x1="24" y1="28" x2="34" y2="28" stroke="${accentGold}" stroke-width="2" stroke-linecap="round"/>
+        <circle cx="29" cy="32" r="1.6" fill="#B45309"/>
+
+        <!-- Ermine Mantle & Royal Crest (Right) -->
+        <path d="M36 45 L50 53 L64 45 L70 72 L30 72 Z" fill="${colorHex}" fill-opacity="0.2" stroke="${colorHex}" stroke-width="1.3"/>
+        <circle cx="65" cy="53" r="6.5" fill="#FFFFFF" stroke="${accentGold}" stroke-width="1.2"/>
+        <g transform="translate(65, 53) scale(0.12) translate(-50, -50)">
+          <path d="${suitPath}" fill="${colorHex}"/>
+        </g>
+      `;
+    }
+
+    return `
+      <g class="court-card-container">
+        <defs>
+          <!-- Ornate Guilloche Hatch Background Pattern -->
+          <pattern id="guilloche-${cardId}" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+            <line x1="0" y1="0" x2="0" y2="6" stroke="${colorHex}" stroke-width="0.5" stroke-opacity="0.08"/>
+            <line x1="3" y1="0" x2="3" y2="6" stroke="${accentGold}" stroke-width="0.4" stroke-opacity="0.06"/>
+          </pattern>
+        </defs>
+
+        <!-- Ornate Outer Court Border -->
+        <rect x="18" y="16" width="64" height="112" rx="5" fill="none" stroke="${frameBorderColor}" stroke-width="${isJack ? '1.5' : '1.2'}" filter="drop-shadow(0 1px 3px rgba(0,0,0,0.1))"/>
+        <rect x="19.5" y="17.5" width="61" height="109" rx="4" fill="url(#guilloche-${cardId})"/>
+        <rect x="20.5" y="18.5" width="59" height="107" rx="3.5" fill="none" stroke="${accentGold}" stroke-width="0.8" stroke-opacity="0.5" stroke-dasharray="3 2"/>
+
+        <!-- Top Half (Direct) -->
+        <g id="court-top-${cardId}">
+          ${figureHalfSVG}
+        </g>
+
+        <!-- Bottom Half (100% Mathematically Mirrored 180deg about center 50, 72) -->
+        <use href="#court-top-${cardId}" transform="rotate(180, 50, 72)"/>
+
+        <!-- Center Mirrored Dividing Line -->
+        <line x1="19.5" y1="72" x2="80.5" y2="72" stroke="${accentGold}" stroke-width="1.2" stroke-dasharray="2 2"/>
+        <circle cx="50" cy="72" r="3" fill="#FFFFFF" stroke="${accentGold}" stroke-width="1.2"/>
+        <circle cx="50" cy="72" r="1.2" fill="${colorHex}"/>
+      </g>
+    `;
+  }
+
+  /**
+   * Master Ace: Oversized Ornate Central Suit Pip with Filigree Inner Pattern
+   */
+  static renderAceMaster(suitPath, colorHex, cardId) {
+    return `
+      <g class="ace-master-container">
+        <!-- Ornate Ace Inner Border -->
+        <rect x="18" y="16" width="64" height="112" rx="6" fill="none" stroke="${colorHex}" stroke-width="1.1" stroke-opacity="0.35"/>
+        <rect x="21" y="19" width="58" height="106" rx="4" fill="none" stroke="${colorHex}" stroke-width="0.6" stroke-opacity="0.18" stroke-dasharray="3 3"/>
+
+        <!-- Corner Flourishes -->
+        <path d="M21 27 C25 27 27 25 27 21" fill="none" stroke="${colorHex}" stroke-width="0.9" opacity="0.4"/>
+        <path d="M79 27 C75 27 73 25 73 21" fill="none" stroke="${colorHex}" stroke-width="0.9" opacity="0.4"/>
+        <path d="M21 117 C25 117 27 119 27 123" fill="none" stroke="${colorHex}" stroke-width="0.9" opacity="0.4"/>
+        <path d="M79 117 C75 117 73 119 73 123" fill="none" stroke="${colorHex}" stroke-width="0.9" opacity="0.4"/>
+
+        <!-- Concentric Filigree Sunburst Rings -->
+        <circle cx="50" cy="72" r="38" fill="none" stroke="${colorHex}" stroke-width="0.8" stroke-dasharray="2 3" opacity="0.25"/>
+        <circle cx="50" cy="72" r="30" fill="none" stroke="${colorHex}" stroke-width="1.2" stroke-dasharray="4 3" opacity="0.35"/>
+        <circle cx="50" cy="72" r="22" fill="${colorHex}" fill-opacity="0.05" stroke="${colorHex}" stroke-width="0.8" opacity="0.3"/>
+
+        <!-- Grand Oversized Central Suit Pip (scale: 0.54) -->
+        <g transform="translate(50, 72) scale(0.54) translate(-50, -50)">
+          <!-- Drop shadow on grand pip -->
+          <path d="${suitPath}" fill="${colorHex}" filter="drop-shadow(0 3px 8px rgba(0,0,0,0.3))"/>
+          
+          <!-- Ornate Filigree Inner Engraving Lines inside the Ace -->
+          <g fill="none" stroke="#FFFFFF" stroke-width="1.6" stroke-linecap="round" opacity="0.75">
+            <circle cx="50" cy="50" r="12" stroke-dasharray="2 2" stroke-width="1.2"/>
+            <circle cx="50" cy="50" r="5" fill="#FFFFFF" fill-opacity="0.85"/>
+            <path d="M50 24 L50 36 M50 64 L50 76 M32 50 L42 50 M58 50 L68 50" stroke-width="1.4"/>
+          </g>
+        </g>
+      </g>
+    `;
+  }
+
+  /**
+   * Generates the high-contrast luxury SVG string for the face of a card
    */
   static renderFaceSVG(card) {
     const suitObj = SUITS[card.suit] || { color: 'black' };
     const rankObj = RANKS[card.rank] || { id: card.rank || '?', points: card.points || 0 };
     const colorHex = suitObj.color === 'red' ? '#E11D48' : '#0F172A';
     const suitPath = SUIT_PATHS[card.suit] || SUIT_PATHS.SPADES;
-    
-    const emblemFn = EMBLEMS[card.rank] || EMBLEMS.DEFAULT;
-    const emblemSVG = (card.rank === 'A' || !EMBLEMS[card.rank]) 
-      ? emblemFn(colorHex, suitPath) 
-      : emblemFn(colorHex);
+    const cardId = card.id || `card_${Math.random()}`;
+
+    // Select specific rendering engine based on traditional rank category
+    let centerArtworkSVG = '';
+    const rank = card.rank;
+
+    if (rank === 'A') {
+      centerArtworkSVG = CardRenderer.renderAceMaster(suitPath, colorHex, cardId);
+    } else if (rank === 'J' || rank === 'Q' || rank === 'K') {
+      centerArtworkSVG = CardRenderer.renderCourtCard(rank, suitPath, colorHex, cardId);
+    } else {
+      // Traditional Number Cards (7, 8, 9, 10)
+      centerArtworkSVG = CardRenderer.renderNumberCardPips(rank, suitPath, colorHex, cardId);
+    }
+
+    // Sleek Non-Intrusive Micro-Pill for points (does not block any bottom pips!)
+    // Placed right on the bottom border at y=136 between corner indices
+    const pointsBadgeSVG = rankObj.points > 0 ? `
+      <g class="card-points-tag" transform="translate(50, 136)">
+        <rect x="-14" y="-5.5" width="28" height="11" rx="5.5" fill="#FFFFFF" stroke="${colorHex}" stroke-width="1.1" filter="drop-shadow(0 1px 2px rgba(0,0,0,0.25))"/>
+        <text x="0" y="3" font-family="'JetBrains Mono', monospace" font-size="7.5" font-weight="900" fill="${colorHex}" text-anchor="middle" letter-spacing="-0.3">${rankObj.points} pt</text>
+      </g>
+    ` : '';
 
     return `
       <svg class="card-svg card-front" viewBox="0 0 100 144" xmlns="http://www.w3.org/2000/svg">
         <!-- Crisp Card Base Surface -->
         <rect x="1" y="1" width="98" height="142" rx="12" fill="#FFFFFF" stroke="#0F172A" stroke-width="1.4"/>
         
-        <!-- Elegant Inner Border -->
-        <rect x="4.5" y="4.5" width="91" height="135" rx="9" fill="none" stroke="${colorHex}" stroke-width="1" stroke-opacity="0.25"/>
+        <!-- Elegant Outer Tint Margin Border -->
+        <rect x="4.5" y="4.5" width="91" height="135" rx="9" fill="none" stroke="${colorHex}" stroke-width="0.8" stroke-opacity="0.3"/>
 
         <!-- Top-Left Corner Index (Bold Rank + Crisp Suit Pip) -->
-        <g class="corner-index corner-top" transform="translate(7.5, 9)">
-          <text x="0" y="15" font-family="'Plus Jakarta Sans', system-ui, sans-serif" font-size="16.5" font-weight="900" fill="${colorHex}">${rankObj.id}</text>
-          <g transform="translate(-0.5, 18) scale(0.145)">
+        <g class="corner-index corner-top" transform="translate(10.5, 8)">
+          <text x="0" y="14" font-family="'Plus Jakarta Sans', system-ui, sans-serif" font-size="15" font-weight="900" fill="${colorHex}" text-anchor="middle">${rankObj.id}</text>
+          <g transform="translate(0, 22) scale(0.12) translate(-50, -50)">
             <path d="${suitPath}" fill="${colorHex}"/>
           </g>
         </g>
 
-        <!-- Centered Artwork & Emblem -->
-        <g class="card-center-art" transform="translate(0, 18)">
-          ${emblemSVG}
+        <!-- Center Artwork Canvas (Pip Layouts / Mirrored Courts / Ace Master) -->
+        <g class="card-center-art">
+          ${centerArtworkSVG}
         </g>
 
-        <!-- Points Badge if non-zero -->
-        ${rankObj.points > 0 ? `
-          <g class="card-points-tag" transform="translate(50, 114)">
-            <rect x="-16" y="-7.5" width="32" height="15" rx="7.5" fill="${colorHex}" fill-opacity="0.12" stroke="${colorHex}" stroke-width="1.1" stroke-opacity="0.45"/>
-            <text x="0" y="3.5" font-family="'JetBrains Mono', monospace" font-size="9" font-weight="800" fill="${colorHex}" text-anchor="middle">${rankObj.points} pt</text>
-          </g>
-        ` : ''}
+        <!-- Sleek Non-Intrusive Bottom Micro-Pill -->
+        ${pointsBadgeSVG}
 
         <!-- Bottom-Right Corner Index (Inverted 180deg) -->
-        <g class="corner-index corner-bottom" transform="translate(92.5, 135) rotate(180)">
-          <text x="0" y="15" font-family="'Plus Jakarta Sans', system-ui, sans-serif" font-size="16.5" font-weight="900" fill="${colorHex}">${rankObj.id}</text>
-          <g transform="translate(-0.5, 18) scale(0.145)">
+        <g class="corner-index corner-bottom" transform="translate(89.5, 136) rotate(180)">
+          <text x="0" y="14" font-family="'Plus Jakarta Sans', system-ui, sans-serif" font-size="15" font-weight="900" fill="${colorHex}" text-anchor="middle">${rankObj.id}</text>
+          <g transform="translate(0, 22) scale(0.12) translate(-50, -50)">
             <path d="${suitPath}" fill="${colorHex}"/>
           </g>
         </g>
