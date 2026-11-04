@@ -56,9 +56,6 @@ class TwentyNineApp {
     this.trickArena = document.getElementById('trick-arena');
     this.trickRoundLabel = document.getElementById('trick-round-label');
     this.trickCurrentPoints = document.getElementById('trick-current-points');
-    this.lockedTrumpTableSlot = document.getElementById('locked-trump-table-slot');
-    this.lockedTrumpCardStub = document.getElementById('locked-trump-card-stub');
-    this.lockedTrumpTag = document.getElementById('locked-trump-tag');
     this.slotNorth = document.getElementById('slot-north');
     this.slotWest = document.getElementById('slot-west');
     this.slotEast = document.getElementById('slot-east');
@@ -542,10 +539,6 @@ class TwentyNineApp {
     this.renderHudTrumpHidden();
     this.hudTargetVal.textContent = '--';
 
-    this.lockedTrumpCardStub.className = 'locked-trump-card-stub';
-    this.lockedTrumpCardStub.innerHTML = '<span>🔒</span>';
-    this.lockedTrumpTag.textContent = 'TRUMP';
-
     this.btnRevealTrump.style.display = 'none';
     this.btnClaimMarriage.style.display = 'none';
     this.challengeBanner.style.display = 'none';
@@ -801,10 +794,6 @@ class TwentyNineApp {
       ? `${isBn ? 'রং:' : 'Trump:'} ${SUITS[trumpSuit].symbol} (${isBn ? 'গোপন' : 'Hidden'})` 
       : (isBn ? 'রং: গোপন' : 'Trump: Hidden');
     this.renderHudTrumpHidden(labelText);
-    
-    this.lockedTrumpCardStub.className = 'locked-trump-card-stub';
-    this.lockedTrumpCardStub.innerHTML = '<span>🔒</span>';
-    this.lockedTrumpTag.textContent = 'TRUMP';
 
     const pName = isBn ? PLAYERS[bidder].nameBn : PLAYERS[bidder].nameEn;
     this.showToast(`${pName} ${isBn ? 'ট্রাম্প গোপন করেছেন' : 'locked the Trump card'}`);
@@ -941,10 +930,6 @@ class TwentyNineApp {
         </div>
       </div>
     `;
-
-    this.lockedTrumpCardStub.className = 'locked-trump-card-stub revealed has-card';
-    this.lockedTrumpCardStub.innerHTML = CardRenderer.renderFaceSVG(displayCard);
-    this.lockedTrumpTag.textContent = suitName.toUpperCase();
 
     const pName = isBn ? PLAYERS[playerId].nameBn : PLAYERS[playerId].nameEn;
     this.showSpeechBubble(playerId, `🎺 ${suitName}!`);
