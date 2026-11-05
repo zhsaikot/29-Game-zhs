@@ -32,6 +32,7 @@ class TwentyNineApp {
     this.bindEvents();
     this.renderPlayerAvatars();
     this.updateLanguageUI();
+    this.setupPWA();
     this.initGame();
   }
 
@@ -201,6 +202,10 @@ class TwentyNineApp {
     this.btnSettingsNewGame = document.getElementById('btn-settings-new-game');
     this.textSettingsNewGame = document.getElementById('text-settings-new-game');
     this.btnSaveSettings = document.getElementById('btn-save-settings');
+    this.btnInstallPWA = document.getElementById('btn-pwa-install');
+    this.btnSettingsInstall = document.getElementById('btn-settings-install');
+    this.rowSettingsInstall = document.getElementById('row-settings-install');
+    this.textSettingsInstall = document.getElementById('text-settings-install');
   }
 
   bindEvents() {
@@ -279,69 +284,6 @@ class TwentyNineApp {
         chip.classList.add('selected');
         this.selectedBid = parseInt(chip.dataset.val, 10);
         this.updateSubmitBidButton();
-
-
-
-    if (this.btnNewGame) {
-
-      this.btnNewGame.title = isBn ? 'নতুন খেলা (ম্যাচ রিসেট)' : 'New Game (Reset Match)';
-
-    }
-
-    if (this.titleConfirmNewGame) {
-
-      this.titleConfirmNewGame.textContent = isBn ? 'নতুন খেলা শুরু করতে চান?' : 'Start New Game?';
-
-    }
-
-    if (this.descConfirmNewGame) {
-
-      this.descConfirmNewGame.textContent = isBn 
-
-        ? 'আপনি কি নতুন খেলা শুরু করতে চান? বর্তমান ম্যাচের স্কোর ও রাউন্ডের সব অগ্রগতি মুছে নতুন খেলা শুরু হবে।' 
-
-        : 'Are you sure you want to start a new game? Current match score and round progress will be reset.';
-
-    }
-
-    if (this.btnCancelNewGame) {
-
-      this.btnCancelNewGame.textContent = isBn ? 'বাতিল' : 'Cancel';
-
-    }
-
-    if (this.btnConfirmNewGame) {
-
-      this.btnConfirmNewGame.textContent = isBn ? 'নতুন খেলা শুরু করুন' : 'Start New Game';
-
-    }
-
-    if (this.textSettingsNewGame) {
-
-      this.textSettingsNewGame.textContent = isBn ? 'নতুন খেলা (ম্যাচ রিসেট)' : 'Start New Game (Reset Match)';
-
-    }
-
-    if (this.btnNewGame) {
-      this.btnNewGame.title = isBn ? 'নতুন খেলা (ম্যাচ রিসেট)' : 'New Game (Reset Match)';
-    }
-    if (this.titleConfirmNewGame) {
-      this.titleConfirmNewGame.textContent = isBn ? 'নতুন খেলা শুরু করতে চান?' : 'Start New Game?';
-    }
-    if (this.descConfirmNewGame) {
-      this.descConfirmNewGame.textContent = isBn 
-        ? 'আপনি কি নতুন খেলা শুরু করতে চান? বর্তমান ম্যাচের স্কোর ও রাউন্ডের সব অগ্রগতি মুছে নতুন খেলা শুরু হবে।' 
-        : 'Are you sure you want to start a new game? Current match score and round progress will be reset.';
-    }
-    if (this.btnCancelNewGame) {
-      this.btnCancelNewGame.textContent = isBn ? 'বাতিল' : 'Cancel';
-    }
-    if (this.btnConfirmNewGame) {
-      this.btnConfirmNewGame.textContent = isBn ? 'নতুন খেলা শুরু করুন' : 'Start New Game';
-    }
-    if (this.textSettingsNewGame) {
-      this.textSettingsNewGame.textContent = isBn ? 'নতুন খেলা (ম্যাচ রিসেট)' : 'Start New Game (Reset Match)';
-    }
       });
     });
 
@@ -788,48 +730,6 @@ class TwentyNineApp {
     }
     this.updateSubmitBidButton();
 
-
-
-    if (this.btnNewGame) {
-
-      this.btnNewGame.title = isBn ? 'নতুন খেলা (ম্যাচ রিসেট)' : 'New Game (Reset Match)';
-
-    }
-
-    if (this.titleConfirmNewGame) {
-
-      this.titleConfirmNewGame.textContent = isBn ? 'নতুন খেলা শুরু করতে চান?' : 'Start New Game?';
-
-    }
-
-    if (this.descConfirmNewGame) {
-
-      this.descConfirmNewGame.textContent = isBn 
-
-        ? 'আপনি কি নতুন খেলা শুরু করতে চান? বর্তমান ম্যাচের স্কোর ও রাউন্ডের সব অগ্রগতি মুছে নতুন খেলা শুরু হবে।' 
-
-        : 'Are you sure you want to start a new game? Current match score and round progress will be reset.';
-
-    }
-
-    if (this.btnCancelNewGame) {
-
-      this.btnCancelNewGame.textContent = isBn ? 'বাতিল' : 'Cancel';
-
-    }
-
-    if (this.btnConfirmNewGame) {
-
-      this.btnConfirmNewGame.textContent = isBn ? 'নতুন খেলা শুরু করুন' : 'Start New Game';
-
-    }
-
-    if (this.textSettingsNewGame) {
-
-      this.textSettingsNewGame.textContent = isBn ? 'নতুন খেলা (ম্যাচ রিসেট)' : 'Start New Game (Reset Match)';
-
-    }
-
     if (this.btnNewGame) {
       this.btnNewGame.title = isBn ? 'নতুন খেলা (ম্যাচ রিসেট)' : 'New Game (Reset Match)';
     }
@@ -849,6 +749,12 @@ class TwentyNineApp {
     }
     if (this.textSettingsNewGame) {
       this.textSettingsNewGame.textContent = isBn ? 'নতুন খেলা (ম্যাচ রিসেট)' : 'Start New Game (Reset Match)';
+    }
+    if (this.btnInstallPWA) {
+      this.btnInstallPWA.title = isBn ? 'অ্যাপ ইনস্টল করুন (PWA)' : 'Install App to Device (PWA)';
+    }
+    if (this.textSettingsInstall) {
+      this.textSettingsInstall.textContent = isBn ? 'ডিভাইসে অ্যাপ ইনস্টল করুন' : 'Install App to Device';
     }
 
     if (this.gameState && this.gameState.isTrumpRevealed && this.gameState.trumpSuit) {
@@ -870,6 +776,81 @@ class TwentyNineApp {
         }
       }
     }
+  }
+
+  setupPWA() {
+    this.deferredPrompt = null;
+
+    // 1. Register Service Worker
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js')
+          .then((registration) => {
+            console.log('[PWA] Service Worker registered with scope:', registration.scope);
+
+            registration.addEventListener('updatefound', () => {
+              const installingWorker = registration.installing;
+              if (installingWorker) {
+                installingWorker.addEventListener('statechange', () => {
+                  if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                    this.showToast(this.currentLanguage === 'bn' 
+                      ? '🚀 নতুন সংস্করণ প্রস্তুত! আপডেট করতে পেজ রিলোড করুন।' 
+                      : '🚀 New version available! Reload to update.');
+                  }
+                });
+              }
+            });
+          })
+          .catch((error) => {
+            console.warn('[PWA] Service Worker registration failed:', error);
+          });
+      });
+    }
+
+    // 2. Handle beforeinstallprompt event
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      this.deferredPrompt = e;
+
+      const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+      if (!isStandalone) {
+        if (this.btnInstallPWA) {
+          this.btnInstallPWA.style.display = 'inline-flex';
+        }
+        if (this.rowSettingsInstall) {
+          this.rowSettingsInstall.style.display = 'flex';
+        }
+      }
+    });
+
+    // 3. Trigger Install Prompt on click
+    const handleInstall = async () => {
+      if (!this.deferredPrompt) return;
+      this.sound.playButtonClick();
+      this.deferredPrompt.prompt();
+      const { outcome } = await this.deferredPrompt.userChoice;
+      console.log(`[PWA] Install choice outcome: ${outcome}`);
+      this.deferredPrompt = null;
+      if (this.btnInstallPWA) this.btnInstallPWA.style.display = 'none';
+      if (this.rowSettingsInstall) this.rowSettingsInstall.style.display = 'none';
+    };
+
+    if (this.btnInstallPWA) {
+      this.btnInstallPWA.addEventListener('click', handleInstall);
+    }
+    if (this.btnSettingsInstall) {
+      this.btnSettingsInstall.addEventListener('click', handleInstall);
+    }
+
+    // 4. Handle appinstalled event
+    window.addEventListener('appinstalled', () => {
+      this.deferredPrompt = null;
+      if (this.btnInstallPWA) this.btnInstallPWA.style.display = 'none';
+      if (this.rowSettingsInstall) this.rowSettingsInstall.style.display = 'none';
+      this.showToast(this.currentLanguage === 'bn' 
+        ? '🎉 অ্যাপ সফলভাবে আপনার ডিভাইসে ইন্সটল হয়েছে!' 
+        : '🎉 App successfully installed!');
+    });
   }
 
   saveGameState() {
