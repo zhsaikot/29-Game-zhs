@@ -26,6 +26,7 @@ export class GameState {
     
     // Bidding
     this.highestBid = 0;
+    this.targetBid = 0;
     this.highestBidder = null;
     this.currentBidder = null;
     this.activeBidders = new Set([0, 1, 2, 3]);
@@ -43,6 +44,7 @@ export class GameState {
       team1: false,
       team2: false
     };
+    this.marriagePoints = { team1: 0, team2: 0 };
 
     // Challenge Multipliers
     this.challengeMultiplier = 1;
@@ -117,6 +119,7 @@ export class GameState {
     this.hands = [[], [], [], []];
     
     this.highestBid = 0;
+    this.targetBid = 0;
     this.highestBidder = null;
     this.activeBidders = new Set([0, 1, 2, 3]);
     this.biddingHistory = [];
@@ -129,6 +132,7 @@ export class GameState {
     this.trumpRevealedAtPlayCount = null;
     this.isSeventhCardTrump = false;
     this.marriageClaimed = { team1: false, team2: false };
+    this.marriagePoints = { team1: 0, team2: 0 };
 
     this.challengeMultiplier = 1;
     this.doubledByTeam = null;
@@ -212,6 +216,7 @@ export class GameState {
       const forcedBidder = this.getNextPlayer(this.dealerIndex);
       this.highestBidder = forcedBidder;
       this.highestBid = BID_RULES.MIN_BID;
+      this.targetBid = BID_RULES.MIN_BID;
       this.biddingHistory.push({ playerId: forcedBidder, bidAmount: 16, isForced: true });
       this.concludeBidding();
       return true;
@@ -234,9 +239,11 @@ export class GameState {
 
   concludeBidding() {
     this.currentPhase = GAME_PHASES.TRUMP_SELECTION;
+    this.targetBid = this.highestBid;
     this.emit('biddingConcluded', {
       winner: this.highestBidder,
-      winningBid: this.highestBid
+      winningBid: this.highestBid,
+      targetBid: this.targetBid
     });
   }
 
@@ -388,51 +395,40 @@ export class GameState {
       bidder: this.highestBidder
     });
 
-    this.checkMarriage();
     return true;
   }
 
-  checkMarriage() {
-    if (!this.isTrumpRevealed) return;
+  canPlayerClaimMarriage(playerId) {
+    if (!this.isTrumpRevealed || !this.trumpSuit) return false;
+    const teamKey = PLAYERS[playerId].team === 1 ? 'team1' : 'team2';
+    if (this.marriageClaimed[teamKey]) return false;
 
-    for (const teamKey of ['team1', 'team2']) {
-      if (this.marriageClaimed[teamKey]) continue;
+    const hand = this.hands[playerId];
+    const hasK = hand.some(c => c.suit === this.trumpSuit && c.rank === 'K');
+    const hasQ = hand.some(c => c.suit === this.trumpSuit && c.rank === 'Q');
+    return hasK && hasQ;
+  }
 
-      const teamMembers = teamKey === 'team1' ? [0, 2] : [1, 3];
-      let hasK = false;
-      let hasQ = false;
-      let holderPlayerId = null;
+  claimMarriage(playerId) {
+    if (!this.canPlayerClaimMarriage(playerId)) return false;
 
-      for (const pId of teamMembers) {
-        const hand = this.hands[pId];
-        if (hand.some(c => c.suit === this.trumpSuit && c.rank === 'K')) hasK = true;
-        if (hand.some(c => c.suit === this.trumpSuit && c.rank === 'Q')) hasQ = true;
-        if (hasK && hasQ && holderPlayerId === null) {
-          holderPlayerId = pId;
-        }
-      }
+    const teamKey = PLAYERS[playerId].team === 1 ? 'team1' : 'team2';
+    this.marriageClaimed[teamKey] = true;
+    this.marriagePoints[teamKey] = 4;
+    this.teamPoints[teamKey] += 4;
 
-      if (hasK && hasQ) {
-        this.marriageClaimed[teamKey] = true;
-        const isBiddingTeam = PLAYERS[this.highestBidder].team === (teamKey === 'team1' ? 1 : 2);
-        
-        const originalBid = this.highestBid;
-        if (isBiddingTeam) {
-          this.highestBid = Math.max(BID_RULES.MIN_BID, this.highestBid - 4);
-        } else {
-          this.highestBid = Math.min(28, this.highestBid + 4);
-        }
+    const isBiddingTeam = PLAYERS[this.highestBidder].team === (teamKey === 'team1' ? 1 : 2);
 
-        this.emit('marriageAnnounced', {
-          teamKey,
-          teamId: teamKey === 'team1' ? 1 : 2,
-          isBiddingTeam,
-          holderPlayerId,
-          originalBid,
-          newBid: this.highestBid
-        });
-      }
-    }
+    this.emit('marriageAnnounced', {
+      playerId,
+      teamKey,
+      teamId: teamKey === 'team1' ? 1 : 2,
+      isBiddingTeam,
+      targetBid: this.targetBid,
+      bonusPoints: 4,
+      totalTeamPoints: this.teamPoints[teamKey]
+    });
+    return true;
   }
 
   playCard(playerId, cardId) {
@@ -546,9 +542,9 @@ export class GameState {
     const defenderTeamKey = bidderTeam === 1 ? 'team2' : 'team1';
 
     const pointsMade = this.teamPoints[bidderTeamKey];
-    const isBidAchieved = pointsMade >= this.highestBid;
+    const isBidAchieved = pointsMade >= this.targetBid;
 
-    let baseGamePoints = (this.settings.highBidDoublePoints && this.highestBid >= 21) ? 2 : 1;
+    let baseGamePoints = (this.settings.highBidDoublePoints && this.targetBid >= 21) ? 2 : 1;
     const gamePointsDelta = baseGamePoints * this.challengeMultiplier;
 
     if (isBidAchieved) {
@@ -563,8 +559,9 @@ export class GameState {
     this.emit('roundEnded', {
       roundNumber: this.roundNumber,
       bidder: this.highestBidder,
-      targetBid: this.highestBid,
+      targetBid: this.targetBid,
       pointsMade,
+      marriageBonus: this.marriagePoints[bidderTeamKey],
       isBidAchieved,
       gamePointsDelta,
       matchScores: this.matchScores,

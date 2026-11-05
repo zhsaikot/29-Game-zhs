@@ -195,10 +195,12 @@ class TwentyNineApp {
     // Quick Bid Chips
     this.quickBidChips.querySelectorAll('.chip-bid').forEach(chip => {
       chip.addEventListener('click', () => {
+        if (chip.disabled) return;
         this.sound.playButtonClick();
         this.quickBidChips.querySelectorAll('.chip-bid').forEach(c => c.classList.remove('selected'));
         chip.classList.add('selected');
         this.selectedBid = parseInt(chip.dataset.val, 10);
+        this.updateSubmitBidButton();
       });
     });
 
@@ -209,9 +211,11 @@ class TwentyNineApp {
     });
 
     this.btnDockSubmit.addEventListener('click', () => {
+      const minPossible = Math.max(BID_RULES.MIN_BID, this.gameState.highestBid + 1);
+      const bidToSubmit = Math.max(this.selectedBid || minPossible, minPossible);
       this.sound.playButtonClick();
       this.floatingBiddingPanel.classList.remove('active');
-      this.gameState.submitBid(0, this.selectedBid);
+      this.gameState.submitBid(0, bidToSubmit);
     });
 
     // Trump Selection
@@ -240,7 +244,7 @@ class TwentyNineApp {
 
     this.btnClaimMarriage.addEventListener('click', () => {
       this.sound.playButtonClick();
-      this.gameState.checkMarriage();
+      this.gameState.claimMarriage(0);
       this.btnClaimMarriage.style.display = 'none';
     });
 
@@ -530,6 +534,10 @@ class TwentyNineApp {
     if (this.hudTargetTitle) {
       this.hudTargetTitle.textContent = isBn ? '🎯 লক্ষ্য:' : '🎯 Target:';
     }
+    if (this.hudTargetVal && this.gameState && this.gameState.targetBid > 0) {
+      this.hudTargetVal.textContent = this.gameState.targetBid;
+    }
+    this.updateSubmitBidButton();
 
     if (this.gameState && this.gameState.isTrumpRevealed && this.gameState.trumpSuit) {
       const badge = this.hudTrumpSlot.querySelector('.hud-trump-badge');
@@ -760,16 +768,23 @@ class TwentyNineApp {
   }
 
   checkMarriageButton() {
-    if (this.gameState.isTrumpRevealed && !this.gameState.marriageClaimed.team1) {
-      const hand = this.gameState.hands[0];
-      const hasK = hand.some(c => c.suit === this.gameState.trumpSuit && c.rank === 'K');
-      const hasQ = hand.some(c => c.suit === this.gameState.trumpSuit && c.rank === 'Q');
-      if (hasK && hasQ) {
-        this.btnClaimMarriage.style.display = 'flex';
-        return;
-      }
+    if (this.gameState && this.gameState.canPlayerClaimMarriage(0)) {
+      this.btnClaimMarriage.style.display = 'inline-flex';
+    } else {
+      this.btnClaimMarriage.style.display = 'none';
     }
-    this.btnClaimMarriage.style.display = 'none';
+  }
+
+  updateSubmitBidButton() {
+    const isBn = this.currentLanguage === 'bn';
+    const bidVal = this.selectedBid || 16;
+    const bnDigits = ['০','১','২','৩','৪','৫','৬','৭','৮','৯'];
+    const bnVal = String(bidVal).replace(/[0-9]/g, d => bnDigits[d]);
+    if (this.btnDockSubmit) {
+      this.btnDockSubmit.textContent = isBn 
+        ? `ডাক জমা দিন (${bnVal})` 
+        : `Submit Bid (${bidVal})`;
+    }
   }
 
   handleBiddingTurn(bidderId) {
@@ -789,6 +804,7 @@ class TwentyNineApp {
         chip.classList.toggle('selected', val === minPossible);
       });
 
+      this.updateSubmitBidButton();
       this.floatingBiddingPanel.classList.add('active');
     } else {
       this.floatingBiddingPanel.classList.remove('active');
@@ -869,7 +885,7 @@ class TwentyNineApp {
     this.floatingBiddingPanel.classList.remove('active');
     this.crowns[winner].style.display = 'block';
     this.pods[winner].classList.add('is-bidder');
-    this.hudTargetVal.textContent = winningBid;
+    this.hudTargetVal.textContent = data.targetBid || winningBid;
 
     const winnerName = this.currentLanguage === 'bn' ? PLAYERS[winner].nameBn : PLAYERS[winner].nameEn;
     this.showSpeechBubble(winner, `🏆 ${winningBid}!`);
@@ -945,12 +961,17 @@ class TwentyNineApp {
   onTurnChanged(currentTurn) {
     this.updateActivePod(currentTurn);
     this.renderHandsAndCounts();
+    this.checkMarriageButton();
 
     if (currentTurn !== 0 && this.gameState.currentPhase === GAME_PHASES.PLAYING) {
       this.statusTags[currentTurn].textContent = this.currentLanguage === 'bn' ? 'খেলছে...' : 'Playing...';
       if (this.aiTurnTimeout) clearTimeout(this.aiTurnTimeout);
 
       this.aiTurnTimeout = setTimeout(() => {
+        if (this.gameState.canPlayerClaimMarriage(currentTurn)) {
+          this.gameState.claimMarriage(currentTurn);
+        }
+
         const decision = this.ai.decidePlay(currentTurn, this.gameState);
         if (decision.speech) {
           this.showSpeechBubble(currentTurn, decision.speech);
@@ -1041,29 +1062,34 @@ class TwentyNineApp {
     this.showToast(`🎺 ${pName} ${isBn ? 'রং প্রকাশ করেছেন:' : 'revealed Trump:'} ${suitName} (${suitObj.symbol})!`);
 
     this.renderHandsAndCounts();
+    this.checkMarriageButton();
   }
 
   onMarriageAnnounced(data) {
-    const { teamId, isBiddingTeam, originalBid, newBid } = data;
+    const { playerId, teamId, isBiddingTeam, targetBid, bonusPoints } = data;
     const isBn = this.currentLanguage === 'bn';
     this.sound.playMarriage();
-    this.hudTargetVal.textContent = newBid;
 
-    const teamName = teamId === 1 
-      ? (isBn ? TEAMS.TEAM_1.nameBn : TEAMS.TEAM_1.nameEn) 
-      : (isBn ? TEAMS.TEAM_2.nameBn : TEAMS.TEAM_2.nameEn);
+    // Target strictly remains the contract bid
+    if (this.gameState && this.gameState.targetBid > 0) {
+      this.hudTargetVal.textContent = this.gameState.targetBid;
+    }
 
-    const message = isBiddingTeam 
-      ? `👑 ${isBn ? 'জোড়া/ম্যারেজ!' : 'Marriage!'} ${teamName} held K & Q! ${isBn ? 'টার্গেট কমল:' : 'Target reduced:'} ${originalBid} ➔ ${newBid}!` 
-      : `👑 ${isBn ? 'জোড়া/ম্যারেজ!' : 'Marriage!'} ${teamName} held K & Q! ${isBn ? 'টার্গেট বাড়ল:' : 'Target increased:'} ${originalBid} ➔ ${newBid}!`;
+    const pName = isBn ? PLAYERS[playerId].nameBn : PLAYERS[playerId].nameEn;
+    const message = isBn
+      ? `👑 জোড়া/ম্যারেজ! ${pName} ট্রাম্পের সাহেব ও বিবি দেখিয়েছেন (+৪ বোনাস পয়েন্ট)!`
+      : `👑 Marriage (Pair)! ${pName} declared King & Queen of Trump (+4 Bonus Points)!`;
 
     this.showToast(message, true);
+    this.showSpeechBubble(playerId, `👑 ${isBn ? '+৪ পয়েন্ট!' : '+4 pts!'}`);
+    this.checkMarriageButton();
   }
 
   onTrickResolved(data) {
     const { winnerId, points } = data;
     const isBn = this.currentLanguage === 'bn';
     this.sound.playTrickWin();
+    this.checkMarriageButton();
 
     if (points > 0) {
       const particle = document.createElement('div');
@@ -1152,10 +1178,11 @@ class TwentyNineApp {
         ? (PLAYERS[bidder].team === 1 ? (isBn ? TEAMS.TEAM_1.nameBn : TEAMS.TEAM_1.nameEn) : (isBn ? TEAMS.TEAM_2.nameBn : TEAMS.TEAM_2.nameEn))
         : (PLAYERS[bidder].team === 1 ? (isBn ? TEAMS.TEAM_2.nameBn : TEAMS.TEAM_2.nameEn) : (isBn ? TEAMS.TEAM_1.nameBn : TEAMS.TEAM_1.nameEn));
 
+      const { marriageBonus } = data;
       this.roundResultBody.innerHTML = `
         <div style="display:flex; flex-direction:column; gap:8px;">
           <div>${isBn ? 'বিডার:' : 'Bidder:'} <strong>${bidderName}</strong></div>
-          <div>${isBn ? 'টার্গেট পয়েন্ট:' : 'Target:'} <strong>${targetBid} pts</strong> | ${isBn ? 'অর্জিত:' : 'Made:'} <strong>${pointsMade} pts</strong></div>
+          <div>${isBn ? 'টার্গেট পয়েন্ট:' : 'Target:'} <strong>${targetBid} pts</strong> | ${isBn ? 'অর্জিত:' : 'Made:'} <strong>${pointsMade} pts</strong>${marriageBonus ? ` (+${marriageBonus} ${isBn ? 'ম্যারেজ' : 'Marriage'})` : ''}</div>
           <div>${isBn ? 'রাউন্ডের ফল:' : 'Round Outcome:'} <strong>${winnerTeamName}</strong> <strong>+${gamePointsDelta}</strong> ${isBn ? 'গেম পয়েন্ট পেল।' : 'Game Point(s).' }</div>
           <div style="margin-top:8px; color:var(--text-primary); font-family:var(--font-mono);">
             ${isBn ? 'মোট স্কোর:' : 'Overall Score:'} ${isBn ? TEAMS.TEAM_1.nameBn : TEAMS.TEAM_1.nameEn}: ${matchScores.team1} | ${isBn ? TEAMS.TEAM_2.nameBn : TEAMS.TEAM_2.nameEn}: ${matchScores.team2}

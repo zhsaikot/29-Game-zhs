@@ -53,15 +53,15 @@ export class AIEngine {
     }
 
     let maxSafeBid = 0;
-    if (points >= 6 || (highCardsBySuit[bestSuit] >= 7 && points >= 5)) {
+    if (points >= 7 || (highCardsBySuit[bestSuit] >= 7 && points >= 6)) {
       maxSafeBid = 21;
-    } else if (points >= 5 || highCardsBySuit[bestSuit] >= 6) {
+    } else if (points >= 6 || highCardsBySuit[bestSuit] >= 6) {
       maxSafeBid = 19;
-    } else if (points >= 4 || highCardsBySuit[bestSuit] >= 5) {
+    } else if (points >= 5 || highCardsBySuit[bestSuit] >= 5) {
       maxSafeBid = 18;
-    } else if (points >= 3 || (points >= 2 && suitCounts[bestSuit] >= 3)) {
+    } else if (points >= 4 && suitCounts[bestSuit] >= 2) {
       maxSafeBid = 17;
-    } else if (points >= 2 || suitCounts[bestSuit] >= 3) {
+    } else if (points >= 3 && suitCounts[bestSuit] >= 3) {
       maxSafeBid = 16;
     }
 
