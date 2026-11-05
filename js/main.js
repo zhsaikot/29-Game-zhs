@@ -178,6 +178,37 @@ class TwentyNineApp {
     this.btnCloseAvatarModal = document.getElementById('btn-close-avatar-modal');
     this.textUploadAvatar = document.getElementById('text-upload-avatar');
 
+    // Widescreen Side Panels DOM
+    this.panelMatchTracker = document.getElementById('panel-match-tracker');
+    this.titleTrackerPanel = document.getElementById('title-tracker-panel');
+    this.labelTrackerTarget = document.getElementById('label-tracker-target');
+    this.trackerTargetValue = document.getElementById('tracker-target-value');
+    this.trackerBidderBadge = document.getElementById('tracker-bidder-badge');
+    this.trackerBidderAvatar = document.getElementById('tracker-bidder-avatar');
+    this.trackerBidderName = document.getElementById('tracker-bidder-name');
+    this.trackerCurrentPoints = document.getElementById('tracker-current-points');
+    this.trackerProgressPercent = document.getElementById('tracker-progress-percent');
+    this.trackerProgressFill = document.getElementById('tracker-progress-fill');
+    this.trackerProgressHelper = document.getElementById('tracker-progress-helper');
+    this.stackTeam1Name = document.getElementById('stack-team1-name');
+    this.stackTeam1Pts = document.getElementById('stack-team1-pts');
+    this.stackTeam1Cards = document.getElementById('stack-team1-cards');
+    this.stackTeam2Name = document.getElementById('stack-team2-name');
+    this.stackTeam2Pts = document.getElementById('stack-team2-pts');
+    this.stackTeam2Cards = document.getElementById('stack-team2-cards');
+
+    this.panelTrumpLastTrick = document.getElementById('panel-trump-last-trick');
+    this.titleTrumpPanel = document.getElementById('title-trump-panel');
+    this.sideTrumpPedestal = document.getElementById('side-trump-pedestal');
+    this.sideTrumpCardSlot = document.getElementById('side-trump-card-slot');
+    this.sideTrumpStatus = document.getElementById('side-trump-status');
+    this.sideTrumpSuitName = document.getElementById('side-trump-suit-name');
+    this.sideTrumpDesc = document.getElementById('side-trump-desc');
+    this.titleLastTrick = document.getElementById('title-last-trick');
+    this.lastTrickWinnerTag = document.getElementById('last-trick-winner-tag');
+    this.lastTrickCardsContainer = document.getElementById('last-trick-cards-container');
+    this.lastTrickEmptyText = document.getElementById('last-trick-empty-text');
+
     this.avatarIconEls = {
       0: document.getElementById('avatar-icon-0'),
       1: document.getElementById('avatar-icon-1'),
@@ -778,6 +809,234 @@ class TwentyNineApp {
     this.showToast(isBn ? `${pName}-এর অবতার আপডেট হয়েছে!` : `${pName}'s avatar updated!`);
   }
 
+  updateWinningTrickCardHighlight() {
+    [this.slotNorth, this.slotWest, this.slotEast, this.slotSouth].forEach(slot => {
+      if (slot) slot.classList.remove('winning-trick-card');
+    });
+
+    if (!this.gameState || !this.gameState.currentTrick || this.gameState.currentTrick.length === 0) {
+      return;
+    }
+
+    let winningPlay = this.gameState.currentTrick[0];
+    let isTrumpWinning = winningPlay.isTrumpPlay;
+
+    for (let i = 1; i < this.gameState.currentTrick.length; i++) {
+      const play = this.gameState.currentTrick[i];
+      const card = play.card;
+      if (play.isTrumpPlay) {
+        if (!isTrumpWinning) {
+          winningPlay = play;
+          isTrumpWinning = true;
+        } else if (card.power > winningPlay.card.power) {
+          winningPlay = play;
+        }
+      } else if (!isTrumpWinning && card.suit === this.gameState.leadSuit) {
+        if (card.power > winningPlay.card.power) {
+          winningPlay = play;
+        }
+      }
+    }
+
+    if (winningPlay) {
+      const slotMap = {
+        0: this.slotSouth,
+        1: this.slotEast,
+        2: this.slotNorth,
+        3: this.slotWest
+      };
+      const winningSlot = slotMap[winningPlay.playerId];
+      if (winningSlot) {
+        winningSlot.classList.add('winning-trick-card');
+      }
+    }
+  }
+
+  updateTargetTrackerWidget() {
+    if (!this.panelMatchTracker) return;
+
+    const isBn = this.currentLanguage === 'bn';
+    const bnDigits = ['০','১','২','৩','৪','৫','৬','৭','৮','৯'];
+    const toBn = num => String(num).replace(/[0-9]/g, d => bnDigits[d]);
+
+    const target = this.gameState ? (this.gameState.targetBid || this.gameState.highestBid || 16) : 16;
+    const highestBidder = this.gameState ? this.gameState.highestBidder : null;
+    const bidderTeam = (highestBidder !== null && typeof highestBidder === 'number' && PLAYERS[highestBidder]) 
+      ? PLAYERS[highestBidder].team 
+      : 1;
+
+    const bidderName = (highestBidder !== null && typeof highestBidder === 'number') 
+      ? this.getPlayerName(highestBidder) 
+      : (isBn ? 'ডাক শুরু হয়নি' : 'No Bid Yet');
+    const bidderAvatar = (highestBidder !== null && typeof highestBidder === 'number')
+      ? (this.playerAvatars[highestBidder] || '🦁')
+      : '🎯';
+
+    if (this.trackerTargetValue) {
+      this.trackerTargetValue.textContent = isBn ? `${toBn(target)} পয়েন্ট` : `${target} pts`;
+    }
+    if (this.trackerBidderName) {
+      this.trackerBidderName.textContent = bidderName;
+    }
+    if (this.trackerBidderAvatar) {
+      if (bidderAvatar.startsWith('data:image') || bidderAvatar.startsWith('http')) {
+        this.trackerBidderAvatar.innerHTML = `<img src="${bidderAvatar}" style="width:16px;height:16px;border-radius:50%;object-fit:cover;" />`;
+      } else {
+        this.trackerBidderAvatar.textContent = bidderAvatar;
+      }
+    }
+
+    const team1Pts = (this.gameState && this.gameState.teamPoints && this.gameState.teamPoints.team1) || 0;
+    const team2Pts = (this.gameState && this.gameState.teamPoints && this.gameState.teamPoints.team2) || 0;
+    const biddingTeamPts = bidderTeam === 1 ? team1Pts : team2Pts;
+
+    const percent = Math.min(100, Math.round((biddingTeamPts / target) * 100));
+    if (this.trackerProgressFill) {
+      this.trackerProgressFill.style.width = `${percent}%`;
+    }
+    if (this.trackerCurrentPoints) {
+      this.trackerCurrentPoints.textContent = isBn 
+        ? `${toBn(biddingTeamPts)} / ${toBn(target)} পয়েন্ট` 
+        : `${biddingTeamPts} / ${target} pts`;
+    }
+    if (this.trackerProgressPercent) {
+      this.trackerProgressPercent.textContent = isBn ? `${toBn(percent)}%` : `${percent}%`;
+    }
+
+    if (this.trackerProgressHelper) {
+      const remaining = Math.max(0, target - biddingTeamPts);
+      if (remaining === 0) {
+        this.trackerProgressHelper.textContent = isBn ? 'লক্ষ্য অর্জিত হয়েছে! 🎉' : 'Target Achieved! 🎉';
+        this.trackerProgressHelper.style.color = 'var(--accent-gold)';
+      } else {
+        this.trackerProgressHelper.textContent = isBn 
+          ? `জিততে আরও ${toBn(remaining)} পয়েন্ট প্রয়োজন` 
+          : `${remaining} more pts needed`;
+        this.trackerProgressHelper.style.color = 'var(--text-secondary)';
+      }
+    }
+
+    if (this.stackTeam1Pts) {
+      this.stackTeam1Pts.textContent = isBn ? `${toBn(team1Pts)} পয়েন্ট` : `${team1Pts} pts`;
+    }
+    if (this.stackTeam2Pts) {
+      this.stackTeam2Pts.textContent = isBn ? `${toBn(team2Pts)} পয়েন্ট` : `${team2Pts} pts`;
+    }
+
+    const tricks1 = (this.gameState && this.gameState.tricksWon && this.gameState.tricksWon.team1) || 0;
+    const tricks2 = (this.gameState && this.gameState.tricksWon && this.gameState.tricksWon.team2) || 0;
+
+    if (this.stackTeam1Cards) {
+      this.renderMiniTrickStack(this.stackTeam1Cards, tricks1);
+    }
+    if (this.stackTeam2Cards) {
+      this.renderMiniTrickStack(this.stackTeam2Cards, tricks2);
+    }
+  }
+
+  renderMiniTrickStack(container, count) {
+    container.innerHTML = '';
+    if (count === 0) {
+      container.innerHTML = `<span class="stack-empty-label">${this.currentLanguage === 'bn' ? '০টি ট্রিক' : '0 tricks'}</span>`;
+      return;
+    }
+    for (let i = 0; i < count; i++) {
+      const cardStub = document.createElement('div');
+      cardStub.className = 'mini-captured-card';
+      cardStub.style.left = `${i * 10}px`;
+      cardStub.style.zIndex = i + 1;
+      container.appendChild(cardStub);
+    }
+    const countLabel = document.createElement('span');
+    countLabel.className = 'stack-count-label';
+    countLabel.style.marginLeft = `${(count - 1) * 10 + 20}px`;
+    countLabel.textContent = this.currentLanguage === 'bn' ? `${count}টি ট্রিক` : `${count} tricks`;
+    container.appendChild(countLabel);
+  }
+
+  updateTrumpPedestalWidget() {
+    if (!this.sideTrumpPedestal) return;
+
+    const isBn = this.currentLanguage === 'bn';
+    const trumpRevealed = this.gameState && this.gameState.trumpRevealed;
+    const trumpSuit = this.gameState && this.gameState.trumpSuit;
+
+    if (trumpRevealed && trumpSuit) {
+      const suitObj = SUITS[trumpSuit] || { symbol: '♠', color: 'black', nameEn: 'Spades', nameBn: 'ইস্কাপন' };
+      const isRed = suitObj.color === 'red';
+      const suitName = isBn ? suitObj.nameBn : suitObj.nameEn;
+
+      if (this.sideTrumpStatus) {
+        this.sideTrumpStatus.textContent = isBn ? 'প্রকাশিত' : 'REVEALED';
+        this.sideTrumpStatus.className = 'trump-pedestal-status status-revealed';
+      }
+      if (this.sideTrumpSuitName) {
+        this.sideTrumpSuitName.textContent = `${suitName} ${suitObj.symbol}`;
+        this.sideTrumpSuitName.style.color = isRed ? '#F87171' : '#A8C7FA';
+      }
+      if (this.sideTrumpDesc) {
+        this.sideTrumpDesc.textContent = isBn ? 'বর্তমান ট্রাম্প সুট' : 'Active Trump Suit';
+      }
+      if (this.sideTrumpCardSlot) {
+        this.sideTrumpCardSlot.innerHTML = `
+          <div class="mini-pedestal-card revealed ${isRed ? 'suit-red' : 'suit-black'}">
+            <span class="pedestal-card-symbol">${suitObj.symbol}</span>
+            <span class="pedestal-card-rank">A</span>
+          </div>
+        `;
+      }
+    } else {
+      if (this.sideTrumpStatus) {
+        this.sideTrumpStatus.textContent = isBn ? 'গোপন' : 'HIDDEN';
+        this.sideTrumpStatus.className = 'trump-pedestal-status status-hidden';
+      }
+      if (this.sideTrumpSuitName) {
+        this.sideTrumpSuitName.textContent = isBn ? 'ট্রাম্প গোপন' : 'Trump Hidden';
+        this.sideTrumpSuitName.style.color = 'var(--text-primary)';
+      }
+      if (this.sideTrumpDesc) {
+        this.sideTrumpDesc.textContent = isBn ? 'ডাককারী বেছে নিয়েছেন' : 'Chosen by Bidder';
+      }
+      if (this.sideTrumpCardSlot) {
+        this.sideTrumpCardSlot.innerHTML = `
+          <div class="mini-pedestal-card hidden-card">
+            <span class="pedestal-card-lock">🔒</span>
+          </div>
+        `;
+      }
+    }
+  }
+
+  updateLastTrickWidget(trickData) {
+    if (!this.lastTrickCardsContainer) return;
+    if (!trickData || !trickData.cards || trickData.cards.length === 0) {
+      this.lastTrickCardsContainer.innerHTML = `<span class="last-trick-placeholder">${this.currentLanguage === 'bn' ? 'এখনো কোনো ট্রিক সম্পন্ন হয়নি' : 'No completed tricks yet'}</span>`;
+      if (this.lastTrickWinnerTag) this.lastTrickWinnerTag.textContent = '';
+      return;
+    }
+
+    const isBn = this.currentLanguage === 'bn';
+    const winnerName = this.getPlayerName(trickData.winner);
+    if (this.lastTrickWinnerTag) {
+      this.lastTrickWinnerTag.textContent = isBn 
+        ? `${winnerName} (+${trickData.points} পয়েন্ট)` 
+        : `${winnerName} (+${trickData.points} pts)`;
+    }
+
+    this.lastTrickCardsContainer.innerHTML = trickData.cards.map(play => {
+      const card = play.card;
+      const isWinner = play.playerId === trickData.winner;
+      const isRed = card.suit === 'HEARTS' || card.suit === 'DIAMONDS';
+      const suitSymbol = SUITS[card.suit] ? SUITS[card.suit].symbol : '♠';
+      return `
+        <div class="last-trick-mini-badge ${isWinner ? 'winner-badge' : ''} ${isRed ? 'suit-red' : 'suit-black'}" title="${card.id} (${this.getPlayerName(play.playerId)})">
+          <span class="badge-rank">${card.rank}</span>
+          <span class="badge-suit">${suitSymbol}</span>
+        </div>
+      `;
+    }).join('');
+  }
+
   updateLanguageUI() {
     const isBn = this.currentLanguage === 'bn';
     this.langIndicator.textContent = isBn ? 'বাং' : 'EN';
@@ -1077,6 +1336,9 @@ class TwentyNineApp {
     this.updateScoreLedger();
     this.renderHandsAndCounts(false);
     this.updatePhaseUI();
+    this.updateTargetTrackerWidget();
+    this.updateTrumpPedestalWidget();
+    this.updateWinningTrickCardHighlight();
 
     // Target & Collected Points
     if (this.gameState.targetBid > 0 || this.gameState.highestBid > 0) {
@@ -1103,19 +1365,14 @@ class TwentyNineApp {
       const suitObj = SUITS[this.gameState.trumpSuit];
       const suitName = isBn ? suitObj.nameBn : suitObj.nameEn;
       const displayCard = this.gameState.lockedTrumpCard || { rank: '?', suit: this.gameState.trumpSuit, power: 0, points: 0 };
-      this.hudTrumpSlot.className = 'trump-indicator-slot revealed has-card';
+      this.hudTrumpSlot.className = 'trump-indicator-slot revealed';
       this.hudTrumpSlot.innerHTML = `
         <div class="hud-trump-badge-wrap">
           <span class="hud-trump-badge">${isBn ? 'ট্রাম্প' : 'TRUMP'}</span>
           <span class="hud-trump-title">${suitName}</span>
         </div>
-        <div class="hud-hanging-trump-card" title="${suitName}">
-          <div class="hud-hanging-connector"></div>
-          <div class="hud-hanging-card-inner">
-            ${CardRenderer.renderFaceSVG(displayCard)}
-          </div>
-        </div>
       `;
+      this.updateTrumpPedestalWidget();
     } else if (this.gameState.trumpSuit) {
       const bidder = this.gameState.highestBidder;
       const labelText = (bidder === 0)
@@ -1233,7 +1490,9 @@ class TwentyNineApp {
     this.slotWest.innerHTML = '';
     this.slotEast.innerHTML = '';
     this.slotSouth.innerHTML = '';
+    [this.slotNorth, this.slotWest, this.slotEast, this.slotSouth].forEach(s => s && s.classList.remove('winning-trick-card'));
     this.trickCurrentPoints.textContent = '0 pts';
+    this.updateTargetTrackerWidget();
     this.trickRoundLabel.textContent = this.currentLanguage === 'bn' ? 'হাত ১ / ৮ (Trick 1/8)' : 'Trick 1 / 8';
     this.renderHudTrumpHidden();
     this.hudTargetVal.textContent = '--';
@@ -1316,10 +1575,10 @@ class TwentyNineApp {
 
     // Available width for fan without horizontal overflow
     const maxAvailableWidth = Math.max(containerWidth - cardWidth - 12, 100);
-    const defaultSpread = numCards <= 4 ? 68 : 40;
+    const defaultSpread = numCards <= 4 ? 76 : Math.max(54, Math.floor(cardWidth - 20));
     const totalRequired = Math.max(numCards - 1, 1) * defaultSpread;
     const spreadX = totalRequired > maxAvailableWidth
-      ? Math.max(14, Math.floor(maxAvailableWidth / Math.max(numCards - 1, 1)))
+      ? Math.max(38, Math.floor(maxAvailableWidth / Math.max(numCards - 1, 1)))
       : defaultSpread;
 
     const spreadRatio = defaultSpread > 0 ? spreadX / defaultSpread : 1;
@@ -1550,6 +1809,7 @@ class TwentyNineApp {
       this.showSpeechBubble(playerId, `${bidAmount}`);
       this.showToast(`${pName}: ${bidAmount}`);
       this.sound.playButtonClick();
+      this.updateTargetTrackerWidget();
     }
   }
 
@@ -1747,6 +2007,8 @@ class TwentyNineApp {
     const currentPoints = trick.reduce((acc, p) => acc + p.card.points, 0);
     this.trickCurrentPoints.textContent = `${currentPoints} pts`;
 
+    this.updateWinningTrickCardHighlight();
+    this.updateTargetTrackerWidget();
     this.renderHandsAndCounts();
   }
 
@@ -1764,20 +2026,15 @@ class TwentyNineApp {
       ? trumpCard
       : { suit: trumpSuit, rank: 'A', points: 1, power: 6, id: `trump_rev_${Date.now()}` };
 
-    this.hudTrumpSlot.className = 'trump-indicator-slot revealed has-hanging-card trump-reveal-pulse';
+    this.hudTrumpSlot.className = 'trump-indicator-slot revealed trump-reveal-pulse';
     this.hudTrumpSlot.innerHTML = `
       <span class="hud-trump-icon-symbol" style="color: ${suitSymbolColor};">${suitObj.symbol}</span>
       <div class="hud-trump-meta">
         <span class="hud-trump-badge">${isBn ? 'ট্রাম্প' : 'TRUMP'}</span>
         <span class="hud-trump-title">${suitName}</span>
       </div>
-      <div class="hud-hanging-trump-card" title="${suitName}">
-        <div class="hud-hanging-connector"></div>
-        <div class="hud-hanging-card-inner">
-          ${CardRenderer.renderFaceSVG(displayCard)}
-        </div>
-      </div>
     `;
+    this.updateTrumpPedestalWidget();
 
     const pName = this.getPlayerName(playerId);
     this.showSpeechBubble(playerId, `🎺 ${suitName}!`);
@@ -1826,11 +2083,15 @@ class TwentyNineApp {
   }
 
   onTrickResolved(data) {
-    const { winnerId, points } = data;
+    const { winnerId, points, cards } = data;
     const isBn = this.currentLanguage === 'bn';
     this.sound.playTrickWin();
     this.checkMarriageButton();
     this.updateHudCollectedPoints();
+
+    this.lastCompletedTrick = { winner: winnerId, points: points, cards: cards || [] };
+    this.updateLastTrickWidget(this.lastCompletedTrick);
+    this.updateTargetTrackerWidget();
 
     if (this.hudCollectedSlot && points > 0) {
       this.hudCollectedSlot.classList.remove('pts-pulse');
@@ -1942,5 +2203,6 @@ class TwentyNineApp {
 }
 
 window.addEventListener('DOMContentLoaded', () => {
+  window.CardRenderer = CardRenderer;
   window.gameApp = window.game = new TwentyNineApp();
 });

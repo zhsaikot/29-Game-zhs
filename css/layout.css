@@ -382,7 +382,7 @@ body {
   flex: 1;
   display: grid;
   grid-template-rows: auto 1fr auto;
-  grid-template-columns: 1fr min(760px, 62vw) 1fr;
+  grid-template-columns: minmax(230px, 1fr) min(760px, 58vw) minmax(230px, 1fr);
   grid-template-areas:
     "top-left     player-north   top-right"
     "player-west  trick-arena    player-east"
@@ -391,14 +391,61 @@ body {
   margin: 6px 12px max(6px, env(safe-area-inset-bottom));
   border-radius: 28px;
   background: 
+    radial-gradient(circle at 50% 50%, rgba(56, 189, 248, 0.07) 0%, transparent 65%),
     radial-gradient(ellipse at 50% 50%, rgba(20, 48, 82, 0.42) 0%, rgba(9, 15, 26, 0.96) 75%),
     radial-gradient(rgba(245, 158, 11, 0.04) 1px, transparent 0);
-  background-size: 100% 100%, 18px 18px;
+  background-size: 100% 100%, 100% 100%, 18px 18px;
   border: 1.5px solid rgba(245, 158, 11, 0.25);
   box-shadow: inset 0 0 70px rgba(0, 0, 0, 0.8), 0 8px 28px rgba(0, 0, 0, 0.65);
   overflow: hidden;
   z-index: 10;
   min-height: 0;
+}
+
+/* Widescreen Flanks containing Player Pod + Glass Side Panel */
+.table-flank {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  z-index: 20;
+}
+
+.flank-left {
+  grid-area: player-west;
+  justify-self: end;
+  margin-right: clamp(10px, 1.8vw, 24px);
+}
+
+.flank-right {
+  grid-area: player-east;
+  justify-self: start;
+  margin-left: clamp(10px, 1.8vw, 24px);
+}
+
+.pod-west, .pod-east {
+  width: max-content;
+  min-width: 190px;
+  max-width: 220px;
+  padding: 12px 18px;
+  border-radius: 20px;
+  box-sizing: border-box;
+}
+
+.pod-west {
+  grid-area: player-west;
+}
+
+.pod-east {
+  grid-area: player-east;
+}
+
+.pod-north {
+  width: max-content;
+  min-width: 190px;
+  padding: 8px 18px;
+  border-radius: 20px;
 }
 
 /* Player Pods / Luxury Glassmorphic Badges */
@@ -776,10 +823,12 @@ body {
   align-items: center;
   justify-content: center;
   margin: auto;
-  width: min(760px, 62vw);
+  width: min(760px, 58vw);
   height: min(350px, 40vh);
   border-radius: 48px;
-  background: radial-gradient(ellipse at center, rgba(24, 38, 59, 0.72) 0%, rgba(11, 16, 26, 0.95) 100%);
+  background: 
+    radial-gradient(circle at 50% 50%, rgba(56, 189, 248, 0.07) 0%, transparent 65%),
+    radial-gradient(ellipse at center, rgba(24, 38, 59, 0.72) 0%, rgba(11, 16, 26, 0.95) 100%);
   border: 1px solid rgba(168, 199, 250, 0.14);
   box-shadow: inset 0 0 60px rgba(0, 0, 0, 0.6), 0 16px 40px rgba(0, 0, 0, 0.4);
 }
@@ -790,6 +839,15 @@ body {
   inset: 6px;
   border-radius: 42px;
   border: 1px dashed rgba(245, 158, 11, 0.2);
+  pointer-events: none;
+}
+
+.trick-arena::after {
+  content: '';
+  position: absolute;
+  inset: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.03);
+  border-radius: 38px;
   pointer-events: none;
 }
 
@@ -838,35 +896,61 @@ body {
   z-index: 10;
 }
 
-.slot-south {
-  bottom: clamp(4px, 1.5vh, 12px);
+.trick-slot {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 10;
+  transition: transform 0.25s cubic-bezier(0.2, 0, 0, 1);
 }
 
 .slot-north {
-  top: clamp(4px, 1.5vh, 12px);
+  transform: translate(-50%, -50%) translateY(-48px);
+}
+
+.slot-south {
+  transform: translate(-50%, -50%) translateY(48px);
 }
 
 .slot-west {
-  left: clamp(4px, 2vw, 24px);
+  transform: translate(-50%, -50%) translateX(-75px);
 }
 
 .slot-east {
-  right: clamp(4px, 2vw, 24px);
+  transform: translate(-50%, -50%) translateX(75px);
 }
 
+/* Subtle Golden Outer Glow on Winning Card in Trick */
+.trick-slot.winning-trick-card .playing-card,
+.playing-card.winning-trick-card {
+  box-shadow: 0 0 20px rgba(250, 204, 21, 0.55), 0 0 8px rgba(250, 204, 21, 0.8), 0 4px 12px rgba(0, 0, 0, 0.6) !important;
+  border: 1.5px solid rgba(250, 204, 21, 0.85) !important;
+  z-index: 15 !important;
+}
+
+/* Reposition Trick Pill to Top-Center Border Rim */
 .trick-center-info {
+  position: absolute;
+  top: -16px;
+  left: 50%;
+  transform: translateX(-50%);
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
-  gap: 2px;
-  background: linear-gradient(135deg, rgba(26, 36, 52, 0.96), rgba(15, 23, 42, 0.98));
-  border: 1.2px solid rgba(245, 158, 11, 0.35);
-  padding: clamp(4px, 1vh, 8px) clamp(8px, 2vw, 18px);
-  border-radius: 16px;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.1);
-  z-index: 15;
+  gap: 8px;
+  background: linear-gradient(135deg, rgba(22, 32, 48, 0.95), rgba(15, 23, 42, 0.98));
+  border: 1.2px solid rgba(245, 158, 11, 0.4);
+  padding: 4px 16px;
+  border-radius: 999px;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  z-index: 12;
+  white-space: nowrap;
 }
 
 .trick-number-label {
@@ -1528,6 +1612,409 @@ body.trump-selection-active #player-hand-container .card {
   transform: translateY(-1px);
 }
 
+
+/* ==========================================================================
+   Widescreen M3 Glass Side-Panels (Left: Tracker, Right: Trump & History)
+   ========================================================================== */
+.widescreen-side-panel {
+  width: 220px;
+  background: rgba(22, 30, 46, 0.65);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
+  box-sizing: border-box;
+  color: var(--text-primary);
+  user-select: none;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+.widescreen-side-panel:hover {
+  border-color: rgba(168, 199, 250, 0.25);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.55);
+}
+
+.side-panel-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.side-panel-icon {
+  font-size: 1rem;
+}
+
+.side-panel-title {
+  font-size: 0.8rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--accent-gold);
+}
+
+/* Left Panel: Target Tracker */
+.tracker-target-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.tracker-target-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.tracker-target-label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+}
+
+.tracker-target-val {
+  font-family: var(--font-mono);
+  font-size: 1.1rem;
+  font-weight: 900;
+  color: #FFFFFF;
+}
+
+.tracker-bidder-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  padding: 3px 8px;
+  max-width: 110px;
+}
+
+.tracker-bidder-avatar {
+  font-size: 0.85rem;
+}
+
+.tracker-bidder-name {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #A8C7FA;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tracker-progress-section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.tracker-progress-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+
+.tracker-progress-points {
+  font-family: var(--font-mono);
+  color: #FFFFFF;
+}
+
+.tracker-progress-track {
+  width: 100%;
+  height: 8px;
+  background: rgba(15, 23, 42, 0.8);
+  border-radius: 999px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.tracker-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #3B82F6 0%, #10B981 100%);
+  border-radius: 999px;
+  transition: width 0.4s cubic-bezier(0.2, 0, 0, 1);
+}
+
+.tracker-progress-helper {
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-align: right;
+}
+
+.tracker-stacks-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 6px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.tracker-stack-team {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.stack-team-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.stack-team-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+}
+
+.dot-team1 {
+  background: #3B82F6;
+  box-shadow: 0 0 6px #3B82F6;
+}
+
+.dot-team2 {
+  background: #EF4444;
+  box-shadow: 0 0 6px #EF4444;
+}
+
+.stack-team-name {
+  color: var(--text-secondary);
+}
+
+.stack-team-pts {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-weight: 800;
+  color: #FFFFFF;
+}
+
+.stack-cards-visual {
+  position: relative;
+  height: 18px;
+  display: flex;
+  align-items: center;
+}
+
+.mini-captured-card {
+  position: absolute;
+  top: 0;
+  width: 14px;
+  height: 18px;
+  border-radius: 3px;
+  background: linear-gradient(135deg, #1E3A8A, #0F172A);
+  border: 0.8px solid rgba(168, 199, 250, 0.4);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+}
+
+.stack-empty-label {
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.stack-count-label {
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+/* Right Panel: Trump Pedestal & Last Trick */
+.trump-pedestal-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  padding: 10px;
+}
+
+.trump-pedestal-mini-card {
+  width: 38px;
+  height: 52px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mini-pedestal-card {
+  width: 100%;
+  height: 100%;
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+}
+
+.mini-pedestal-card.hidden-card {
+  background: linear-gradient(135deg, #1E293B, #0F172A);
+  border: 1.2px dashed rgba(245, 158, 11, 0.4);
+}
+
+.pedestal-card-lock {
+  font-size: 1.1rem;
+}
+
+.mini-pedestal-card.revealed {
+  background: #FFFFFF;
+  border: 1.2px solid #0F172A;
+  box-shadow: 0 0 16px rgba(245, 158, 11, 0.45);
+}
+
+.mini-pedestal-card.revealed.suit-red {
+  color: #DC2626;
+}
+
+.mini-pedestal-card.revealed.suit-black {
+  color: #0F172A;
+}
+
+.pedestal-card-symbol {
+  font-size: 1.2rem;
+  line-height: 1;
+}
+
+.pedestal-card-rank {
+  font-size: 0.65rem;
+  font-weight: 900;
+}
+
+.trump-pedestal-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.trump-pedestal-status {
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+}
+
+.trump-pedestal-status.status-hidden {
+  color: #FBBF24;
+}
+
+.trump-pedestal-status.status-revealed {
+  color: #34D399;
+}
+
+.trump-pedestal-suit {
+  font-size: 0.88rem;
+  font-weight: 800;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.trump-pedestal-desc {
+  font-size: 0.65rem;
+  color: var(--text-secondary);
+}
+
+/* Last Trick Mini-Widget */
+.last-trick-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.last-trick-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.last-trick-title {
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.last-trick-winner {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--accent-gold);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 120px;
+}
+
+.last-trick-cards-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 38px;
+}
+
+.last-trick-placeholder {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.last-trick-mini-badge {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #FFFFFF;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  border-radius: 6px;
+  padding: 3px 2px;
+  min-width: 0;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  transition: transform 0.2s ease;
+}
+
+.last-trick-mini-badge.winner-badge {
+  border: 1.5px solid var(--accent-gold);
+  box-shadow: 0 0 10px rgba(245, 158, 11, 0.5);
+  transform: translateY(-2px);
+}
+
+.last-trick-mini-badge.suit-red {
+  color: #DC2626;
+}
+
+.last-trick-mini-badge.suit-black {
+  color: #0F172A;
+}
+
+.badge-rank {
+  font-size: 0.72rem;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.badge-suit {
+  font-size: 0.78rem;
+  line-height: 1;
+}
+
 /* ==========================================================================
    Responsive Breakpoints
    ========================================================================== */
@@ -1536,6 +2023,14 @@ body.trump-selection-active #player-hand-container .card {
 @media (max-width: 1023px) {
   .brand-subtext {
     display: none;
+  }
+
+  .widescreen-side-panel {
+    display: none !important;
+  }
+
+  .table-flank {
+    display: contents;
   }
 
   .game-table-arena {
@@ -1634,9 +2129,15 @@ body.trump-selection-active #player-hand-container .card {
   }
 
   .pod-north, .pod-west, .pod-east {
+    min-width: 0 !important;
     padding: 4px 6px;
     border-radius: 14px;
     gap: 4px;
+  }
+
+  .pod-west, .pod-east {
+    max-width: 66px !important;
+    width: auto !important;
   }
 
   /* Condense West and East side card previews on mobile to prevent squishing the center trick table */

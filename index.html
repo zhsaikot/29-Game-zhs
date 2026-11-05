@@ -127,19 +127,67 @@
       <div class="north-cards-preview" id="north-card-stubs"></div>
     </div>
 
-    <!-- West: Opponent Marcus -->
-    <div class="player-pod pod-west" id="pod-west">
-      <div class="player-avatar-wrap" data-player-id="3" title="Click to Change Avatar">
-        <span class="avatar-content" id="avatar-icon-3">🐺</span>
-        <span class="player-avatar-edit-badge">✏️</span>
-        <span class="bidder-crown-badge" id="crown-west" style="display:none;">👑</span>
+    <!-- West Flank: Marcus + Match & Target Tracker -->
+    <div class="table-flank flank-left">
+      <div class="player-pod pod-west" id="pod-west">
+        <div class="player-avatar-wrap" data-player-id="3" title="Click to Change Avatar">
+          <span class="avatar-content" id="avatar-icon-3">🐺</span>
+          <span class="player-avatar-edit-badge">✏️</span>
+          <span class="bidder-crown-badge" id="crown-west" style="display:none;">👑</span>
+        </div>
+        <div class="player-meta">
+          <span class="player-name" id="name-west">Marcus (West)</span>
+          <span class="player-status-tag" id="status-west">Waiting</span>
+          <span class="player-card-count" id="count-west">4 cards</span>
+        </div>
+        <div class="west-cards-preview" id="west-card-stubs"></div>
       </div>
-      <div class="player-meta">
-        <span class="player-name" id="name-west">Marcus (West)</span>
-        <span class="player-status-tag" id="status-west">Waiting</span>
-        <span class="player-card-count" id="count-west">4 cards</span>
-      </div>
-      <div class="west-cards-preview" id="west-card-stubs"></div>
+
+      <!-- Left Side Panel (Widescreen): Match & Target Tracker -->
+      <aside class="widescreen-side-panel side-panel-left" id="panel-match-tracker" aria-label="Match and Target Tracker">
+        <div class="side-panel-header">
+          <span class="side-panel-icon">🎯</span>
+          <span class="side-panel-title" id="title-tracker-panel">Target Tracker</span>
+        </div>
+        <div class="tracker-target-row">
+          <div class="tracker-target-info">
+            <span class="tracker-target-label" id="label-tracker-target">Target Bid</span>
+            <span class="tracker-target-val" id="tracker-target-value">16 pts</span>
+          </div>
+          <div class="tracker-bidder-pill" id="tracker-bidder-badge">
+            <span class="tracker-bidder-avatar" id="tracker-bidder-avatar">🦁</span>
+            <span class="tracker-bidder-name" id="tracker-bidder-name">Saikot</span>
+          </div>
+        </div>
+        <div class="tracker-progress-section">
+          <div class="tracker-progress-labels">
+            <span class="tracker-progress-points" id="tracker-current-points">0 / 16 pts</span>
+            <span class="tracker-progress-percent" id="tracker-progress-percent">0%</span>
+          </div>
+          <div class="tracker-progress-track">
+            <div class="tracker-progress-fill" id="tracker-progress-fill" style="width: 0%;"></div>
+          </div>
+          <div class="tracker-progress-helper" id="tracker-progress-helper">16 pts needed to win</div>
+        </div>
+        <div class="tracker-stacks-section">
+          <div class="tracker-stack-team team-us">
+            <div class="stack-team-header">
+              <span class="stack-team-dot dot-team1"></span>
+              <span class="stack-team-name" id="stack-team1-name">Us</span>
+              <span class="stack-team-pts" id="stack-team1-pts">0 pts</span>
+            </div>
+            <div class="stack-cards-visual" id="stack-team1-cards"></div>
+          </div>
+          <div class="tracker-stack-team team-them">
+            <div class="stack-team-header">
+              <span class="stack-team-dot dot-team2"></span>
+              <span class="stack-team-name" id="stack-team2-name">Them</span>
+              <span class="stack-team-pts" id="stack-team2-pts">0 pts</span>
+            </div>
+            <div class="stack-cards-visual" id="stack-team2-cards"></div>
+          </div>
+        </div>
+      </aside>
     </div>
 
     <!-- Center Trick Arena -->
@@ -194,19 +242,50 @@
       </div>
     </div>
 
-    <!-- East: Opponent Sophia -->
-    <div class="player-pod pod-east" id="pod-east">
-      <div class="player-avatar-wrap" data-player-id="1" title="Click to Change Avatar">
-        <span class="avatar-content" id="avatar-icon-1">🦊</span>
-        <span class="player-avatar-edit-badge">✏️</span>
-        <span class="bidder-crown-badge" id="crown-east" style="display:none;">👑</span>
+    <!-- East Flank: Sophia + Trump Pedestal & Last Trick -->
+    <div class="table-flank flank-right">
+      <div class="player-pod pod-east" id="pod-east">
+        <div class="player-avatar-wrap" data-player-id="1" title="Click to Change Avatar">
+          <span class="avatar-content" id="avatar-icon-1">🦊</span>
+          <span class="player-avatar-edit-badge">✏️</span>
+          <span class="bidder-crown-badge" id="crown-east" style="display:none;">👑</span>
+        </div>
+        <div class="player-meta">
+          <span class="player-name" id="name-east">Sophia (East)</span>
+          <span class="player-status-tag" id="status-east">Waiting</span>
+          <span class="player-card-count" id="count-east">4 cards</span>
+        </div>
+        <div class="east-cards-preview" id="east-card-stubs"></div>
       </div>
-      <div class="player-meta">
-        <span class="player-name" id="name-east">Sophia (East)</span>
-        <span class="player-status-tag" id="status-east">Waiting</span>
-        <span class="player-card-count" id="count-east">4 cards</span>
-      </div>
-      <div class="east-cards-preview" id="east-card-stubs"></div>
+
+      <!-- Right Side Panel (Widescreen): Trump Pedestal & Last Trick -->
+      <aside class="widescreen-side-panel side-panel-right" id="panel-trump-last-trick" aria-label="Trump Pedestal and Last Trick">
+        <div class="side-panel-header">
+          <span class="side-panel-icon">👑</span>
+          <span class="side-panel-title" id="title-trump-panel">Trump & History</span>
+        </div>
+        <div class="trump-pedestal-card" id="side-trump-pedestal">
+          <div class="trump-pedestal-mini-card" id="side-trump-card-slot">
+            <div class="mini-pedestal-card hidden-card">
+              <span class="pedestal-card-lock">🔒</span>
+            </div>
+          </div>
+          <div class="trump-pedestal-info">
+            <span class="trump-pedestal-status status-hidden" id="side-trump-status">HIDDEN</span>
+            <span class="trump-pedestal-suit" id="side-trump-suit-name">Trump Secret</span>
+            <span class="trump-pedestal-desc" id="side-trump-desc">Chosen by Bidder</span>
+          </div>
+        </div>
+        <div class="last-trick-section">
+          <div class="last-trick-header">
+            <span class="last-trick-title" id="title-last-trick">Last Trick</span>
+            <span class="last-trick-winner" id="last-trick-winner-tag">None yet</span>
+          </div>
+          <div class="last-trick-cards-row" id="last-trick-cards-container">
+            <span class="last-trick-placeholder" id="last-trick-empty-text">No completed tricks yet</span>
+          </div>
+        </div>
+      </aside>
     </div>
 
     <!-- South: Human Player Saikot -->

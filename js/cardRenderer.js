@@ -305,7 +305,7 @@ export class CardRenderer {
         <rect x="4.5" y="4.5" width="91" height="135" rx="9" fill="none" stroke="${colorHex}" stroke-width="0.8" stroke-opacity="0.3"/>
 
         <!-- Top-Left Corner Index (Bold Rank + Crisp Suit Pip) -->
-        <g class="corner-index corner-top" transform="translate(10.5, 8)">
+        <g class="corner-index corner-top card-corner top-left" transform="translate(8, 6)">
           <text x="0" y="14" font-family="'Plus Jakarta Sans', system-ui, sans-serif" font-size="15" font-weight="900" fill="${colorHex}" text-anchor="middle">${rankObj.id}</text>
           <g transform="translate(0, 22) scale(0.12) translate(-50, -50)">
             <path d="${suitPath}" fill="${colorHex}"/>

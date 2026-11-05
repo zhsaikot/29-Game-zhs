@@ -217,3 +217,9 @@
 .real-card-frame {
   stroke-linejoin: round;
 }
+
+
+/* Corner Index Tightening for Hand Fan Clarity */
+.card-corner.top-left {
+  transform: translate(8px, 6px);
+}
