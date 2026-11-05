@@ -56,24 +56,48 @@
   --ease-smooth: cubic-bezier(0.2, 0.0, 0, 1.0);
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
 
-  /* Card Dimensions */
-  --card-width: 96px;
-  --card-height: 138px;
-  --card-radius: 12px;
+  /* Card Dimensions - Mobile First Base (< 480px) */
+  --card-width: 62px;
+  --card-height: 89px;
+  --card-radius: 8px;
+}
+
+@media (min-width: 480px) {
+  :root {
+    --card-width: 76px;
+    --card-height: 109px;
+    --card-radius: 9px;
+  }
 }
 
 @media (min-width: 768px) {
   :root {
-    --card-width: 108px;
-    --card-height: 156px;
-    --card-radius: 14px;
+    --card-width: 96px;
+    --card-height: 138px;
+    --card-radius: 12px;
   }
 }
 
-@media (min-width: 1200px) {
+@media (min-width: 1024px) {
+  :root {
+    --card-width: 108px;
+    --card-height: 156px;
+    --card-radius: 13px;
+  }
+}
+
+@media (min-width: 1360px) {
   :root {
     --card-width: 118px;
     --card-height: 170px;
     --card-radius: 14px;
+  }
+}
+
+@media (max-height: 520px) and (orientation: landscape) {
+  :root {
+    --card-width: 52px;
+    --card-height: 75px;
+    --card-radius: 6px;
   }
 }

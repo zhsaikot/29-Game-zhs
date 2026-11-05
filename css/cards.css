@@ -7,22 +7,22 @@
   display: flex;
   align-items: flex-end;
   justify-content: center;
-  height: calc(var(--card-height) + 36px);
+  height: calc(var(--card-height) + clamp(18px, 3vh, 32px));
   width: 100%;
   max-width: 900px;
   perspective: 1200px;
-  padding-bottom: 14px;
-  margin-top: 6px;
+  padding-bottom: clamp(6px, 1.5vh, 12px);
+  margin-top: 2px;
 }
 
-/* Playing Card Base Structure - Smooth 4px Glide (Preserving Natural Stacking Order) */
+/* Playing Card Base Structure - Smooth Glide (Preserving Natural Stacking Order) */
 .playing-card {
   --card-x: 0px;
   --card-y: 0px;
   --card-rot: 0deg;
 
   position: absolute;
-  bottom: 12px;
+  bottom: clamp(4px, 1vh, 10px);
   width: var(--card-width);
   height: var(--card-height);
   border-radius: var(--card-radius);
@@ -30,9 +30,9 @@
   perspective: 1000px;
   transform-style: preserve-3d;
   
-  /* Natural fan position with gentle 4px glide transition */
+  /* Natural fan position with gentle glide transition */
   transform: translateX(var(--card-x)) translateY(var(--card-y)) rotate(var(--card-rot));
-  transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.25s ease, filter 0.25s ease;
+  transition: transform 0.28s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.25s ease, filter 0.25s ease;
   will-change: transform;
   
   user-select: none;
@@ -79,10 +79,18 @@
   display: block;
 }
 
-/* Card Hover in Hand: Gently glides 4px straight upwards without changing layer order */
-.hand-container .playing-card:not(.dimmed):hover {
-  transform: translateX(var(--card-x)) translateY(calc(var(--card-y) - 4px)) rotate(var(--card-rot));
-  filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.5));
+/* Card Hover in Hand (for mouse devices) */
+@media (hover: hover) {
+  .hand-container .playing-card:not(.dimmed):hover {
+    transform: translateX(var(--card-x)) translateY(calc(var(--card-y) - 6px)) rotate(var(--card-rot));
+    filter: drop-shadow(0 12px 22px rgba(0, 0, 0, 0.6));
+  }
+}
+
+/* Active tap feedback for mobile & touch */
+.hand-container .playing-card:not(.dimmed):active {
+  transform: translateX(var(--card-x)) translateY(calc(var(--card-y) - 8px)) rotate(var(--card-rot)) scale(1.04);
+  filter: drop-shadow(0 14px 26px rgba(168, 199, 250, 0.6));
 }
 
 /* Playable Pulse indicator on active turn */
@@ -117,7 +125,7 @@
   position: relative;
   bottom: auto;
   cursor: default;
-  filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.6));
+  filter: drop-shadow(0 8px 18px rgba(0, 0, 0, 0.6));
   will-change: transform, opacity;
 }
 
@@ -129,7 +137,7 @@
 @keyframes card-drop-in {
   from {
     opacity: 0;
-    transform: translateX(var(--card-x)) translateY(32px) rotate(var(--card-rot)) scale(0.6);
+    transform: translateX(var(--card-x)) translateY(28px) rotate(var(--card-rot)) scale(0.65);
   }
   to {
     opacity: 1;
@@ -164,5 +172,14 @@
   100% {
     transform: scale(1) rotateY(0deg);
     filter: drop-shadow(0 0 16px rgba(253, 226, 147, 0.6));
+  }
+}
+
+/* Mobile Landscape Tweaks */
+@media (max-height: 520px) and (orientation: landscape) {
+  .hand-container {
+    height: calc(var(--card-height) + 14px);
+    padding-bottom: 2px;
+    margin-top: 0;
   }
 }

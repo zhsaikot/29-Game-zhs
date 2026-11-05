@@ -337,6 +337,27 @@ class TwentyNineApp {
       };
       reader.readAsDataURL(file);
     });
+
+    // Window Resize & Orientation Change Listener (Responsive Hand & HUD updates)
+    let resizeTimer = null;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => {
+        this.updateLanguageUI();
+        if (this.gameState && this.gameState.hands && this.gameState.hands[0]) {
+          this.renderHandsAndCounts(false);
+        }
+      }, 150);
+    });
+
+    window.addEventListener('orientationchange', () => {
+      setTimeout(() => {
+        this.updateLanguageUI();
+        if (this.gameState && this.gameState.hands && this.gameState.hands[0]) {
+          this.renderHandsAndCounts(false);
+        }
+      }, 250);
+    });
   }
 
   renderPlayerAvatars() {
@@ -410,8 +431,14 @@ class TwentyNineApp {
       }
     }
 
-    this.labelTeam1.textContent = (isBn ? TEAMS.TEAM_1.nameBn : TEAMS.TEAM_1.nameEn) + ':';
-    this.labelTeam2.textContent = (isBn ? TEAMS.TEAM_2.nameBn : TEAMS.TEAM_2.nameEn) + ':';
+    const isNarrow = window.innerWidth < 900;
+    if (isNarrow) {
+      this.labelTeam1.textContent = (isBn ? 'আমরা' : 'You') + ':';
+      this.labelTeam2.textContent = (isBn ? 'বিপক্ষ' : 'Opp') + ':';
+    } else {
+      this.labelTeam1.textContent = (isBn ? TEAMS.TEAM_1.nameBn : TEAMS.TEAM_1.nameEn) + ':';
+      this.labelTeam2.textContent = (isBn ? TEAMS.TEAM_2.nameBn : TEAMS.TEAM_2.nameEn) + ':';
+    }
     this.brandTitle.textContent = isBn ? '২৯ (Twenty-Nine) • বাংলাদেশ স্ট্যান্ডার্ড' : 'Twenty-Nine • Bangladesh Standard';
 
     this.textRevealTrump.textContent = isBn ? 'রং তোলা (Reveal Trump)' : 'Reveal Trump';
@@ -597,16 +624,31 @@ class TwentyNineApp {
   /**
    * Renders South Hand with Wide, Full-Brightness Fan Layout
    */
-  renderHandsAndCounts() {
-    this.sound.playDeal();
+  renderHandsAndCounts(playDealSound = true) {
+    if (playDealSound) {
+      this.sound.playDeal();
+    }
 
     const southHand = this.gameState.hands[0];
     this.playerHandContainer.innerHTML = '';
 
     const numCards = southHand.length;
-    // Dynamic wide spread: 72px for 4 cards so all cards are completely visible; 42px for 7-8 cards
-    const spreadX = numCards <= 4 ? 72 : 42;
-    const arcAngle = numCards <= 4 ? 2.8 : 3.6;
+    const containerWidth = this.playerHandContainer.clientWidth || window.innerWidth;
+
+    // Read responsive card width from CSS variables or fallback
+    const rootStyle = getComputedStyle(document.documentElement);
+    const cardWidth = parseFloat(rootStyle.getPropertyValue('--card-width')) || 62;
+
+    // Available width for fan without horizontal overflow
+    const maxAvailableWidth = Math.max(containerWidth - cardWidth - 12, 100);
+    const defaultSpread = numCards <= 4 ? 68 : 40;
+    const totalRequired = Math.max(numCards - 1, 1) * defaultSpread;
+    const spreadX = totalRequired > maxAvailableWidth
+      ? Math.max(14, Math.floor(maxAvailableWidth / Math.max(numCards - 1, 1)))
+      : defaultSpread;
+
+    const spreadRatio = defaultSpread > 0 ? spreadX / defaultSpread : 1;
+    const arcAngle = (numCards <= 4 ? 2.5 : 3.4) * spreadRatio;
 
     southHand.forEach((card, idx) => {
       // ONLY dim during trick playing if it is South's turn and the card cannot legally be played
@@ -625,7 +667,7 @@ class TwentyNineApp {
       const mid = (numCards - 1) / 2;
       const offset = idx - mid;
       const angle = (offset * arcAngle).toFixed(2);
-      const translateY = (Math.abs(offset) * 2.8).toFixed(1);
+      const translateY = (Math.abs(offset) * 2.2 * spreadRatio).toFixed(1);
       const translateX = (offset * spreadX).toFixed(1);
 
       cardEl.style.setProperty('--card-x', `${translateX}px`);
