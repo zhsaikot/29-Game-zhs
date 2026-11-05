@@ -586,4 +586,76 @@ export class GameState {
       return b.power - a.power;
     });
   }
+
+  serialize() {
+    return {
+      matchScores: this.matchScores,
+      roundNumber: this.roundNumber,
+      dealerIndex: this.dealerIndex,
+      currentPhase: this.currentPhase,
+      deck: this.deck,
+      hands: this.hands,
+      highestBid: this.highestBid,
+      targetBid: this.targetBid,
+      highestBidder: this.highestBidder,
+      currentBidder: this.currentBidder,
+      activeBidders: Array.from(this.activeBidders),
+      biddingHistory: this.biddingHistory,
+      trumpSuit: this.trumpSuit,
+      lockedTrumpCard: this.lockedTrumpCard,
+      isTrumpRevealed: this.isTrumpRevealed,
+      trumpRevealedBy: this.trumpRevealedBy,
+      trumpRevealedInTrick: this.trumpRevealedInTrick,
+      trumpRevealedAtPlayCount: this.trumpRevealedAtPlayCount,
+      isSeventhCardTrump: this.isSeventhCardTrump,
+      marriageClaimed: this.marriageClaimed,
+      marriagePoints: this.marriagePoints,
+      challengeMultiplier: this.challengeMultiplier,
+      doubledByTeam: this.doubledByTeam,
+      redoubledByTeam: this.redoubledByTeam,
+      trickNumber: this.trickNumber,
+      currentTurn: this.currentTurn,
+      leadSuit: this.leadSuit,
+      currentTrick: this.currentTrick,
+      tricksHistory: this.tricksHistory,
+      teamPoints: this.teamPoints,
+      settings: this.settings
+    };
+  }
+
+  deserialize(data) {
+    if (!data) return false;
+    this.matchScores = data.matchScores || { team1: 0, team2: 0 };
+    this.roundNumber = data.roundNumber || 1;
+    this.dealerIndex = data.dealerIndex !== undefined ? data.dealerIndex : 3;
+    this.currentPhase = data.currentPhase || GAME_PHASES.IDLE;
+    this.deck = data.deck || [];
+    this.hands = data.hands || [[], [], [], []];
+    this.highestBid = data.highestBid || 0;
+    this.targetBid = data.targetBid || 0;
+    this.highestBidder = data.highestBidder !== undefined ? data.highestBidder : null;
+    this.currentBidder = data.currentBidder !== undefined ? data.currentBidder : null;
+    this.activeBidders = new Set(data.activeBidders || [0, 1, 2, 3]);
+    this.biddingHistory = data.biddingHistory || [];
+    this.trumpSuit = data.trumpSuit || null;
+    this.lockedTrumpCard = data.lockedTrumpCard || null;
+    this.isTrumpRevealed = Boolean(data.isTrumpRevealed);
+    this.trumpRevealedBy = data.trumpRevealedBy !== undefined ? data.trumpRevealedBy : null;
+    this.trumpRevealedInTrick = data.trumpRevealedInTrick || null;
+    this.trumpRevealedAtPlayCount = data.trumpRevealedAtPlayCount || null;
+    this.isSeventhCardTrump = Boolean(data.isSeventhCardTrump);
+    this.marriageClaimed = data.marriageClaimed || { team1: false, team2: false };
+    this.marriagePoints = data.marriagePoints || { team1: 0, team2: 0 };
+    this.challengeMultiplier = data.challengeMultiplier || 1;
+    this.doubledByTeam = data.doubledByTeam || null;
+    this.redoubledByTeam = data.redoubledByTeam || null;
+    this.trickNumber = data.trickNumber || 1;
+    this.currentTurn = data.currentTurn !== undefined ? data.currentTurn : 0;
+    this.leadSuit = data.leadSuit || null;
+    this.currentTrick = data.currentTrick || [];
+    this.tricksHistory = data.tricksHistory || [];
+    this.teamPoints = data.teamPoints || { team1: 0, team2: 0 };
+    if (data.settings) this.settings = { ...this.settings, ...data.settings };
+    return true;
+  }
 }

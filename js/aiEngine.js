@@ -237,4 +237,26 @@ export class AIEngine {
     }
     return winningPlay;
   }
+
+  restoreAIState(gameState) {
+    this.resetMemory();
+    if (gameState.tricksHistory) {
+      gameState.tricksHistory.forEach(trick => {
+        if (trick.cards) {
+          trick.cards.forEach(item => {
+            if (item && item.card) {
+              this.recordPlayedCard(item.card);
+            }
+          });
+        }
+      });
+    }
+    if (gameState.currentTrick) {
+      gameState.currentTrick.forEach(item => {
+        if (item && item.card) {
+          this.recordPlayedCard(item.card);
+        }
+      });
+    }
+  }
 }

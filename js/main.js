@@ -176,25 +176,49 @@ class TwentyNineApp {
     this.btnRulesDialog = document.getElementById('btn-rules-dialog');
     this.btnCloseRules = document.getElementById('btn-close-rules');
     this.btnSettingsDialog = document.getElementById('btn-settings-dialog');
+
+    this.btnNewGame = document.getElementById('btn-new-game');
+
+    this.modalConfirmNewGame = document.getElementById('modal-confirm-new-game');
+
+    this.titleConfirmNewGame = document.getElementById('title-confirm-new-game');
+
+    this.descConfirmNewGame = document.getElementById('desc-confirm-new-game');
+
+    this.btnCancelNewGame = document.getElementById('btn-cancel-new-game');
+
+    this.btnConfirmNewGame = document.getElementById('btn-confirm-new-game');
+
+    this.btnSettingsNewGame = document.getElementById('btn-settings-new-game');
+
+    this.textSettingsNewGame = document.getElementById('text-settings-new-game');
+    this.btnNewGame = document.getElementById('btn-new-game');
+    this.modalConfirmNewGame = document.getElementById('modal-confirm-new-game');
+    this.titleConfirmNewGame = document.getElementById('title-confirm-new-game');
+    this.descConfirmNewGame = document.getElementById('desc-confirm-new-game');
+    this.btnCancelNewGame = document.getElementById('btn-cancel-new-game');
+    this.btnConfirmNewGame = document.getElementById('btn-confirm-new-game');
+    this.btnSettingsNewGame = document.getElementById('btn-settings-new-game');
+    this.textSettingsNewGame = document.getElementById('text-settings-new-game');
     this.btnSaveSettings = document.getElementById('btn-save-settings');
   }
 
   bindEvents() {
-    this.gameState.on('phaseChange', () => this.renderHandsAndCounts());
+    this.gameState.on('phaseChange', () => { this.renderHandsAndCounts(); this.saveGameState(); });
     this.gameState.on('biddingStarted', (data) => this.handleBiddingTurn(data.currentBidder));
-    this.gameState.on('biddingTurn', (data) => this.handleBiddingTurn(data.currentBidder));
-    this.gameState.on('bidPlaced', (data) => this.onBidPlaced(data));
-    this.gameState.on('biddingConcluded', (data) => this.onBiddingConcluded(data));
-    this.gameState.on('trumpSelected', (data) => this.onTrumpSelected(data));
+    this.gameState.on('biddingTurn', (data) => { this.handleBiddingTurn(data.currentBidder); this.saveGameState(); });
+    this.gameState.on('bidPlaced', (data) => { this.onBidPlaced(data); this.saveGameState(); });
+    this.gameState.on('biddingConcluded', (data) => { this.onBiddingConcluded(data); this.saveGameState(); });
+    this.gameState.on('trumpSelected', (data) => { this.onTrumpSelected(data); this.saveGameState(); });
     this.gameState.on('challengePhaseStarted', (data) => this.handleChallengePhase(data));
     this.gameState.on('challengeAnnounced', (data) => this.onChallengeAnnounced(data));
     this.gameState.on('trickStarted', (data) => this.onTrickStarted(data));
-    this.gameState.on('cardPlayed', (data) => this.onCardPlayed(data));
+    this.gameState.on('cardPlayed', (data) => { this.onCardPlayed(data); this.saveGameState(); });
     this.gameState.on('turnChanged', (data) => this.onTurnChanged(data.currentTurn));
-    this.gameState.on('trumpRevealed', (data) => this.onTrumpRevealed(data));
-    this.gameState.on('marriageAnnounced', (data) => this.onMarriageAnnounced(data));
-    this.gameState.on('trickResolved', (data) => this.onTrickResolved(data));
-    this.gameState.on('roundEnded', (data) => this.onRoundEnded(data));
+    this.gameState.on('trumpRevealed', (data) => { this.onTrumpRevealed(data); this.saveGameState(); });
+    this.gameState.on('marriageAnnounced', (data) => { this.onMarriageAnnounced(data); this.saveGameState(); });
+    this.gameState.on('trickResolved', (data) => { this.onTrickResolved(data); this.saveGameState(); });
+    this.gameState.on('roundEnded', (data) => { this.onRoundEnded(data); this.saveGameState(); });
 
     // Language Toggle
     if (this.hudCollectedSlot) {
@@ -255,6 +279,69 @@ class TwentyNineApp {
         chip.classList.add('selected');
         this.selectedBid = parseInt(chip.dataset.val, 10);
         this.updateSubmitBidButton();
+
+
+
+    if (this.btnNewGame) {
+
+      this.btnNewGame.title = isBn ? 'নতুন খেলা (ম্যাচ রিসেট)' : 'New Game (Reset Match)';
+
+    }
+
+    if (this.titleConfirmNewGame) {
+
+      this.titleConfirmNewGame.textContent = isBn ? 'নতুন খেলা শুরু করতে চান?' : 'Start New Game?';
+
+    }
+
+    if (this.descConfirmNewGame) {
+
+      this.descConfirmNewGame.textContent = isBn 
+
+        ? 'আপনি কি নতুন খেলা শুরু করতে চান? বর্তমান ম্যাচের স্কোর ও রাউন্ডের সব অগ্রগতি মুছে নতুন খেলা শুরু হবে।' 
+
+        : 'Are you sure you want to start a new game? Current match score and round progress will be reset.';
+
+    }
+
+    if (this.btnCancelNewGame) {
+
+      this.btnCancelNewGame.textContent = isBn ? 'বাতিল' : 'Cancel';
+
+    }
+
+    if (this.btnConfirmNewGame) {
+
+      this.btnConfirmNewGame.textContent = isBn ? 'নতুন খেলা শুরু করুন' : 'Start New Game';
+
+    }
+
+    if (this.textSettingsNewGame) {
+
+      this.textSettingsNewGame.textContent = isBn ? 'নতুন খেলা (ম্যাচ রিসেট)' : 'Start New Game (Reset Match)';
+
+    }
+
+    if (this.btnNewGame) {
+      this.btnNewGame.title = isBn ? 'নতুন খেলা (ম্যাচ রিসেট)' : 'New Game (Reset Match)';
+    }
+    if (this.titleConfirmNewGame) {
+      this.titleConfirmNewGame.textContent = isBn ? 'নতুন খেলা শুরু করতে চান?' : 'Start New Game?';
+    }
+    if (this.descConfirmNewGame) {
+      this.descConfirmNewGame.textContent = isBn 
+        ? 'আপনি কি নতুন খেলা শুরু করতে চান? বর্তমান ম্যাচের স্কোর ও রাউন্ডের সব অগ্রগতি মুছে নতুন খেলা শুরু হবে।' 
+        : 'Are you sure you want to start a new game? Current match score and round progress will be reset.';
+    }
+    if (this.btnCancelNewGame) {
+      this.btnCancelNewGame.textContent = isBn ? 'বাতিল' : 'Cancel';
+    }
+    if (this.btnConfirmNewGame) {
+      this.btnConfirmNewGame.textContent = isBn ? 'নতুন খেলা শুরু করুন' : 'Start New Game';
+    }
+    if (this.textSettingsNewGame) {
+      this.textSettingsNewGame.textContent = isBn ? 'নতুন খেলা (ম্যাচ রিসেট)' : 'Start New Game (Reset Match)';
+    }
       });
     });
 
@@ -327,10 +414,7 @@ class TwentyNineApp {
     this.btnRestartMatch.addEventListener('click', () => {
       this.sound.playButtonClick();
       this.modalMatchOver.classList.remove('active');
-      this.gameState.matchScores = { team1: 0, team2: 0 };
-      this.updateScoreLedger();
-      this.resetTableForNewRound();
-      this.gameState.startNewRound();
+      this.startFreshGame();
     });
 
     // Audio & Settings
@@ -355,6 +439,111 @@ class TwentyNineApp {
       this.sound.playButtonClick();
       this.modalSettings.classList.add('active');
     });
+
+    if (this.btnNewGame) {
+      this.btnNewGame.addEventListener('click', () => {
+        this.sound.playButtonClick();
+        if (this.modalConfirmNewGame) this.modalConfirmNewGame.classList.add('active');
+      });
+    }
+
+    if (this.btnCancelNewGame) {
+      this.btnCancelNewGame.addEventListener('click', () => {
+        this.sound.playButtonClick();
+        if (this.modalConfirmNewGame) this.modalConfirmNewGame.classList.remove('active');
+      });
+    }
+
+    if (this.btnConfirmNewGame) {
+      this.btnConfirmNewGame.addEventListener('click', () => {
+        this.sound.playButtonClick();
+        if (this.modalConfirmNewGame) this.modalConfirmNewGame.classList.remove('active');
+        if (this.modalSettings) this.modalSettings.classList.remove('active');
+        this.startFreshGame();
+      });
+    }
+
+    if (this.btnSettingsNewGame) {
+      this.btnSettingsNewGame.addEventListener('click', () => {
+        this.sound.playButtonClick();
+        if (this.modalSettings) this.modalSettings.classList.remove('active');
+        if (this.modalConfirmNewGame) this.modalConfirmNewGame.classList.add('active');
+      });
+    }
+
+    window.addEventListener('beforeunload', () => {
+      this.saveGameState();
+    });
+
+    if (this.btnNewGame) {
+
+      this.btnNewGame.addEventListener('click', () => {
+
+        this.sound.playButtonClick();
+
+        if (this.modalConfirmNewGame) this.modalConfirmNewGame.classList.add('active');
+
+      });
+
+    }
+
+
+
+    if (this.btnCancelNewGame) {
+
+      this.btnCancelNewGame.addEventListener('click', () => {
+
+        this.sound.playButtonClick();
+
+        if (this.modalConfirmNewGame) this.modalConfirmNewGame.classList.remove('active');
+
+      });
+
+    }
+
+
+
+    if (this.btnConfirmNewGame) {
+
+      this.btnConfirmNewGame.addEventListener('click', () => {
+
+        this.sound.playButtonClick();
+
+        if (this.modalConfirmNewGame) this.modalConfirmNewGame.classList.remove('active');
+
+        if (this.modalSettings) this.modalSettings.classList.remove('active');
+
+        this.startFreshGame();
+
+      });
+
+    }
+
+
+
+    if (this.btnSettingsNewGame) {
+
+      this.btnSettingsNewGame.addEventListener('click', () => {
+
+        this.sound.playButtonClick();
+
+        if (this.modalSettings) this.modalSettings.classList.remove('active');
+
+        if (this.modalConfirmNewGame) this.modalConfirmNewGame.classList.add('active');
+
+      });
+
+    }
+
+
+
+    window.addEventListener('beforeunload', () => {
+
+      this.saveGameState();
+
+    });
+
+
 
     this.btnSaveSettings.addEventListener('click', () => {
       this.sound.playButtonClick();
@@ -599,6 +788,69 @@ class TwentyNineApp {
     }
     this.updateSubmitBidButton();
 
+
+
+    if (this.btnNewGame) {
+
+      this.btnNewGame.title = isBn ? 'নতুন খেলা (ম্যাচ রিসেট)' : 'New Game (Reset Match)';
+
+    }
+
+    if (this.titleConfirmNewGame) {
+
+      this.titleConfirmNewGame.textContent = isBn ? 'নতুন খেলা শুরু করতে চান?' : 'Start New Game?';
+
+    }
+
+    if (this.descConfirmNewGame) {
+
+      this.descConfirmNewGame.textContent = isBn 
+
+        ? 'আপনি কি নতুন খেলা শুরু করতে চান? বর্তমান ম্যাচের স্কোর ও রাউন্ডের সব অগ্রগতি মুছে নতুন খেলা শুরু হবে।' 
+
+        : 'Are you sure you want to start a new game? Current match score and round progress will be reset.';
+
+    }
+
+    if (this.btnCancelNewGame) {
+
+      this.btnCancelNewGame.textContent = isBn ? 'বাতিল' : 'Cancel';
+
+    }
+
+    if (this.btnConfirmNewGame) {
+
+      this.btnConfirmNewGame.textContent = isBn ? 'নতুন খেলা শুরু করুন' : 'Start New Game';
+
+    }
+
+    if (this.textSettingsNewGame) {
+
+      this.textSettingsNewGame.textContent = isBn ? 'নতুন খেলা (ম্যাচ রিসেট)' : 'Start New Game (Reset Match)';
+
+    }
+
+    if (this.btnNewGame) {
+      this.btnNewGame.title = isBn ? 'নতুন খেলা (ম্যাচ রিসেট)' : 'New Game (Reset Match)';
+    }
+    if (this.titleConfirmNewGame) {
+      this.titleConfirmNewGame.textContent = isBn ? 'নতুন খেলা শুরু করতে চান?' : 'Start New Game?';
+    }
+    if (this.descConfirmNewGame) {
+      this.descConfirmNewGame.textContent = isBn 
+        ? 'আপনি কি নতুন খেলা শুরু করতে চান? বর্তমান ম্যাচের স্কোর ও রাউন্ডের সব অগ্রগতি মুছে নতুন খেলা শুরু হবে।' 
+        : 'Are you sure you want to start a new game? Current match score and round progress will be reset.';
+    }
+    if (this.btnCancelNewGame) {
+      this.btnCancelNewGame.textContent = isBn ? 'বাতিল' : 'Cancel';
+    }
+    if (this.btnConfirmNewGame) {
+      this.btnConfirmNewGame.textContent = isBn ? 'নতুন খেলা শুরু করুন' : 'Start New Game';
+    }
+    if (this.textSettingsNewGame) {
+      this.textSettingsNewGame.textContent = isBn ? 'নতুন খেলা (ম্যাচ রিসেট)' : 'Start New Game (Reset Match)';
+    }
+
     if (this.gameState && this.gameState.isTrumpRevealed && this.gameState.trumpSuit) {
       const badge = this.hudTrumpSlot.querySelector('.hud-trump-badge');
       const title = this.hudTrumpSlot.querySelector('.hud-trump-title');
@@ -620,10 +872,181 @@ class TwentyNineApp {
     }
   }
 
-  initGame() {
+  saveGameState() {
+    try {
+      if (!this.gameState) return;
+      const data = this.gameState.serialize();
+      localStorage.setItem('twenty_nine_saved_game', JSON.stringify(data));
+      localStorage.setItem('twenty_nine_language', this.currentLanguage);
+    } catch (e) {
+      console.warn('Failed to save game state to localStorage:', e);
+    }
+  }
+
+  clearSavedGame() {
+    try {
+      localStorage.removeItem('twenty_nine_saved_game');
+    } catch (e) {
+      console.warn('Failed to clear saved game state:', e);
+    }
+  }
+
+  startFreshGame() {
+    this.clearSavedGame();
+    if (this.aiTurnTimeout) clearTimeout(this.aiTurnTimeout);
+    this.gameState.matchScores = { team1: 0, team2: 0 };
+    this.gameState.roundNumber = 1;
+    this.gameState.dealerIndex = 3;
     this.updateScoreLedger();
     this.resetTableForNewRound();
     this.gameState.startNewRound();
+    this.saveGameState();
+    this.showToast(this.currentLanguage === 'bn' ? '✨ নতুন খেলা শুরু হয়েছে!' : '✨ New Game Started!');
+  }
+
+  resumeSavedGame() {
+    const isBn = this.currentLanguage === 'bn';
+    const bnDigits = ['০','১','২','৩','৪','৫','৬','৭','৮','৯'];
+    const toBn = num => String(num).replace(/[0-9]/g, d => bnDigits[d]);
+
+    this.updateScoreLedger();
+    this.renderHandsAndCounts(false);
+
+    // Target & Collected Points
+    if (this.gameState.targetBid > 0 || this.gameState.highestBid > 0) {
+      const tb = this.gameState.targetBid || this.gameState.highestBid;
+      this.hudTargetVal.textContent = isBn ? toBn(tb) : tb;
+    } else {
+      this.hudTargetVal.textContent = '--';
+    }
+    this.updateHudCollectedPoints();
+
+    // Bidder crowns and pods
+    for (let i = 0; i < 4; i++) {
+      if (this.crowns[i]) this.crowns[i].style.display = 'none';
+      if (this.pods[i]) this.pods[i].classList.remove('is-bidder', 'active-turn');
+    }
+    if (this.gameState.highestBidder !== null) {
+      const b = this.gameState.highestBidder;
+      if (this.crowns[b]) this.crowns[b].style.display = 'block';
+      if (this.pods[b]) this.pods[b].classList.add('is-bidder');
+    }
+
+    // Trump HUD display
+    if (this.gameState.isTrumpRevealed && this.gameState.trumpSuit) {
+      const suitObj = SUITS[this.gameState.trumpSuit];
+      const suitName = isBn ? suitObj.nameBn : suitObj.nameEn;
+      const displayCard = this.gameState.lockedTrumpCard || { rank: '?', suit: this.gameState.trumpSuit, power: 0, points: 0 };
+      this.hudTrumpSlot.className = 'trump-indicator-slot revealed has-card';
+      this.hudTrumpSlot.innerHTML = `
+        <div class="hud-trump-badge-wrap">
+          <span class="hud-trump-badge">${isBn ? 'ট্রাম্প' : 'TRUMP'}</span>
+          <span class="hud-trump-title">${suitName}</span>
+        </div>
+        <div class="hud-hanging-trump-card" title="${suitName}">
+          <div class="hud-hanging-connector"></div>
+          <div class="hud-hanging-card-inner">
+            ${CardRenderer.renderFaceSVG(displayCard)}
+          </div>
+        </div>
+      `;
+    } else if (this.gameState.trumpSuit) {
+      const bidder = this.gameState.highestBidder;
+      const labelText = (bidder === 0)
+        ? `${isBn ? 'রং:' : 'Trump:'} ${SUITS[this.gameState.trumpSuit].symbol} (${isBn ? 'গোপন' : 'Hidden'})`
+        : (isBn ? 'রং: গোপন' : 'Trump: Hidden');
+      this.renderHudTrumpHidden(labelText);
+    } else {
+      this.renderHudTrumpHidden();
+    }
+
+    // Reconstruct trick arena cards
+    this.slotNorth.innerHTML = '';
+    this.slotWest.innerHTML = '';
+    this.slotEast.innerHTML = '';
+    this.slotSouth.innerHTML = '';
+
+    if (this.gameState.currentTrick && this.gameState.currentTrick.length > 0) {
+      const slotMap = { 0: this.slotSouth, 1: this.slotEast, 2: this.slotNorth, 3: this.slotWest };
+      this.gameState.currentTrick.forEach(item => {
+        const slot = slotMap[item.playerId];
+        if (slot && item.card) {
+          const cardEl = CardRenderer.createCardElement(item.card, { isDimmed: false, isFaceUp: true });
+          const randomAngle = (Math.random() * 8 - 4).toFixed(1);
+          cardEl.style.setProperty('--card-x', '0px');
+          cardEl.style.setProperty('--card-y', '0px');
+          cardEl.style.setProperty('--card-rot', `${randomAngle}deg`);
+          cardEl.classList.add('trick-card-played');
+          slot.appendChild(cardEl);
+        }
+      });
+      const currentPts = this.gameState.currentTrick.reduce((acc, p) => acc + (p.card ? p.card.points : 0), 0);
+      this.trickCurrentPoints.textContent = `${currentPts} pts`;
+    } else {
+      this.trickCurrentPoints.textContent = '0 pts';
+    }
+
+    this.trickRoundLabel.textContent = isBn
+      ? `হাত ${this.gameState.trickNumber} / ৮ (Trick ${this.gameState.trickNumber}/8)`
+      : `Trick ${this.gameState.trickNumber} / 8`;
+
+    // Route to active phase
+    const phase = this.gameState.currentPhase;
+    if (phase === GAME_PHASES.BIDDING) {
+      this.handleBiddingTurn(this.gameState.currentBidder);
+    } else if (phase === GAME_PHASES.TRUMP_SELECTION) {
+      if (this.gameState.highestBidder === 0) {
+        document.body.classList.add('trump-selection-active');
+        this.renderTrumpHandPreview();
+        this.modalTrumpSelect.classList.add('active');
+      } else {
+        setTimeout(() => {
+          const bestSuit = this.ai.pickTrumpSuit(this.gameState.hands[this.gameState.highestBidder]);
+          this.gameState.selectTrump(bestSuit, false);
+        }, 500);
+      }
+    } else if (phase === GAME_PHASES.CHALLENGE) {
+      this.handleChallengePhase({
+        bidderTeam: PLAYERS[this.gameState.highestBidder].team,
+        highestBid: this.gameState.highestBid
+      });
+    } else if (phase === GAME_PHASES.PLAYING) {
+      this.onTurnChanged(this.gameState.currentTurn);
+      this.checkMarriageButton();
+    } else if (phase === GAME_PHASES.ROUND_OVER) {
+      this.modalRoundEnd.classList.add('active');
+    } else if (phase === GAME_PHASES.MATCH_OVER) {
+      this.modalMatchOver.classList.add('active');
+    }
+
+    this.showToast(isBn ? '🔄 আগের খেলা পুনরুদ্ধার করা হয়েছে' : '🔄 Game Resumed');
+  }
+
+  initGame() {
+    const savedLang = localStorage.getItem('twenty_nine_language');
+    if (savedLang && (savedLang === 'bn' || savedLang === 'en')) {
+      this.currentLanguage = savedLang;
+      this.updateLanguageUI();
+    }
+
+    const saved = localStorage.getItem('twenty_nine_saved_game');
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (parsed && parsed.currentPhase && parsed.currentPhase !== GAME_PHASES.MATCH_OVER) {
+          const restored = this.gameState.deserialize(parsed);
+          if (restored) {
+            this.ai.restoreAIState(this.gameState);
+            this.resumeSavedGame();
+            return;
+          }
+        }
+      } catch (e) {
+        console.warn('Could not restore saved game:', e);
+      }
+    }
+
+    this.startFreshGame();
   }
 
   renderHudTrumpHidden(labelOverride = null) {
@@ -1358,5 +1781,5 @@ class TwentyNineApp {
 }
 
 window.addEventListener('DOMContentLoaded', () => {
-  window.gameApp = new TwentyNineApp();
+  window.gameApp = window.game = new TwentyNineApp();
 });
