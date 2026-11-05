@@ -9,6 +9,8 @@
   <!-- Favicon & Mobile Touch Icons -->
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png">
+  <link rel="shortcut icon" href="favicon.ico">
   <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
   <meta name="theme-color" content="#0B0F17">
   
@@ -28,10 +30,9 @@
   <!-- Top App Header / M3 HUD -->
   <header class="app-header">
     <div class="brand-section">
-      <div class="brand-logo-pill">
-        <span class="brand-logo-text">29</span>
-      </div>
-      <div>
+      <img src="assets/logo-badge.png" class="brand-logo-img" alt="29 Card Game">
+      <div class="brand-title-wrap">
+        <div class="brand-main-title">29 CARD GAME</div>
         <div class="brand-subtext" id="brand-title">Twenty-Nine • Bangladesh Standard</div>
       </div>
     </div>
@@ -121,7 +122,9 @@
     <!-- Center Trick Arena -->
     <div class="trick-arena" id="trick-arena">
       <!-- Table Center Watermark / Seal -->
-      <div class="table-center-seal" aria-hidden="true">29</div>
+      <div class="table-center-seal" aria-hidden="true">
+        <img src="assets/logo-emblem.png" class="table-seal-img" alt="">
+      </div>
 
       <!-- 4 Card Slots -->
       <div class="trick-slot slot-north" id="slot-north"></div>
@@ -292,6 +295,9 @@
   <!-- Rules & Help Modal -->
   <div class="modal-overlay" id="modal-rules">
     <div class="m3-dialog" style="max-width: 560px; max-height: 85vh; overflow-y: auto;">
+      <div class="dialog-logo-banner">
+        <img src="assets/logo-emblem.png" alt="29 Card Game">
+      </div>
       <div class="dialog-title">
         <span>📖</span> <span id="title-rules-modal">Rules of 29</span>
       </div>

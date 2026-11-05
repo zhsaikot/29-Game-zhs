@@ -60,6 +60,35 @@ body {
   flex-shrink: 0;
 }
 
+.brand-logo-img {
+  width: clamp(34px, 4vw, 42px);
+  height: clamp(34px, 4vw, 42px);
+  border-radius: 9px;
+  object-fit: cover;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6), 0 0 10px rgba(245, 208, 97, 0.25);
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+
+.brand-logo-img:hover {
+  transform: scale(1.05);
+}
+
+.brand-title-wrap {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.brand-main-title {
+  font-family: var(--font-deck), 'Outfit', sans-serif;
+  font-size: clamp(0.76rem, 1.8vw, 0.92rem);
+  font-weight: 800;
+  color: var(--accent-gold);
+  letter-spacing: 0.5px;
+  line-height: 1.15;
+}
+
 .brand-logo-pill {
   background: linear-gradient(135deg, #1D3557, #0B0F17);
   border: 1px solid rgba(168, 199, 250, 0.4);
@@ -732,21 +761,35 @@ body {
 /* Luxury 29 Center Table Seal */
 .table-center-seal {
   position: absolute;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: clamp(2.6rem, 8vw, 6.5rem);
-  font-weight: 900;
-  color: rgba(245, 158, 11, 0.045);
   pointer-events: none;
   user-select: none;
-  letter-spacing: -2px;
   z-index: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: clamp(75px, 18vw, 175px);
-  height: clamp(75px, 18vw, 175px);
-  border-radius: 50%;
-  border: 1.5px dashed rgba(245, 158, 11, 0.06);
+  width: clamp(120px, 26vw, 240px);
+  height: clamp(90px, 19vw, 175px);
+  opacity: 0.18;
+  filter: drop-shadow(0 6px 18px rgba(0, 0, 0, 0.65));
+  transition: opacity 0.3s ease;
+}
+
+.table-seal-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.dialog-logo-banner {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 12px;
+}
+
+.dialog-logo-banner img {
+  max-width: 160px;
+  height: auto;
+  filter: drop-shadow(0 4px 14px rgba(0, 0, 0, 0.6));
 }
 
 .trick-slot {
