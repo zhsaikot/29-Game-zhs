@@ -3,7 +3,7 @@
  * Enables full offline play, instant asset loading, and caching strategy
  */
 
-const CACHE_NAME = 'twenty-nine-pwa-v4';
+const CACHE_NAME = 'twenty-nine-pwa-v5';
 
 // Core assets required for offline gameplay
 const PRECACHE_ASSETS = [

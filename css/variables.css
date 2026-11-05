@@ -80,16 +80,16 @@
 
 @media (min-width: 1024px) {
   :root {
-    --card-width: 108px;
-    --card-height: 156px;
+    --card-height: clamp(120px, 16.5vh, 156px);
+    --card-width: calc(var(--card-height) * 0.692);
     --card-radius: 13px;
   }
 }
 
 @media (min-width: 1360px) {
   :root {
-    --card-width: 118px;
-    --card-height: 170px;
+    --card-height: clamp(126px, 17.5vh, 168px);
+    --card-width: calc(var(--card-height) * 0.692);
     --card-radius: 14px;
   }
 }

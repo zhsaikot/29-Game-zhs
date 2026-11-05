@@ -7,12 +7,12 @@
   display: flex;
   align-items: flex-end;
   justify-content: center;
-  height: calc(var(--card-height) + clamp(26px, 4vh, 42px));
+  height: calc(var(--card-height) + 16px);
   width: 100%;
   max-width: 950px;
   perspective: 1200px;
-  padding-bottom: 24px;
-  margin-top: 2px;
+  padding-bottom: 8px;
+  margin-top: 0;
 }
 
 /* Playing Card Base Structure - Smooth Glide (Preserving Natural Stacking Order) */
@@ -22,7 +22,7 @@
   --card-rot: 0deg;
 
   position: absolute;
-  bottom: 24px;
+  bottom: 8px;
   width: var(--card-width);
   height: var(--card-height);
   border-radius: var(--card-radius);
