@@ -3,7 +3,7 @@
  * 100% Perfect Edition: Cinematic Timing, Wide Fan, High Contrast & Full Visibility
  */
 
-import { SUITS, RANKS, PLAYERS, TEAMS, GAME_PHASES, BID_RULES, SETTINGS_DEFAULTS, PRESET_AVATARS, DEFAULT_PLAYER_AVATARS } from './constants.js';
+import { SUITS, SUIT_ORDER, RANKS, PLAYERS, TEAMS, GAME_PHASES, BID_RULES, SETTINGS_DEFAULTS, PRESET_AVATARS, DEFAULT_PLAYER_AVATARS } from './constants.js';
 import { GameState } from './gameState.js';
 import { AIEngine } from './aiEngine.js';
 import { SoundEngine } from './audio.js';
@@ -114,6 +114,9 @@ class TwentyNineApp {
     this.modalTrumpSelect = document.getElementById('modal-trump-select');
     this.titleTrumpSelect = document.getElementById('title-trump-select');
     this.descTrumpSelect = document.getElementById('desc-trump-select');
+    this.trumpHandPreviewDock = document.getElementById('trump-hand-preview-dock');
+    this.trumpPreviewCardsList = document.getElementById('trump-preview-cards-list');
+    this.textTrumpHandTitle = document.getElementById('text-trump-hand-title');
     this.btnTrumpSeventh = document.getElementById('btn-trump-seventh');
 
     this.challengeBanner = document.getElementById('challenge-banner');
@@ -217,6 +220,7 @@ class TwentyNineApp {
         const suit = cardEl.dataset.suit;
         this.sound.playButtonClick();
         this.modalTrumpSelect.classList.remove('active');
+        document.body.classList.remove('trump-selection-active');
         this.gameState.selectTrump(suit, false);
       });
     });
@@ -224,6 +228,7 @@ class TwentyNineApp {
     this.btnTrumpSeventh.addEventListener('click', () => {
       this.sound.playButtonClick();
       this.modalTrumpSelect.classList.remove('active');
+      document.body.classList.remove('trump-selection-active');
       this.gameState.selectTrump(null, true);
     });
 
@@ -447,6 +452,15 @@ class TwentyNineApp {
     this.btnDockPass.textContent = isBn ? 'পাস (Pass)' : 'Pass';
     this.btnDockSubmit.textContent = isBn ? 'ডাক দিন (Submit Bid)' : 'Submit Bid';
 
+    if (this.textTrumpHandTitle) {
+      this.textTrumpHandTitle.textContent = isBn
+        ? 'আপনার ৪টি কার্ড (ট্রাম্প বেছে নিতে দেখুন):'
+        : 'Your 4 Cards (Review to Choose Trump):';
+    }
+    if (this.modalTrumpSelect && this.modalTrumpSelect.classList.contains('active')) {
+      this.renderTrumpHandPreview();
+    }
+
     this.rulesContent.innerHTML = isBn ? `
       <div>
         <strong style="color:var(--primary-accent);">১. কার্ডের শক্তি ও পয়েন্ট (Hierarchy & Points):</strong><br>
@@ -557,6 +571,7 @@ class TwentyNineApp {
   }
 
   resetTableForNewRound() {
+    document.body.classList.remove('trump-selection-active');
     this.slotNorth.innerHTML = '';
     this.slotWest.innerHTML = '';
     this.slotEast.innerHTML = '';
@@ -804,6 +819,51 @@ class TwentyNineApp {
     }
   }
 
+  renderTrumpHandPreview() {
+    if (!this.trumpPreviewCardsList) return;
+    this.trumpPreviewCardsList.innerHTML = '';
+
+    const southHand = (this.gameState && this.gameState.hands && this.gameState.hands[0]) || [];
+    const isBn = this.currentLanguage === 'bn';
+
+    const sortedCards = [...southHand].sort((a, b) => {
+      if (a.suit !== b.suit) return SUIT_ORDER.indexOf(a.suit) - SUIT_ORDER.indexOf(b.suit);
+      return (b.power || 0) - (a.power || 0);
+    });
+
+    sortedCards.forEach(card => {
+      const suitInfo = SUITS[card.suit] || { color: 'black', symbol: '♠', nameEn: 'Spades', nameBn: 'ইস্কাপন' };
+      const isRed = suitInfo.color === 'red';
+      const pts = card.points || 0;
+      const ptsText = isBn
+        ? (pts > 0 ? `${pts} পয়েন্ট` : '০ পয়েন্ট')
+        : (pts === 1 ? '1 pt' : `${pts} pts`);
+
+      const chip = document.createElement('div');
+      chip.className = `trump-mini-card-chip ${isRed ? 'suit-red' : 'suit-black'}`;
+      chip.title = isBn
+        ? `${suitInfo.nameBn} ট্রাম্প হিসেবে নির্বাচন করতে ক্লিক করুন`
+        : `Click to select ${suitInfo.nameEn} as Trump`;
+
+      chip.innerHTML = `
+        <div class="trump-mini-card-top">
+          <span class="card-rank">${card.rank}</span>
+          <span class="card-suit">${suitInfo.symbol}</span>
+        </div>
+        <div class="trump-mini-card-pts">${ptsText}</div>
+      `;
+
+      chip.addEventListener('click', () => {
+        this.sound.playButtonClick();
+        this.modalTrumpSelect.classList.remove('active');
+        document.body.classList.remove('trump-selection-active');
+        this.gameState.selectTrump(card.suit, false);
+      });
+
+      this.trumpPreviewCardsList.appendChild(chip);
+    });
+  }
+
   onBiddingConcluded(data) {
     const { winner, winningBid } = data;
     this.floatingBiddingPanel.classList.remove('active');
@@ -817,6 +877,8 @@ class TwentyNineApp {
 
     if (winner === 0) {
       setTimeout(() => {
+        document.body.classList.add('trump-selection-active');
+        this.renderTrumpHandPreview();
         this.modalTrumpSelect.classList.add('active');
       }, 500);
     } else {
@@ -829,6 +891,7 @@ class TwentyNineApp {
   }
 
   onTrumpSelected(data) {
+    document.body.classList.remove('trump-selection-active');
     const { bidder, isSeventhCard, trumpSuit } = data;
     const isBn = this.currentLanguage === 'bn';
 
