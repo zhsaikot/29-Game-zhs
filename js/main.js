@@ -20,6 +20,14 @@ class TwentyNineApp {
     this.aiTurnTimeout = null;
     this.currentEditingPlayerId = 0;
 
+    // Persisted Custom Player Names
+    this.customPlayerNames = {
+      0: localStorage.getItem('twenty_nine_name_0') || null,
+      1: localStorage.getItem('twenty_nine_name_1') || null,
+      2: localStorage.getItem('twenty_nine_name_2') || null,
+      3: localStorage.getItem('twenty_nine_name_3') || null,
+    };
+
     // Persisted Player Avatars
     this.playerAvatars = {
       0: localStorage.getItem('twenty_nine_avatar_0') || DEFAULT_PLAYER_AVATARS[0],
@@ -31,6 +39,7 @@ class TwentyNineApp {
     this.cacheDOM();
     this.bindEvents();
     this.renderPlayerAvatars();
+    this.renderPlayerNames();
     this.updateLanguageUI();
     this.setupPWA();
     this.initGame();
@@ -155,10 +164,14 @@ class TwentyNineApp {
     this.titleSettingsModal = document.getElementById('title-settings-modal');
     this.toastContainer = document.getElementById('toast-container');
 
-    // Avatar Chooser Modal
+    // Avatar & Name Chooser Modal
     this.modalAvatarChooser = document.getElementById('modal-avatar-chooser');
     this.titleAvatarModal = document.getElementById('title-avatar-modal');
     this.avatarTargetName = document.getElementById('avatar-target-name');
+    this.labelPlayerName = document.getElementById('label-player-name');
+    this.playerNameInput = document.getElementById('player-name-input');
+    this.btnSavePlayerName = document.getElementById('btn-save-player-name');
+    this.textSavePlayerName = document.getElementById('text-save-player-name');
     this.avatarPresetsGrid = document.getElementById('avatar-presets-grid');
     this.avatarFileInput = document.getElementById('avatar-file-input');
     this.btnTriggerUpload = document.getElementById('btn-trigger-upload');
@@ -235,8 +248,8 @@ class TwentyNineApp {
         const toBn = num => String(num).replace(/[0-9]/g, d => bnDigits[d]);
         const p1 = this.gameState && this.gameState.teamPoints ? this.gameState.teamPoints.team1 : 0;
         const p2 = this.gameState && this.gameState.teamPoints ? this.gameState.teamPoints.team2 : 0;
-        const t1Name = isBn ? TEAMS.TEAM_1.nameBn : TEAMS.TEAM_1.nameEn;
-        const t2Name = isBn ? TEAMS.TEAM_2.nameBn : TEAMS.TEAM_2.nameEn;
+        const t1Name = this.getTeamName(1);
+        const t2Name = this.getTeamName(2);
         this.showToast(`🏆 ${isBn ? 'রাউন্ডের পয়েন্ট:' : 'Round Points:'} ${t1Name} ${isBn ? toBn(p1) : p1} | ${t2Name} ${isBn ? toBn(p2) : p2}`);
       });
     }
@@ -500,38 +513,97 @@ class TwentyNineApp {
       this.showToast(this.currentLanguage === 'bn' ? 'সেটিংস সংরক্ষিত হয়েছে' : 'Settings saved');
     });
 
-    // Avatar Chooser Triggers & Upload
+    // Avatar & Name Chooser Triggers & Upload
     document.querySelectorAll('.player-avatar-wrap[data-player-id]').forEach(wrap => {
-      wrap.addEventListener('click', () => {
+      wrap.addEventListener('click', (e) => {
+        e.stopPropagation();
         this.sound.playButtonClick();
         const pid = parseInt(wrap.dataset.playerId, 10);
         this.openAvatarChooser(pid);
       });
     });
 
-    this.btnCloseAvatarModal.addEventListener('click', () => {
-      this.sound.playButtonClick();
-      this.modalAvatarChooser.classList.remove('active');
+    // Also allow clicking player pod identity / meta to open customize modal
+    const southBadge = document.querySelector('.user-identity-badge');
+    if (southBadge) {
+      southBadge.addEventListener('click', (e) => {
+        if (e.target.closest('.action-buttons-group')) return;
+        this.sound.playButtonClick();
+        this.openAvatarChooser(0);
+      });
+    }
+
+    document.querySelectorAll('.player-pod .player-meta').forEach((meta) => {
+      meta.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const pod = meta.closest('.player-pod');
+        if (!pod) return;
+        let pid = 0;
+        if (pod.classList.contains('pod-east')) pid = 1;
+        else if (pod.classList.contains('pod-north')) pid = 2;
+        else if (pod.classList.contains('pod-west')) pid = 3;
+        this.sound.playButtonClick();
+        this.openAvatarChooser(pid);
+      });
     });
 
-    this.btnTriggerUpload.addEventListener('click', () => {
-      this.sound.playButtonClick();
-      this.avatarFileInput.click();
-    });
+    if (this.btnSavePlayerName) {
+      this.btnSavePlayerName.addEventListener('click', () => {
+        this.sound.playButtonClick();
+        this.saveCurrentPlayerName(true);
+      });
+    }
 
-    this.avatarFileInput.addEventListener('change', (e) => {
-      const file = e.target.files && e.target.files[0];
-      if (!file) return;
+    if (this.playerNameInput) {
+      this.playerNameInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          this.sound.playButtonClick();
+          this.saveCurrentPlayerName(true);
+        }
+      });
+    }
 
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        const dataUrl = event.target.result;
-        this.setPlayerAvatar(this.currentEditingPlayerId, dataUrl);
+    if (this.btnCloseAvatarModal) {
+      this.btnCloseAvatarModal.addEventListener('click', () => {
+        this.sound.playButtonClick();
+        this.saveCurrentPlayerName(false);
         this.modalAvatarChooser.classList.remove('active');
-        this.avatarFileInput.value = '';
-      };
-      reader.readAsDataURL(file);
-    });
+      });
+    }
+
+    if (this.modalAvatarChooser) {
+      this.modalAvatarChooser.addEventListener('click', (e) => {
+        if (e.target === this.modalAvatarChooser) {
+          this.saveCurrentPlayerName(false);
+          this.modalAvatarChooser.classList.remove('active');
+        }
+      });
+    }
+
+    if (this.btnTriggerUpload) {
+      this.btnTriggerUpload.addEventListener('click', () => {
+        this.sound.playButtonClick();
+        this.avatarFileInput.click();
+      });
+    }
+
+    if (this.avatarFileInput) {
+      this.avatarFileInput.addEventListener('change', (e) => {
+        const file = e.target.files && e.target.files[0];
+        if (!file) return;
+
+        this.saveCurrentPlayerName(false);
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          const dataUrl = event.target.result;
+          this.setPlayerAvatar(this.currentEditingPlayerId, dataUrl);
+          this.modalAvatarChooser.classList.remove('active');
+          this.avatarFileInput.value = '';
+        };
+        reader.readAsDataURL(file);
+      });
+    }
 
     // Window Resize & Orientation Change Listener (Responsive Hand & HUD updates)
     let resizeTimer = null;
@@ -569,14 +641,98 @@ class TwentyNineApp {
     }
   }
 
+  getPlayerName(playerId) {
+    if (this.customPlayerNames && this.customPlayerNames[playerId]) {
+      return this.customPlayerNames[playerId];
+    }
+    const isBn = this.currentLanguage === 'bn';
+    return isBn ? PLAYERS[playerId].nameBn : PLAYERS[playerId].nameEn;
+  }
+
+  getTeamName(teamId) {
+    const isBn = this.currentLanguage === 'bn';
+    const andWord = isBn ? ' ও ' : ' & ';
+    if (teamId === 1) {
+      return `${this.getPlayerName(0)}${andWord}${this.getPlayerName(2)}`;
+    } else {
+      return `${this.getPlayerName(1)}${andWord}${this.getPlayerName(3)}`;
+    }
+  }
+
+  renderPlayerNames() {
+    for (let i = 0; i < 4; i++) {
+      if (this.playerNames && this.playerNames[i]) {
+        this.playerNames[i].textContent = this.getPlayerName(i);
+      }
+    }
+    this.updateHUDTeamLabels();
+  }
+
+  updateHUDTeamLabels() {
+    const isNarrow = window.innerWidth < 900;
+    const isBn = this.currentLanguage === 'bn';
+    if (isNarrow) {
+      if (this.labelTeam1) this.labelTeam1.textContent = (isBn ? 'আমরা' : 'You') + ':';
+      if (this.labelTeam2) this.labelTeam2.textContent = (isBn ? 'বিপক্ষ' : 'Opp') + ':';
+    } else {
+      if (this.labelTeam1) this.labelTeam1.textContent = this.getTeamName(1) + ':';
+      if (this.labelTeam2) this.labelTeam2.textContent = this.getTeamName(2) + ':';
+    }
+  }
+
+  setPlayerName(playerId, newName, showToast = true) {
+    newName = (newName || '').trim();
+    const oldName = this.getPlayerName(playerId);
+    if (newName && newName.length > 0) {
+      this.customPlayerNames[playerId] = newName;
+      try {
+        localStorage.setItem('twenty_nine_name_' + playerId, newName);
+      } catch (e) {
+        console.warn('Could not save player name to localStorage:', e);
+      }
+    } else {
+      delete this.customPlayerNames[playerId];
+      try {
+        localStorage.removeItem('twenty_nine_name_' + playerId);
+      } catch (e) {
+        console.warn(e);
+      }
+    }
+    this.renderPlayerNames();
+    const updatedName = this.getPlayerName(playerId);
+    if (showToast && oldName !== updatedName) {
+      const isBn = this.currentLanguage === 'bn';
+      this.showToast(isBn ? `প্লেয়ারের নাম "${updatedName}" সেভ করা হয়েছে!` : `Player name saved as "${updatedName}"!`);
+    }
+  }
+
+  saveCurrentPlayerName(showToast = true) {
+    if (!this.playerNameInput) return;
+    const newName = this.playerNameInput.value.trim();
+    this.setPlayerName(this.currentEditingPlayerId, newName, showToast);
+    if (this.avatarTargetName) {
+      const isBn = this.currentLanguage === 'bn';
+      const pName = this.getPlayerName(this.currentEditingPlayerId);
+      this.avatarTargetName.textContent = isBn 
+        ? `${pName}-এর জন্য অবতার ও নাম পরিবর্তন করুন:` 
+        : `Select avatar and name for ${pName}:`;
+    }
+  }
+
   openAvatarChooser(playerId) {
     this.currentEditingPlayerId = playerId;
     const isBn = this.currentLanguage === 'bn';
-    const pName = isBn ? PLAYERS[playerId].nameBn : PLAYERS[playerId].nameEn;
+    const pName = this.getPlayerName(playerId);
     
-    this.avatarTargetName.textContent = isBn 
-      ? `${pName}-এর জন্য অবতার বা ছবি নির্বাচন করুন:` 
-      : `Select avatar or upload custom photo for ${pName}:`;
+    if (this.playerNameInput) {
+      this.playerNameInput.value = this.customPlayerNames[playerId] || (isBn ? PLAYERS[playerId].nameBn : PLAYERS[playerId].nameEn);
+    }
+
+    if (this.avatarTargetName) {
+      this.avatarTargetName.textContent = isBn 
+        ? `${pName}-এর জন্য অবতার ও নাম পরিবর্তন করুন:` 
+        : `Select avatar and name for ${pName}:`;
+    }
 
     // Populate preset avatar items
     this.avatarPresetsGrid.innerHTML = PRESET_AVATARS.map(preset => {
@@ -592,6 +748,7 @@ class TwentyNineApp {
     this.avatarPresetsGrid.querySelectorAll('.avatar-preset-item').forEach(item => {
       item.addEventListener('click', () => {
         this.sound.playButtonClick();
+        this.saveCurrentPlayerName(false);
         const icon = item.dataset.icon;
         this.setPlayerAvatar(this.currentEditingPlayerId, icon);
         this.modalAvatarChooser.classList.remove('active');
@@ -599,6 +756,12 @@ class TwentyNineApp {
     });
 
     this.modalAvatarChooser.classList.add('active');
+    setTimeout(() => {
+      if (this.playerNameInput) {
+        this.playerNameInput.focus();
+        this.playerNameInput.select();
+      }
+    }, 100);
   }
 
   setPlayerAvatar(playerId, avatarVal) {
@@ -611,8 +774,8 @@ class TwentyNineApp {
     this.renderPlayerAvatars();
 
     const isBn = this.currentLanguage === 'bn';
-    const pName = isBn ? PLAYERS[playerId].nameBn : PLAYERS[playerId].nameEn;
-    this.showToast(isBn ? `${pName}-এর অবতার আপডেট হয়েছে` : `${pName}'s avatar updated!`);
+    const pName = this.getPlayerName(playerId);
+    this.showToast(isBn ? `${pName}-এর অবতার আপডেট হয়েছে!` : `${pName}'s avatar updated!`);
   }
 
   updateLanguageUI() {
@@ -620,20 +783,7 @@ class TwentyNineApp {
     this.langIndicator.textContent = isBn ? 'বাং' : 'EN';
     document.documentElement.lang = isBn ? 'bn' : 'en';
 
-    for (let i = 0; i < 4; i++) {
-      if (this.playerNames[i]) {
-        this.playerNames[i].textContent = isBn ? PLAYERS[i].nameBn : PLAYERS[i].nameEn;
-      }
-    }
-
-    const isNarrow = window.innerWidth < 900;
-    if (isNarrow) {
-      this.labelTeam1.textContent = (isBn ? 'আমরা' : 'You') + ':';
-      this.labelTeam2.textContent = (isBn ? 'বিপক্ষ' : 'Opp') + ':';
-    } else {
-      this.labelTeam1.textContent = (isBn ? TEAMS.TEAM_1.nameBn : TEAMS.TEAM_1.nameEn) + ':';
-      this.labelTeam2.textContent = (isBn ? TEAMS.TEAM_2.nameBn : TEAMS.TEAM_2.nameEn) + ':';
-    }
+    this.renderPlayerNames();
     this.brandTitle.textContent = isBn ? '২৯ (Twenty-Nine) • বাংলাদেশ স্ট্যান্ডার্ড' : 'Twenty-Nine • Bangladesh Standard';
 
     this.textRevealTrump.textContent = isBn ? 'রং তোলা (Reveal Trump)' : 'Reveal Trump';
@@ -708,13 +858,22 @@ class TwentyNineApp {
     `;
 
     if (this.titleAvatarModal) {
-      this.titleAvatarModal.textContent = isBn ? 'প্রোফাইল অবতার নির্বাচন' : 'Select Profile Avatar';
+      this.titleAvatarModal.textContent = isBn ? 'প্লেয়ার প্রোফাইল ও নাম সম্পাদনা' : 'Customize Player Profile';
+    }
+    if (this.labelPlayerName) {
+      this.labelPlayerName.textContent = isBn ? 'প্লেয়ারের নাম:' : 'Player Name:';
+    }
+    if (this.playerNameInput) {
+      this.playerNameInput.placeholder = isBn ? 'প্লেয়ারের নাম লিখুন...' : 'Enter player name...';
+    }
+    if (this.textSavePlayerName) {
+      this.textSavePlayerName.textContent = isBn ? 'সেভ' : 'Save';
     }
     if (this.textUploadAvatar) {
       this.textUploadAvatar.textContent = isBn ? 'কাস্টম ছবি বা ফটো আপলোড করুন' : 'Upload Custom Photo / Icon';
     }
     if (this.btnCloseAvatarModal) {
-      this.btnCloseAvatarModal.textContent = isBn ? 'সম্পন্ন' : 'Close';
+      this.btnCloseAvatarModal.textContent = isBn ? 'সম্পন্ন' : 'Done';
     }
 
     if (this.hudTargetTitle) {
@@ -1275,8 +1434,8 @@ class TwentyNineApp {
     this.hudCollectedTeam1.textContent = isBn ? toBn(pts1) : pts1;
     this.hudCollectedTeam2.textContent = isBn ? toBn(pts2) : pts2;
 
-    const t1Name = isBn ? TEAMS.TEAM_1.nameBn : TEAMS.TEAM_1.nameEn;
-    const t2Name = isBn ? TEAMS.TEAM_2.nameBn : TEAMS.TEAM_2.nameEn;
+    const t1Name = this.getTeamName(1);
+    const t2Name = this.getTeamName(2);
     const titleText = isBn 
       ? `অর্জিত পয়েন্ট: ${t1Name} ${toBn(pts1)} | ${t2Name} ${toBn(pts2)}`
       : `Points Collected: ${t1Name} ${pts1} pts | ${t2Name} ${pts2} pts`;
@@ -1377,7 +1536,7 @@ class TwentyNineApp {
 
   onBidPlaced(data) {
     const { playerId, bidAmount, isPass } = data;
-    const pName = this.currentLanguage === 'bn' ? PLAYERS[playerId].nameBn : PLAYERS[playerId].nameEn;
+    const pName = this.getPlayerName(playerId);
 
     if (isPass) {
       this.statusTags[playerId].textContent = this.currentLanguage === 'bn' ? 'পাস' : 'Passed';
@@ -1450,7 +1609,7 @@ class TwentyNineApp {
     const finalTarget = data.targetBid || winningBid;
     this.hudTargetVal.textContent = isBn ? toBn(finalTarget) : finalTarget;
 
-    const winnerName = this.currentLanguage === 'bn' ? PLAYERS[winner].nameBn : PLAYERS[winner].nameEn;
+    const winnerName = this.getPlayerName(winner);
     this.showSpeechBubble(winner, `🏆 ${winningBid}!`);
     this.showToast(`🎯 ${winnerName} ${winningBid} ${this.currentLanguage === 'bn' ? 'পয়েন্টে ডাক জিতেছেন!' : 'won the bid!'}`);
 
@@ -1479,7 +1638,7 @@ class TwentyNineApp {
       : (isBn ? 'রং: গোপন' : 'Trump: Hidden');
     this.renderHudTrumpHidden(labelText);
 
-    const pName = isBn ? PLAYERS[bidder].nameBn : PLAYERS[bidder].nameEn;
+    const pName = this.getPlayerName(bidder);
     this.showToast(`${pName} ${isBn ? 'ট্রাম্প গোপন করেছেন' : 'locked the Trump card'}`);
   }
 
@@ -1620,7 +1779,7 @@ class TwentyNineApp {
       </div>
     `;
 
-    const pName = isBn ? PLAYERS[playerId].nameBn : PLAYERS[playerId].nameEn;
+    const pName = this.getPlayerName(playerId);
     this.showSpeechBubble(playerId, `🎺 ${suitName}!`);
     this.showToast(`🎺 ${pName} ${isBn ? 'রং প্রকাশ করেছেন:' : 'revealed Trump:'} ${suitName} (${suitObj.symbol})!`);
 
@@ -1656,7 +1815,7 @@ class TwentyNineApp {
       this.hudTargetVal.textContent = this.gameState.targetBid;
     }
 
-    const pName = isBn ? PLAYERS[playerId].nameBn : PLAYERS[playerId].nameEn;
+    const pName = this.getPlayerName(playerId);
     const message = isBn
       ? `👑 জোড়া/ম্যারেজ! ${pName} ট্রাম্পের সাহেব ও বিবি দেখিয়েছেন (+৪ বোনাস পয়েন্ট)!`
       : `👑 Marriage (Pair)! ${pName} declared King & Queen of Trump (+4 Bonus Points)!`;
@@ -1723,7 +1882,7 @@ class TwentyNineApp {
       });
     }
 
-    const wName = isBn ? PLAYERS[winnerId].nameBn : PLAYERS[winnerId].nameEn;
+    const wName = this.getPlayerName(winnerId);
     this.showSpeechBubble(winnerId, `+${points}`);
     this.showToast(`${wName} ${isBn ? 'হাত জিতেছেন' : 'takes the trick'} (+${points} pts)`);
   }
@@ -1741,7 +1900,7 @@ class TwentyNineApp {
       this.sound.playRoundLoss();
     }
 
-    const bidderName = isBn ? PLAYERS[bidder].nameBn : PLAYERS[bidder].nameEn;
+    const bidderName = this.getPlayerName(bidder);
 
     if (isMatchWon) {
       this.matchOverTitle.innerHTML = winnerTeam === 1 
@@ -1751,8 +1910,8 @@ class TwentyNineApp {
       this.matchOverBody.innerHTML = `
         <div style="font-size:1.05rem; margin-bottom:12px;">
           ${isBn ? 'চূড়ান্ত ম্যাচ স্কোর:' : 'Final Match Score:'} 
-          <strong>${isBn ? TEAMS.TEAM_1.nameBn : TEAMS.TEAM_1.nameEn} (${matchScores.team1})</strong> vs 
-          <strong>${isBn ? TEAMS.TEAM_2.nameBn : TEAMS.TEAM_2.nameEn} (${matchScores.team2})</strong>
+          <strong>${this.getTeamName(1)} (${matchScores.team1})</strong> vs 
+          <strong>${this.getTeamName(2)} (${matchScores.team2})</strong>
         </div>
         <div>${isBn ? 'টার্গেট ৬ গেম পয়েন্ট পূর্ণ হয়েছে।' : 'Target 6 Game Points achieved.'}</div>
       `;
@@ -1763,8 +1922,8 @@ class TwentyNineApp {
         : `<span>💥</span> ${isBn ? 'ডাক ব্যর্থ হয়েছে (ডাউন/সেট)' : 'Bid Failed / Set'} (${pointsMade} / ${targetBid} pts)`;
 
       const winnerTeamName = isBidAchieved 
-        ? (PLAYERS[bidder].team === 1 ? (isBn ? TEAMS.TEAM_1.nameBn : TEAMS.TEAM_1.nameEn) : (isBn ? TEAMS.TEAM_2.nameBn : TEAMS.TEAM_2.nameEn))
-        : (PLAYERS[bidder].team === 1 ? (isBn ? TEAMS.TEAM_2.nameBn : TEAMS.TEAM_2.nameEn) : (isBn ? TEAMS.TEAM_1.nameBn : TEAMS.TEAM_1.nameEn));
+        ? (PLAYERS[bidder].team === 1 ? this.getTeamName(1) : this.getTeamName(2))
+        : (PLAYERS[bidder].team === 1 ? this.getTeamName(2) : this.getTeamName(1));
 
       const { marriageBonus } = data;
       this.roundResultBody.innerHTML = `
@@ -1773,7 +1932,7 @@ class TwentyNineApp {
           <div>${isBn ? 'টার্গেট পয়েন্ট:' : 'Target:'} <strong>${targetBid} pts</strong> | ${isBn ? 'অর্জিত:' : 'Made:'} <strong>${pointsMade} pts</strong>${marriageBonus ? ` (+${marriageBonus} ${isBn ? 'ম্যারেজ' : 'Marriage'})` : ''}</div>
           <div>${isBn ? 'রাউন্ডের ফল:' : 'Round Outcome:'} <strong>${winnerTeamName}</strong> <strong>+${gamePointsDelta}</strong> ${isBn ? 'গেম পয়েন্ট পেল।' : 'Game Point(s).' }</div>
           <div style="margin-top:8px; color:var(--text-primary); font-family:var(--font-mono);">
-            ${isBn ? 'মোট স্কোর:' : 'Overall Score:'} ${isBn ? TEAMS.TEAM_1.nameBn : TEAMS.TEAM_1.nameEn}: ${matchScores.team1} | ${isBn ? TEAMS.TEAM_2.nameBn : TEAMS.TEAM_2.nameEn}: ${matchScores.team2}
+            ${isBn ? 'মোট স্কোর:' : 'Overall Score:'} ${this.getTeamName(1)}: ${matchScores.team1} | ${this.getTeamName(2)}: ${matchScores.team2}
           </div>
         </div>
       `;

@@ -1334,7 +1334,102 @@ body.trump-selection-active #player-hand-container .card {
   font-size: clamp(0.78rem, 2vw, 0.88rem);
   color: var(--text-secondary);
   margin-top: -4px;
-  margin-bottom: 6px;
+  margin-bottom: 4px;
+}
+
+/* Player Name Customization Box */
+.player-name-edit-box {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  text-align: left;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 14px;
+  padding: 10px 14px;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.player-name-input-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.player-name-input-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.player-name-field-wrap {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(11, 16, 26, 0.85);
+  border: 1.5px solid rgba(168, 199, 250, 0.3);
+  border-radius: 10px;
+  padding: 6px 12px;
+  transition: all 0.2s ease;
+}
+
+.player-name-field-wrap:focus-within {
+  border-color: var(--primary-accent);
+  box-shadow: 0 0 0 3px rgba(168, 199, 250, 0.25);
+  background: rgba(15, 23, 42, 0.95);
+}
+
+.player-name-field-icon {
+  font-size: 0.88rem;
+  opacity: 0.8;
+}
+
+.player-name-text-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #FFFFFF;
+  font-family: inherit;
+  font-size: 0.92rem;
+  font-weight: 600;
+  min-width: 0;
+}
+
+.player-name-text-input::placeholder {
+  color: rgba(255, 255, 255, 0.35);
+  font-weight: 400;
+}
+
+.btn-save-player-name {
+  padding: 8px 16px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  border-radius: 10px;
+  background: rgba(168, 199, 250, 0.2);
+  color: #A8C7FA;
+  border: 1px solid rgba(168, 199, 250, 0.4);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.btn-save-player-name:hover {
+  background: rgba(168, 199, 250, 0.35);
+  border-color: #A8C7FA;
+  transform: translateY(-1px);
+}
+
+.btn-save-player-name:active {
+  transform: translateY(0);
+}
+
+.player-meta,
+.user-identity-badge {
+  cursor: pointer;
 }
 
 .avatar-presets-grid {

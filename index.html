@@ -405,15 +405,29 @@
     </div>
   </div>
 
-  <!-- Profile Icon / Avatar Chooser Modal -->
+  <!-- Profile Icon / Avatar & Name Chooser Modal -->
   <div class="modal-overlay" id="modal-avatar-chooser">
     <div class="m3-dialog avatar-chooser-dialog">
       <div class="dialog-title">
-        <span>🎭</span> <span id="title-avatar-modal">Select Profile Avatar</span>
+        <span>🎭</span> <span id="title-avatar-modal">Customize Player Profile</span>
       </div>
-      <div class="dialog-body" style="display:flex; flex-direction:column; gap:16px;">
-        <p class="avatar-chooser-subtitle" id="avatar-target-name">Choose an avatar for player</p>
+      <div class="dialog-body" style="display:flex; flex-direction:column; gap:14px;">
+        <p class="avatar-chooser-subtitle" id="avatar-target-name">Select avatar or edit details for player</p>
         
+        <!-- Player Name Edit Section -->
+        <div class="player-name-edit-box">
+          <label for="player-name-input" class="player-name-input-label" id="label-player-name">Player Name</label>
+          <div class="player-name-input-row">
+            <div class="player-name-field-wrap">
+              <span class="player-name-field-icon">✏️</span>
+              <input type="text" id="player-name-input" class="player-name-text-input" maxlength="20" placeholder="Enter player name..." autocomplete="off">
+            </div>
+            <button type="button" class="btn-m3 btn-m3-tonal btn-save-player-name" id="btn-save-player-name">
+              <span id="text-save-player-name">Save</span>
+            </button>
+          </div>
+        </div>
+
         <!-- Preset Avatar Options (4-5 presets + extra high quality) -->
         <div class="avatar-presets-grid" id="avatar-presets-grid">
           <!-- Populated dynamically via JS -->
@@ -432,7 +446,7 @@
         </div>
       </div>
       <div class="dialog-actions">
-        <button class="btn-m3 btn-m3-filled" id="btn-close-avatar-modal">Close</button>
+        <button class="btn-m3 btn-m3-filled" id="btn-close-avatar-modal">Done</button>
       </div>
     </div>
   </div>
