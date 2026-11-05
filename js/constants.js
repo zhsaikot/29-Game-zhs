@@ -1,6 +1,6 @@
 /**
  * Constants & Rules for 29 (Twenty-Nine) Card Game
- * Full Bilingual Support (English & বাংলা)
+ * 100% English Edition
  */
 
 export const SUITS = {
@@ -8,28 +8,28 @@ export const SUITS = {
     id: 'SPADES', 
     symbol: '♠', 
     nameEn: 'Spades', 
-    nameBn: 'ইসকাপণ', 
+    nameBn: 'Spades', 
     color: 'black' 
   },
   HEARTS: { 
     id: 'HEARTS', 
     symbol: '♥', 
     nameEn: 'Hearts', 
-    nameBn: 'হরতন', 
+    nameBn: 'Hearts', 
     color: 'red' 
   },
   CLUBS: { 
     id: 'CLUBS', 
     symbol: '♣', 
     nameEn: 'Clubs', 
-    nameBn: 'চিড়িতন', 
+    nameBn: 'Clubs', 
     color: 'black' 
   },
   DIAMONDS: { 
     id: 'DIAMONDS', 
     symbol: '♦', 
     nameEn: 'Diamonds', 
-    nameBn: 'রুইতন', 
+    nameBn: 'Diamonds', 
     color: 'red' 
   }
 };
@@ -37,14 +37,14 @@ export const SUITS = {
 export const SUIT_ORDER = ['SPADES', 'HEARTS', 'CLUBS', 'DIAMONDS'];
 
 const RANK_DEFINITIONS = {
-  'J':  { id: 'J',  nameEn: 'Jack',  nameBn: 'গোলাম (J)', power: 8, points: 3 },
-  '9':  { id: '9',  nameEn: '9',     nameBn: 'নহলা (9)',   power: 7, points: 2 },
-  'A':  { id: 'A',  nameEn: 'Ace',   nameBn: 'টেক্কা (A)', power: 6, points: 1 },
-  '10': { id: '10', nameEn: '10',    nameBn: 'দহলা (10)',  power: 5, points: 1 },
-  'K':  { id: 'K',  nameEn: 'King',  nameBn: 'সাহেব (K)', power: 4, points: 0 },
-  'Q':  { id: 'Q',  nameEn: 'Queen', nameBn: 'বিবি (Q)',   power: 3, points: 0 },
-  '8':  { id: '8',  nameEn: '8',     nameBn: 'আট (8)',     power: 2, points: 0 },
-  '7':  { id: '7',  nameEn: '7',     nameBn: 'সাত (7)',    power: 1, points: 0 }
+  'J':  { id: 'J',  nameEn: 'Jack',  nameBn: 'Jack (J)', power: 8, points: 3 },
+  '9':  { id: '9',  nameEn: '9',     nameBn: 'Nine (9)',   power: 7, points: 2 },
+  'A':  { id: 'A',  nameEn: 'Ace',   nameBn: 'Ace (A)', power: 6, points: 1 },
+  '10': { id: '10', nameEn: '10',    nameBn: 'Ten (10)',  power: 5, points: 1 },
+  'K':  { id: 'K',  nameEn: 'King',  nameBn: 'King (K)', power: 4, points: 0 },
+  'Q':  { id: 'Q',  nameEn: 'Queen', nameBn: 'Queen (Q)',   power: 3, points: 0 },
+  '8':  { id: '8',  nameEn: '8',     nameBn: 'Eight (8)',     power: 2, points: 0 },
+  '7':  { id: '7',  nameEn: '7',     nameBn: 'Seven (7)',    power: 1, points: 0 }
 };
 
 export const RANKS = {
@@ -80,15 +80,15 @@ export const DEFAULT_PLAYER_AVATARS = {
 };
 
 export const PLAYERS = [
-  { id: 0, key: 'SOUTH', nameEn: 'Saikot', nameBn: 'সইকত', isHuman: true, team: 1 },
-  { id: 1, key: 'EAST',  nameEn: 'Sophia (East)', nameBn: 'সোফিয়া (পূর্ব)', isHuman: false, team: 2 },
-  { id: 2, key: 'NORTH', nameEn: 'Arthur (Partner)', nameBn: 'আর্থার (পার্টনার)', isHuman: false, team: 1 },
-  { id: 3, key: 'WEST',  nameEn: 'Marcus (West)', nameBn: 'মার্কাস (পশ্চিম)', isHuman: false, team: 2 }
+  { id: 0, key: 'SOUTH', nameEn: 'Saikot', nameBn: 'Saikot', isHuman: true, team: 1 },
+  { id: 1, key: 'EAST',  nameEn: 'Sophia (East)', nameBn: 'Sophia (East)', isHuman: false, team: 2 },
+  { id: 2, key: 'NORTH', nameEn: 'Arthur (Partner)', nameBn: 'Arthur (Partner)', isHuman: false, team: 1 },
+  { id: 3, key: 'WEST',  nameEn: 'Marcus (West)', nameBn: 'Marcus (West)', isHuman: false, team: 2 }
 ];
 
 export const TEAMS = {
-  TEAM_1: { id: 1, nameEn: 'Saikot & Arthur', nameBn: 'সইকত ও আর্থার', playerIds: [0, 2], color: 'var(--primary-accent)' },
-  TEAM_2: { id: 2, nameEn: 'Sophia & Marcus', nameBn: 'সোফিয়া ও মার্কাস', playerIds: [1, 3], color: 'var(--secondary-accent)' }
+  TEAM_1: { id: 1, nameEn: 'Saikot & Arthur', nameBn: 'Saikot & Arthur', playerIds: [0, 2], color: 'var(--primary-accent)' },
+  TEAM_2: { id: 2, nameEn: 'Sophia & Marcus', nameBn: 'Sophia & Marcus', playerIds: [1, 3], color: 'var(--secondary-accent)' }
 };
 
 export const GAME_PHASES = {

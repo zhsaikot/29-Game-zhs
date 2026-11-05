@@ -1,6 +1,6 @@
 <div align="center">
 
-# ♠️ ২৯ (Twenty-Nine) Card Game ♥️
+# ♠️ 29 (Twenty-Nine) Card Game 🃏
 ### Google Material Design 3 • Authentic South Asian Edition
 
 [![Live Demo](https://img.shields.io/badge/Demo-Live%20on%20GitHub%20Pages-success?style=for-the-badge&logo=github)](https://zhsaikot.github.io/29-Game-zhs/)
@@ -46,16 +46,16 @@
 - **Two-Phase Dealing:** 4 cards dealt initially ➔ Bidding from 16 to 28 (or Pass) ➔ Hidden Trump locked on table slot ➔ Remaining 4 cards dealt (total 8 cards each).
 - **Active Bidders System:** Once a player passes, they cannot bid again in that round. Bidding circulates strictly among active players.
 - **Fair Trump Mechanics:** Only the Bidder knows the secret trump suit before it is revealed. No player can lead trump prior to reveal (unless holding only trumps).
-- **Trump Reveal (রং তোলা):** Anyone void in the led suit can reveal the secret trump with a dramatic 3D flip animation. The revealing player must play trump if holding one.
-- **Marriage / Royals (জোড়া):** Holding both King & Queen of the Trump suit allows declaring Marriage, adjusting the target bid by **4 points**!
+- **Trump Reveal:** Anyone void in the led suit can reveal the secret trump with a dramatic 3D flip animation. The revealing player must play trump if holding one.
+- **Marriage / Royals:** Holding both King & Queen of the Trump suit allows declaring Marriage, adjusting the target bid by **4 points**!
 - **Double & Redouble:** Interactive multiplier challenges (x2 and x4 game points).
 - **High Bid Bonus:** Winning a bid of 21 or higher automatically earns **2 Game Points** on success.
 
 ### 🤖 4. Fair & Smart Heuristic AI
 - **Zero-Cheating Guarantee:** AI players do not secretly know the hidden trump suit until it is legitimately revealed.
-- **Partner Awareness:** Recognizes when partner has already secured the trick with a boss card, intelligently loading high points (পাঞ্জা দেওয়া) or dumping zero-point trash cards.
+- **Partner Awareness:** Recognizes when partner has already secured the trick with a boss card, intelligently loading high points (loading points) or dumping zero-point trash cards.
 - **Memory Card Counter:** Tracks played Jacks and Nines to know when Aces and 10s become boss cards.
-- **Live Speech Bubbles:** Opponents and partners express real-time reactions (*"১৬"*, *"পাস!"*, *"রং তুললাম!"*, *"কাটলাম!"*) next to their avatars!
+- **Live Speech Bubbles:** Opponents and partners express real-time reactions (*"16"*, *"Pass!"*, *"Revealed Trump!"*, *"Trumped!"*) next to their avatars!
 
 ### 🔊 5. Zero-Dependency Procedural Web Audio Engine
 - Built using the native browser `AudioContext` without any external `.mp3` or `.wav` files:
@@ -66,23 +66,23 @@
   - Triumphant rising chords for round victory
 - Built-in Mute/Unmute toggle.
 
-### 🌐 6. Instant Bilingual Support (English ⇄ বাংলা)
-- Single-click toggle (`বাং / EN`) in the top HUD switches all player names (*আপনি, কবির, রহিম, করিম*), suit names (*ইসকাপণ, হরতন, চিড়িতন, রুইতন*), rules, dialogs, and toasts between English and authentic Bengali!
+### 🌐 6. Modern Material 3 & Customization
+- Clean, responsive Google Material 3 dark-themed interface with custom player avatars, player name customization, sound effects, PWA offline support, and dedicated match trackers.
 
 ---
 
 ## 🏆 Card Hierarchy & Point Values
 
-| Rank | Name (English) | নাম (বাংলা) | Power | Points | Traditional Note |
-| :---: | :---: | :---: | :---: | :---: | :---: |
-| **J** | Jack | গোলাম (J) | 8 (Highest) | **3 pts** | Highest power card in every suit |
-| **9** | Nine | নহলা (9) | 7 | **2 pts** | Second highest card |
-| **A** | Ace | টেক্কা (A) | 6 | **1 pt** | Honor card |
-| **10** | Ten | দহলা (10) | 5 | **1 pt** | Honor card |
-| **K** | King | সাহেব (K) | 4 | **0 pts** | Part of Marriage pair |
-| **Q** | Queen | বিবি (Q) | 3 | **0 pts** | Part of Marriage pair |
-| **8** | Eight | আট (8) | 2 | **0 pts** | Trash / probe card |
-| **7** | Seven | সাত (7) | 1 (Lowest) | **0 pts** | Lowest power card |
+| Rank | Card Name | Power | Points | Traditional Note |
+|:---:|:---|:---:|:---:|:---|
+| **J** | Jack | 8 (Highest) | **3 pts** | Highest power card in every suit |
+| **9** | Nine | 7 | **2 pts** | Second highest card |
+| **A** | Ace | 6 | **1 pt** | Honor card |
+| **10** | Ten | 5 | **1 pt** | Honor card |
+| **K** | King | 4 | **0 pts** | Part of Marriage pair |
+| **Q** | Queen | 3 | **0 pts** | Part of Marriage pair |
+| **8** | Eight | 2 | **0 pts** | Trash / probe card |
+| **7** | Seven | 1 (Lowest) | **0 pts** | Lowest power card |
 
 > **Last Trick Bonus:** Winner of the 8th (final) trick receives **+1 bonus point**, bringing total round points to **29**.
 

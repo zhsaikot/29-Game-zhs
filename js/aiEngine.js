@@ -128,7 +128,7 @@ export class AIEngine {
         if (currentWinningPlay.card.rank === 'J' || this.isBossCard(currentWinningPlay.card)) {
           const highPointsCard = cardsOfLeadSuit.find(c => c.points > 0);
           if (highPointsCard && trick.length === 3) {
-            return { action: 'play', card: highPointsCard, speech: 'পাঞ্জা দিলাম!' };
+            return { action: 'play', card: highPointsCard, speech: 'Point added!' };
           }
         }
         const lowestCard = cardsOfLeadSuit.reduce((min, c) => c.power < min.power ? c : min, cardsOfLeadSuit[0]);
@@ -157,12 +157,12 @@ export class AIEngine {
       if (isBidder) {
         const holdsTrump = hand.some(c => c.suit === gameState.trumpSuit);
         if (!isPartnerWinning && isValuable && holdsTrump) {
-          return { action: 'reveal_trump', speech: 'রং তুললাম!' };
+          return { action: 'reveal_trump', speech: 'Trump revealed!' };
         }
       } else {
         // If non-bidder: asks to reveal trump on high value trick to attempt a cut
         if (!isPartnerWinning && isValuable) {
-          return { action: 'reveal_trump', speech: 'রং দেখান!' };
+          return { action: 'reveal_trump', speech: 'Reveal Trump!' };
         }
       }
     } else {
@@ -178,7 +178,7 @@ export class AIEngine {
 
         if (winningTrumps.length > 0) {
           const lowestWinningTrump = winningTrumps.reduce((min, c) => c.power < min.power ? c : min, winningTrumps[0]);
-          return { action: 'play', card: lowestWinningTrump, speech: 'কাটলাম!' };
+          return { action: 'play', card: lowestWinningTrump, speech: 'Trumped!' };
         }
       }
     }
@@ -187,7 +187,7 @@ export class AIEngine {
     if (isPartnerWinning && trick.length === 3) {
       const highPointTrash = playableCards.find(c => c.points > 0 && c.rank !== 'J');
       if (highPointTrash) {
-        return { action: 'play', card: highPointTrash, speech: 'পয়েন্ট দিলাম' };
+        return { action: 'play', card: highPointTrash, speech: 'Point added' };
       }
     }
 
@@ -204,7 +204,7 @@ export class AIEngine {
   chooseLeadCard(playableCards, gameState) {
     for (const card of playableCards) {
       if (this.isBossCard(card) && card.points >= 2 && (!gameState.isTrumpRevealed || card.suit !== gameState.trumpSuit)) {
-        return { action: 'play', card, speech: `${card.rank} খেললাম` };
+        return { action: 'play', card, speech: `Played ${card.rank}` };
       }
     }
 
