@@ -43,6 +43,18 @@ class TwentyNineApp {
     this.hudTrumpLabel = document.getElementById('hud-trump-label');
     this.hudTargetTitle = document.getElementById('hud-target-title');
     this.hudTargetVal = document.getElementById('hud-target-val');
+
+    this.hudCollectedSlot = document.getElementById('hud-collected-slot');
+
+    this.hudCollectedTitle = document.getElementById('hud-collected-title');
+
+    this.hudCollectedTeam1 = document.getElementById('hud-collected-team1');
+
+    this.hudCollectedTeam2 = document.getElementById('hud-collected-team2');
+    this.hudCollectedSlot = document.getElementById('hud-collected-slot');
+    this.hudCollectedTitle = document.getElementById('hud-collected-title');
+    this.hudCollectedTeam1 = document.getElementById('hud-collected-team1');
+    this.hudCollectedTeam2 = document.getElementById('hud-collected-team2');
     this.labelTeam1 = document.getElementById('label-team1');
     this.labelTeam2 = document.getElementById('label-team2');
     this.scoreTeam1Val = document.getElementById('score-team1-val');
@@ -185,6 +197,48 @@ class TwentyNineApp {
     this.gameState.on('roundEnded', (data) => this.onRoundEnded(data));
 
     // Language Toggle
+    if (this.hudCollectedSlot) {
+      this.hudCollectedSlot.addEventListener('click', () => {
+        this.sound.playButtonClick();
+        const isBn = this.currentLanguage === 'bn';
+        const bnDigits = ['০','১','২','৩','৪','৫','৬','৭','৮','৯'];
+        const toBn = num => String(num).replace(/[0-9]/g, d => bnDigits[d]);
+        const p1 = this.gameState && this.gameState.teamPoints ? this.gameState.teamPoints.team1 : 0;
+        const p2 = this.gameState && this.gameState.teamPoints ? this.gameState.teamPoints.team2 : 0;
+        const t1Name = isBn ? TEAMS.TEAM_1.nameBn : TEAMS.TEAM_1.nameEn;
+        const t2Name = isBn ? TEAMS.TEAM_2.nameBn : TEAMS.TEAM_2.nameEn;
+        this.showToast(`🏆 ${isBn ? 'রাউন্ডের পয়েন্ট:' : 'Round Points:'} ${t1Name} ${isBn ? toBn(p1) : p1} | ${t2Name} ${isBn ? toBn(p2) : p2}`);
+      });
+    }
+
+    if (this.hudCollectedSlot) {
+
+      this.hudCollectedSlot.addEventListener('click', () => {
+
+        this.sound.playButtonClick();
+
+        const isBn = this.currentLanguage === 'bn';
+
+        const bnDigits = ['০','১','২','৩','৪','৫','৬','৭','৮','৯'];
+
+        const toBn = num => String(num).replace(/[0-9]/g, d => bnDigits[d]);
+
+        const p1 = this.gameState && this.gameState.teamPoints ? this.gameState.teamPoints.team1 : 0;
+
+        const p2 = this.gameState && this.gameState.teamPoints ? this.gameState.teamPoints.team2 : 0;
+
+        const t1Name = isBn ? TEAMS.TEAM_1.nameBn : TEAMS.TEAM_1.nameEn;
+
+        const t2Name = isBn ? TEAMS.TEAM_2.nameBn : TEAMS.TEAM_2.nameEn;
+
+        this.showToast(`🏆 ${isBn ? 'রাউন্ডের পয়েন্ট:' : 'Round Points:'} ${t1Name} ${isBn ? toBn(p1) : p1} | ${t2Name} ${isBn ? toBn(p2) : p2}`);
+
+      });
+
+    }
+
+
+
     this.btnLangToggle.addEventListener('click', () => {
       this.sound.playButtonClick();
       this.currentLanguage = this.currentLanguage === 'bn' ? 'en' : 'bn';
@@ -486,7 +540,7 @@ class TwentyNineApp {
       </div>
       <div>
         <strong style="color:var(--accent-gold);">৪. জোড়া / ম্যারেজ রুল (Marriage Rule):</strong><br>
-        ট্রাম্প খোলার পর কোনো দলের কাছে ট্রাম্পের <strong>King (K)</strong> ও <strong>Queen (Q)</strong> থাকলে জোড়া ঘোষণা করা যায়। বিডিং দলের থাকলে টার্গেট ৪ কমে, ডিফেন্ডিং দলের থাকলে টার্গেট ৪ বাড়ে।
+        ট্রাম্প খোলার পর কোনো খেলোয়াড়ের হাতে ট্রাম্পের <strong>King (K)</strong> ও <strong>Queen (Q)</strong> থাকলে তিনি ম্যারেজ দাবি করে দলের জন্য <strong>+৪ বোনাস পয়েন্ট</strong> অর্জন করতে পারেন!
       </div>
       <div>
         <strong style="color:var(--tertiary-accent);">৫. ম্যাচ স্কোর (Red vs Black Points):</strong><br>
@@ -513,7 +567,7 @@ class TwentyNineApp {
       </div>
       <div>
         <strong style="color:var(--accent-gold);">4. Marriage Rule (K + Q of Trump):</strong><br>
-        If a team holds both K & Q of Trump after trump is revealed, target drops by 4 for bidder team or increases by 4 for defenders.
+        A player holding both <strong>King (K)</strong> & <strong>Queen (Q)</strong> of Trump can claim Marriage (Pair) after trump is revealed to earn <strong>+4 Bonus Points</strong> for their team!
       </div>
       <div>
         <strong style="color:var(--tertiary-accent);">5. Match Points:</strong><br>
@@ -534,8 +588,14 @@ class TwentyNineApp {
     if (this.hudTargetTitle) {
       this.hudTargetTitle.textContent = isBn ? '🎯 লক্ষ্য:' : '🎯 Target:';
     }
+    if (this.hudCollectedTitle) {
+      this.hudCollectedTitle.textContent = isBn ? '🏆 অর্জিত:' : '🏆 Won:';
+    }
+    this.updateHudCollectedPoints();
     if (this.hudTargetVal && this.gameState && this.gameState.targetBid > 0) {
-      this.hudTargetVal.textContent = this.gameState.targetBid;
+      const bnDigits = ['০','১','২','৩','৪','৫','৬','৭','৮','৯'];
+      const toBn = num => String(num).replace(/[0-9]/g, d => bnDigits[d]);
+      this.hudTargetVal.textContent = isBn ? toBn(this.gameState.targetBid) : this.gameState.targetBid;
     }
     this.updateSubmitBidButton();
 
@@ -588,6 +648,9 @@ class TwentyNineApp {
     this.trickRoundLabel.textContent = this.currentLanguage === 'bn' ? 'হাত ১ / ৮ (Trick 1/8)' : 'Trick 1 / 8';
     this.renderHudTrumpHidden();
     this.hudTargetVal.textContent = '--';
+
+    this.updateHudCollectedPoints();
+    this.updateHudCollectedPoints();
 
     this.btnRevealTrump.style.display = 'none';
     this.btnClaimMarriage.style.display = 'none';
@@ -775,6 +838,75 @@ class TwentyNineApp {
     }
   }
 
+  updateHudCollectedPoints() {
+    if (!this.hudCollectedTeam1 || !this.hudCollectedTeam2 || !this.gameState) return;
+    const isBn = this.currentLanguage === 'bn';
+    const bnDigits = ['০','১','২','৩','৪','৫','৬','৭','৮','৯'];
+    const toBn = num => String(num).replace(/[0-9]/g, d => bnDigits[d]);
+
+    const pts1 = (this.gameState.teamPoints && this.gameState.teamPoints.team1) || 0;
+    const pts2 = (this.gameState.teamPoints && this.gameState.teamPoints.team2) || 0;
+
+    this.hudCollectedTeam1.textContent = isBn ? toBn(pts1) : pts1;
+    this.hudCollectedTeam2.textContent = isBn ? toBn(pts2) : pts2;
+
+    const t1Name = isBn ? TEAMS.TEAM_1.nameBn : TEAMS.TEAM_1.nameEn;
+    const t2Name = isBn ? TEAMS.TEAM_2.nameBn : TEAMS.TEAM_2.nameEn;
+    const titleText = isBn 
+      ? `অর্জিত পয়েন্ট: ${t1Name} ${toBn(pts1)} | ${t2Name} ${toBn(pts2)}`
+      : `Points Collected: ${t1Name} ${pts1} pts | ${t2Name} ${pts2} pts`;
+
+    if (this.hudCollectedSlot) {
+      this.hudCollectedSlot.title = titleText;
+    }
+  }
+
+  updateHudCollectedPoints() {
+
+    if (!this.hudCollectedTeam1 || !this.hudCollectedTeam2 || !this.gameState) return;
+
+    const isBn = this.currentLanguage === 'bn';
+
+    const bnDigits = ['০','১','২','৩','৪','৫','৬','৭','৮','৯'];
+
+    const toBn = num => String(num).replace(/[0-9]/g, d => bnDigits[d]);
+
+
+
+    const pts1 = (this.gameState.teamPoints && this.gameState.teamPoints.team1) || 0;
+
+    const pts2 = (this.gameState.teamPoints && this.gameState.teamPoints.team2) || 0;
+
+
+
+    this.hudCollectedTeam1.textContent = isBn ? toBn(pts1) : pts1;
+
+    this.hudCollectedTeam2.textContent = isBn ? toBn(pts2) : pts2;
+
+
+
+    const t1Name = isBn ? TEAMS.TEAM_1.nameBn : TEAMS.TEAM_1.nameEn;
+
+    const t2Name = isBn ? TEAMS.TEAM_2.nameBn : TEAMS.TEAM_2.nameEn;
+
+    const titleText = isBn 
+
+      ? `অর্জিত পয়েন্ট: ${t1Name} ${toBn(pts1)} | ${t2Name} ${toBn(pts2)}`
+
+      : `Points Collected: ${t1Name} ${pts1} pts | ${t2Name} ${pts2} pts`;
+
+
+
+    if (this.hudCollectedSlot) {
+
+      this.hudCollectedSlot.title = titleText;
+
+    }
+
+  }
+
+
+
   updateSubmitBidButton() {
     const isBn = this.currentLanguage === 'bn';
     const bidVal = this.selectedBid || 16;
@@ -828,7 +960,9 @@ class TwentyNineApp {
       this.showToast(`${pName}: ${this.currentLanguage === 'bn' ? 'পাস করেছেন' : 'Passed'}`);
     } else {
       this.statusTags[playerId].textContent = `${this.currentLanguage === 'bn' ? 'ডাক:' : 'Bid:'} ${bidAmount}`;
-      this.hudTargetVal.textContent = bidAmount;
+      const bnDigits = ['০','১','২','৩','৪','৫','৬','৭','৮','৯'];
+      const toBn = num => String(num).replace(/[0-9]/g, d => bnDigits[d]);
+      this.hudTargetVal.textContent = this.currentLanguage === 'bn' ? toBn(bidAmount) : bidAmount;
       this.showSpeechBubble(playerId, `${bidAmount}`);
       this.showToast(`${pName}: ${bidAmount}`);
       this.sound.playButtonClick();
@@ -885,7 +1019,11 @@ class TwentyNineApp {
     this.floatingBiddingPanel.classList.remove('active');
     this.crowns[winner].style.display = 'block';
     this.pods[winner].classList.add('is-bidder');
-    this.hudTargetVal.textContent = data.targetBid || winningBid;
+    const isBn = this.currentLanguage === 'bn';
+    const bnDigits = ['০','১','২','৩','৪','৫','৬','৭','৮','৯'];
+    const toBn = num => String(num).replace(/[0-9]/g, d => bnDigits[d]);
+    const finalTarget = data.targetBid || winningBid;
+    this.hudTargetVal.textContent = isBn ? toBn(finalTarget) : finalTarget;
 
     const winnerName = this.currentLanguage === 'bn' ? PLAYERS[winner].nameBn : PLAYERS[winner].nameEn;
     this.showSpeechBubble(winner, `🏆 ${winningBid}!`);
@@ -1070,6 +1208,24 @@ class TwentyNineApp {
     const isBn = this.currentLanguage === 'bn';
     this.sound.playMarriage();
 
+    this.updateHudCollectedPoints();
+
+    if (this.hudCollectedSlot) {
+
+      this.hudCollectedSlot.classList.remove('pts-pulse');
+
+      void this.hudCollectedSlot.offsetWidth;
+
+      this.hudCollectedSlot.classList.add('pts-pulse');
+
+    }
+    this.updateHudCollectedPoints();
+    if (this.hudCollectedSlot) {
+      this.hudCollectedSlot.classList.remove('pts-pulse');
+      void this.hudCollectedSlot.offsetWidth;
+      this.hudCollectedSlot.classList.add('pts-pulse');
+    }
+
     // Target strictly remains the contract bid
     if (this.gameState && this.gameState.targetBid > 0) {
       this.hudTargetVal.textContent = this.gameState.targetBid;
@@ -1090,6 +1246,13 @@ class TwentyNineApp {
     const isBn = this.currentLanguage === 'bn';
     this.sound.playTrickWin();
     this.checkMarriageButton();
+    this.updateHudCollectedPoints();
+
+    if (this.hudCollectedSlot && points > 0) {
+      this.hudCollectedSlot.classList.remove('pts-pulse');
+      void this.hudCollectedSlot.offsetWidth;
+      this.hudCollectedSlot.classList.add('pts-pulse');
+    }
 
     if (points > 0) {
       const particle = document.createElement('div');
