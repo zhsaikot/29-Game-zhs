@@ -39,8 +39,8 @@ export class CardRenderer {
     const frameGlow = isNine ? 'filter="drop-shadow(0 0 5px rgba(245, 158, 11, 0.45))"' : '';
 
     const innerGridFrame = `
-      <rect x="18" y="16" width="64" height="112" rx="6" fill="none" stroke="${frameStroke}" stroke-width="${isNine ? '1.4' : '0.9'}" stroke-opacity="${frameStrokeOpacity}" ${frameGlow}/>
-      <rect x="20.5" y="18.5" width="59" height="107" rx="4.5" fill="none" stroke="${frameStroke}" stroke-width="0.6" stroke-opacity="${isNine ? 0.45 : 0.12}" stroke-dasharray="3 2"/>
+      <rect class="real-card-frame" x="26" y="22" width="48" height="100" rx="6" fill="none" stroke="${frameStroke}" stroke-width="${isNine ? '1.4' : '0.9'}" stroke-opacity="${frameStrokeOpacity}" ${frameGlow}/>
+      <rect x="28" y="24" width="44" height="96" rx="4.5" fill="none" stroke="${frameStroke}" stroke-width="0.6" stroke-opacity="${isNine ? 0.45 : 0.12}" stroke-dasharray="3 2"/>
     `;
 
     // Exact traditional playing card pip coordinates (viewBox 0 0 100 144)
@@ -213,9 +213,9 @@ export class CardRenderer {
         </defs>
 
         <!-- Ornate Outer Court Border -->
-        <rect x="18" y="16" width="64" height="112" rx="5" fill="none" stroke="${frameBorderColor}" stroke-width="${isJack ? '1.5' : '1.2'}" filter="drop-shadow(0 1px 3px rgba(0,0,0,0.1))"/>
-        <rect x="19.5" y="17.5" width="61" height="109" rx="4" fill="url(#guilloche-${cardId})"/>
-        <rect x="20.5" y="18.5" width="59" height="107" rx="3.5" fill="none" stroke="${accentGold}" stroke-width="0.8" stroke-opacity="0.5" stroke-dasharray="3 2"/>
+        <rect class="real-card-frame" x="26" y="22" width="48" height="100" rx="5" fill="none" stroke="${frameBorderColor}" stroke-width="${isJack ? '1.5' : '1.2'}" filter="drop-shadow(0 1px 3px rgba(0,0,0,0.1))"/>
+        <rect x="27.5" y="23.5" width="45" height="97" rx="4" fill="url(#guilloche-${cardId})"/>
+        <rect x="28.5" y="24.5" width="43" height="95" rx="3.5" fill="none" stroke="${accentGold}" stroke-width="0.8" stroke-opacity="0.5" stroke-dasharray="3 2"/>
 
         <!-- Top Half (Direct) -->
         <g id="court-top-${cardId}">
@@ -240,8 +240,8 @@ export class CardRenderer {
     return `
       <g class="ace-master-container">
         <!-- Ornate Ace Inner Border -->
-        <rect x="18" y="16" width="64" height="112" rx="6" fill="none" stroke="${colorHex}" stroke-width="1.1" stroke-opacity="0.35"/>
-        <rect x="21" y="19" width="58" height="106" rx="4" fill="none" stroke="${colorHex}" stroke-width="0.6" stroke-opacity="0.18" stroke-dasharray="3 3"/>
+        <rect class="real-card-frame" x="26" y="22" width="48" height="100" rx="6" fill="none" stroke="${colorHex}" stroke-width="1.1" stroke-opacity="0.35"/>
+        <rect x="28" y="24" width="44" height="96" rx="4" fill="none" stroke="${colorHex}" stroke-width="0.6" stroke-opacity="0.18" stroke-dasharray="3 3"/>
 
         <!-- Corner Flourishes -->
         <path d="M21 27 C25 27 27 25 27 21" fill="none" stroke="${colorHex}" stroke-width="0.9" opacity="0.4"/>
@@ -293,14 +293,8 @@ export class CardRenderer {
       centerArtworkSVG = CardRenderer.renderNumberCardPips(rank, suitPath, colorHex, cardId);
     }
 
-    // Sleek Non-Intrusive Micro-Pill for points (does not block any bottom pips!)
-    // Placed right on the bottom border at y=136 between corner indices
-    const pointsBadgeSVG = rankObj.points > 0 ? `
-      <g class="card-points-tag" transform="translate(50, 136)">
-        <rect x="-14" y="-5.5" width="28" height="11" rx="5.5" fill="#FFFFFF" stroke="${colorHex}" stroke-width="1.1" filter="drop-shadow(0 1px 2px rgba(0,0,0,0.25))"/>
-        <text x="0" y="3" font-family="'JetBrains Mono', monospace" font-size="7.5" font-weight="900" fill="${colorHex}" text-anchor="middle" letter-spacing="-0.3">${rankObj.points} pt</text>
-      </g>
-    ` : '';
+    // Point badge moved to top-right corner pill in DOM & CSS (.card-point-badge)
+    const pointsBadgeSVG = '';
 
     return `
       <svg class="card-svg card-front" viewBox="0 0 100 144" xmlns="http://www.w3.org/2000/svg">
@@ -410,10 +404,13 @@ export class CardRenderer {
       cardEl.classList.add('trump-locked');
     }
 
+    const pointBadgeHTML = card.points > 0 ? `<div class="card-point-badge">${card.points} pt</div>` : '';
+
     cardEl.innerHTML = `
       <div class="card-inner">
         <div class="card-face card-front-wrapper">
           ${this.renderFaceSVG(card)}
+          ${pointBadgeHTML}
         </div>
         <div class="card-face card-back-wrapper">
           ${this.renderBackSVG(isTrumpLocked)}

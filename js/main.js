@@ -69,6 +69,7 @@ class TwentyNineApp {
     this.trickArena = document.getElementById('trick-arena');
     this.trickRoundLabel = document.getElementById('trick-round-label');
     this.trickCurrentPoints = document.getElementById('trick-current-points');
+    this.trickCenterInfo = document.getElementById('trick-center-info');
     this.slotNorth = document.getElementById('slot-north');
     this.slotWest = document.getElementById('slot-west');
     this.slotEast = document.getElementById('slot-east');
@@ -209,7 +210,7 @@ class TwentyNineApp {
   }
 
   bindEvents() {
-    this.gameState.on('phaseChange', () => { this.renderHandsAndCounts(); this.saveGameState(); });
+    this.gameState.on('phaseChange', () => { this.renderHandsAndCounts(); this.updatePhaseUI(); this.saveGameState(); });
     this.gameState.on('biddingStarted', (data) => this.handleBiddingTurn(data.currentBidder));
     this.gameState.on('biddingTurn', (data) => { this.handleBiddingTurn(data.currentBidder); this.saveGameState(); });
     this.gameState.on('bidPlaced', (data) => { this.onBidPlaced(data); this.saveGameState(); });
@@ -853,6 +854,30 @@ class TwentyNineApp {
     });
   }
 
+  updatePhaseUI() {
+    const phase = this.gameState.currentPhase;
+    document.body.classList.remove(
+      'phase-idle', 'phase-dealing_phase_1', 'phase-bidding',
+      'phase-trump_selection', 'phase-trump-selection', 'phase-dealing_phase_2',
+      'phase-challenge', 'phase-playing', 'phase-round_over', 'phase-match_over'
+    );
+    if (phase) {
+      document.body.classList.add(`phase-${phase.toLowerCase()}`);
+    }
+
+    if (this.trickCenterInfo) {
+      if (phase === GAME_PHASES.BIDDING || phase === GAME_PHASES.TRUMP_SELECTION || phase === GAME_PHASES.DEALING_PHASE_1 || phase === GAME_PHASES.DEALING_PHASE_2) {
+        this.trickCenterInfo.style.display = 'none';
+      } else if (phase === GAME_PHASES.PLAYING) {
+        this.trickCenterInfo.style.display = 'flex';
+      }
+    }
+
+    if (this.floatingBiddingPanel && phase !== GAME_PHASES.BIDDING) {
+      this.floatingBiddingPanel.classList.remove('active');
+    }
+  }
+
   saveGameState() {
     try {
       if (!this.gameState) return;
@@ -892,6 +917,7 @@ class TwentyNineApp {
 
     this.updateScoreLedger();
     this.renderHandsAndCounts(false);
+    this.updatePhaseUI();
 
     // Target & Collected Points
     if (this.gameState.targetBid > 0 || this.gameState.highestBid > 0) {
@@ -1197,26 +1223,21 @@ class TwentyNineApp {
     this.counts[3].textContent = `${cWest} cards`;
     this.counts[1].textContent = `${cEast} cards`;
 
-    this.northStubs.innerHTML = '';
-    for (let i = 0; i < cNorth; i++) {
-      const s = document.createElement('div');
-      s.className = 'north-card-stub';
-      this.northStubs.appendChild(s);
-    }
+    const createFannedStubs = (container, count, className) => {
+      container.innerHTML = '';
+      for (let i = 0; i < count; i++) {
+        const s = document.createElement('div');
+        s.className = className;
+        const rot = count > 1 ? (-12 + (24 / (count - 1)) * i) : 0;
+        s.style.setProperty('--fan-rot', `${rot.toFixed(1)}deg`);
+        s.style.zIndex = i + 1;
+        container.appendChild(s);
+      }
+    };
 
-    this.westStubs.innerHTML = '';
-    for (let i = 0; i < cWest; i++) {
-      const s = document.createElement('div');
-      s.className = 'west-card-stub';
-      this.westStubs.appendChild(s);
-    }
-
-    this.eastStubs.innerHTML = '';
-    for (let i = 0; i < cEast; i++) {
-      const s = document.createElement('div');
-      s.className = 'east-card-stub';
-      this.eastStubs.appendChild(s);
-    }
+    createFannedStubs(this.northStubs, cNorth, 'north-card-stub ai-mini-card');
+    createFannedStubs(this.westStubs, cWest, 'west-card-stub ai-mini-card');
+    createFannedStubs(this.eastStubs, cEast, 'east-card-stub ai-mini-card');
   }
 
   checkRevealTrumpButton() {

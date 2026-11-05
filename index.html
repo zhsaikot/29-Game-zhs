@@ -160,6 +160,38 @@
         <span class="trick-number-label" id="trick-round-label">Trick 1 / 8</span>
         <span class="trick-points-badge" id="trick-current-points">0 pts</span>
       </div>
+      <!-- Centered Bidding Console in Arena -->
+      <div class="floating-bidding-panel" id="floating-bidding-panel">
+        <div class="bidding-panel-header">
+          <span class="bidding-status-heading">
+            <span>🎯</span> <span id="label-your-bid">Your Turn to Bid</span>
+          </span>
+          <span class="bidding-current-highest" id="dock-highest-bid-label">Current: None</span>
+        </div>
+
+        <!-- Quick Bid Chips (16 to 28) -->
+        <div class="quick-bid-chips-row" id="quick-bid-chips">
+          <button class="chip-bid" data-val="16">16</button>
+          <button class="chip-bid" data-val="17">17</button>
+          <button class="chip-bid" data-val="18">18</button>
+          <button class="chip-bid" data-val="19">19</button>
+          <button class="chip-bid" data-val="20">20</button>
+          <button class="chip-bid" data-val="21">21</button>
+          <button class="chip-bid" data-val="22">22</button>
+          <button class="chip-bid" data-val="23">23</button>
+          <button class="chip-bid" data-val="24">24</button>
+          <button class="chip-bid" data-val="25">25</button>
+          <button class="chip-bid" data-val="26">26</button>
+          <button class="chip-bid" data-val="27">27</button>
+          <button class="chip-bid" data-val="28">28</button>
+        </div>
+
+        <!-- Bidding Action Controls -->
+        <div class="bidding-actions-row">
+          <button class="btn-m3 btn-m3-tonal" id="btn-dock-pass">Pass</button>
+          <button class="btn-m3 btn-m3-filled" id="btn-dock-submit">Submit Bid</button>
+        </div>
+      </div>
     </div>
 
     <!-- East: Opponent Sophia -->
@@ -200,39 +232,6 @@
           <button class="btn-reveal-trump" id="btn-reveal-trump" style="display: none;">
             <span>✨</span> <span id="text-reveal-trump">Reveal Trump</span>
           </button>
-        </div>
-      </div>
-
-      <!-- Floating Non-Modal Bidding Dock (Directly Above South Cards) -->
-      <div class="floating-bidding-panel" id="floating-bidding-panel">
-        <div class="bidding-panel-header">
-          <span class="bidding-status-heading">
-            <span>🎯</span> <span id="label-your-bid">Your Turn to Bid</span>
-          </span>
-          <span class="bidding-current-highest" id="dock-highest-bid-label">Current: None</span>
-        </div>
-
-        <!-- Quick Bid Chips (16 to 28) -->
-        <div class="quick-bid-chips-row" id="quick-bid-chips">
-          <button class="chip-bid" data-val="16">16</button>
-          <button class="chip-bid" data-val="17">17</button>
-          <button class="chip-bid" data-val="18">18</button>
-          <button class="chip-bid" data-val="19">19</button>
-          <button class="chip-bid" data-val="20">20</button>
-          <button class="chip-bid" data-val="21">21</button>
-          <button class="chip-bid" data-val="22">22</button>
-          <button class="chip-bid" data-val="23">23</button>
-          <button class="chip-bid" data-val="24">24</button>
-          <button class="chip-bid" data-val="25">25</button>
-          <button class="chip-bid" data-val="26">26</button>
-          <button class="chip-bid" data-val="27">27</button>
-          <button class="chip-bid" data-val="28">28</button>
-        </div>
-
-        <!-- Bidding Action Controls -->
-        <div class="bidding-actions-row">
-          <button class="btn-m3 btn-m3-tonal" id="btn-dock-pass">Pass</button>
-          <button class="btn-m3 btn-m3-filled" id="btn-dock-submit">Submit Bid</button>
         </div>
       </div>
 
