@@ -1056,6 +1056,17 @@ class TwentyNineApp {
         ? 'আপনার ৪টি কার্ড (ট্রাম্প বেছে নিতে দেখুন):'
         : 'Your 4 Cards (Review to Choose Trump):';
     }
+
+    const nameSuitSpades = document.getElementById('name-suit-spades');
+    const nameSuitHearts = document.getElementById('name-suit-hearts');
+    const nameSuitClubs = document.getElementById('name-suit-clubs');
+    const nameSuitDiamonds = document.getElementById('name-suit-diamonds');
+    const nameSuitSeventh = document.getElementById('name-suit-seventh');
+    if (nameSuitSpades) nameSuitSpades.textContent = isBn ? 'ইস্কাপন (Spades)' : 'Spades';
+    if (nameSuitHearts) nameSuitHearts.textContent = isBn ? 'হরতন (Hearts)' : 'Hearts';
+    if (nameSuitClubs) nameSuitClubs.textContent = isBn ? 'চিড়িতন (Clubs)' : 'Clubs';
+    if (nameSuitDiamonds) nameSuitDiamonds.textContent = isBn ? 'রুইতন (Diamonds)' : 'Diamonds';
+    if (nameSuitSeventh) nameSuitSeventh.textContent = isBn ? '৭ম কার্ড (অন্ধ ট্রাম্প)' : '7th Card (Blind Trump)';
     if (this.modalTrumpSelect && this.modalTrumpSelect.classList.contains('active')) {
       this.renderTrumpHandPreview();
     }

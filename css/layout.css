@@ -1326,11 +1326,46 @@ body.trump-selection-active #player-hand-container .card {
 .trump-pick-symbol {
   font-size: clamp(1.6rem, 5vw, 2.2rem);
   line-height: 1;
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.trump-pick-card:hover .trump-pick-symbol {
+  transform: scale(1.18);
 }
 
 .trump-pick-name {
   font-size: clamp(0.72rem, 2vw, 0.82rem);
   font-weight: 700;
+  color: var(--text-primary);
+}
+
+/* High-Contrast Suit Colors for Dark Trump Picker Modal */
+.trump-pick-card .trump-pick-symbol.suit-spades,
+.trump-pick-card .trump-pick-symbol.suit-clubs,
+.trump-pick-card[data-suit="SPADES"] .trump-pick-symbol,
+.trump-pick-card[data-suit="CLUBS"] .trump-pick-symbol {
+  color: #FFFFFF !important;
+  filter: drop-shadow(0 2px 8px rgba(255, 255, 255, 0.45));
+}
+
+.trump-pick-card .trump-pick-symbol.suit-hearts,
+.trump-pick-card .trump-pick-symbol.suit-diamonds,
+.trump-pick-card[data-suit="HEARTS"] .trump-pick-symbol,
+.trump-pick-card[data-suit="DIAMONDS"] .trump-pick-symbol {
+  color: #FB7185 !important;
+  filter: drop-shadow(0 2px 8px rgba(251, 113, 133, 0.5));
+}
+
+.trump-pick-card[data-suit="SPADES"]:hover,
+.trump-pick-card[data-suit="CLUBS"]:hover {
+  border-color: rgba(255, 255, 255, 0.4);
+  box-shadow: 0 4px 16px rgba(255, 255, 255, 0.15);
+}
+
+.trump-pick-card[data-suit="HEARTS"]:hover,
+.trump-pick-card[data-suit="DIAMONDS"]:hover {
+  border-color: rgba(251, 113, 133, 0.5);
+  box-shadow: 0 4px 16px rgba(251, 113, 133, 0.2);
 }
 
 .trump-seventh-card-btn {
